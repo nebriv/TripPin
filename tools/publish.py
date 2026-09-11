@@ -12,7 +12,7 @@ blocks third-party images), but a 5 MB KV value helps nobody.
     export TRIPPIN_ENTRY_KEY=...   # the group word; --key overrides
     export TRIPPIN_PASSCODE=...    # the owner's passcode; --pass overrides
     python tools/publish.py --url https://trippin.<sub>.workers.dev
-    python tools/publish.py ... --owner ben      # just one person's stays
+    python tools/publish.py ... --owner player1      # just one person's stays
 
 Standard library only.
 """

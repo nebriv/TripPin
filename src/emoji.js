@@ -41,8 +41,8 @@
   'use strict';
 
   // Picked for character rather than coverage. The point is that people take
-  // the same one every time and everyone knows whose it is — Maddie is the
-  // dog, Ben is the bear. A tasteful grid of shapes would defeat that.
+  // the same one every time and everyone knows whose it is — one of you is
+  // the dog, one is the bear. A tasteful grid of shapes would defeat that.
   var ANIMALS = [
     { e: '🐻', n: 'bear' },      { e: '🦆', n: 'duck' },      { e: '🐙', n: 'octopus' },
     { e: '🦊', n: 'fox' },       { e: '🐢', n: 'tortoise' },  { e: '🦖', n: 'dinosaur' },

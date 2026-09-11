@@ -12,9 +12,9 @@
 
    Would it work on any map game? If yes, it is not written yet. "Forty miles,
    you could have walked that" is somebody else's game wearing our hat. This
-   file knows Andrew. It knows this was a bed, that it had a private sauna,
-   that Benjamin was on the trip, that Ben wrote a sentence about it. That is
-   the material.
+   file knows who booked it. It knows this was a bed, that it had a private
+   sauna, who else was on the trip, that somebody wrote a sentence about it.
+   That is the material.
 
    HOW A STRATEGY FIRES
 

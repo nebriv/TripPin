@@ -35,8 +35,8 @@ Every stay belongs to whoever's Airbnb account it came off. That's the trick: on
 all five of you have imported your history, "who was there?" is a real question with
 a real answer, and the photo is the only evidence.
 
-Right now the deck holds Ben's 41 trips, so the WHO half is a freebie until the
-others land.
+Right now the deck holds one player's 41 trips, so the WHO half is a freebie
+until the others land.
 
 ## Live
 
@@ -132,7 +132,7 @@ count — "+12 not playing" — because your friends travel with their own frien
 ### You: the command line
 
 ```bash
-python tools/import_trips.py --html andrew.html --owner andrew --photos --write
+python tools/import_trips.py --html player3.html --owner player3 --photos --write
 python tools/enrich_stays.py --write
 ```
 
@@ -157,7 +157,7 @@ But the listing id is usually recoverable from the photo URL
 (`.../Hosting-27974739/...`, or base64 of `StaySupplyListing:<id>`), and the listing
 page publishes real coordinates plus "Kerhonkson, **New York**, United States".
 
-Of Ben's 41, twenty had a recoverable id. It corrected two outright:
+Of those 41, twenty had a recoverable id. It corrected two outright:
 
 ```
 Morris     -> Pennsylvania, not New York   (3.1 deg out)
@@ -318,8 +318,8 @@ the browser's own colour scheme already says.
 `src/stays.js` holds everything. The bit that matters most:
 
 ```js
-{ id: 'maddie', name: 'Maddie', color: '#b07c2e',
-  tell: 'Trailheads and hot tubs. If the road needs clearance, she booked it.' }
+{ id: 'player4', name: 'Robin', color: '#b07c2e',
+  tell: 'Trailheads and hot tubs. If the road needs clearance, they booked it.' }
 ```
 
 The `tell` shows on the How to Play screen and is how people learn to read a photo.

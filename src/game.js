@@ -1898,7 +1898,7 @@
   function signIn(done) {
     var saved = load('me', null);
     if (!online()) {
-      // The local file has no server to ask. ?me=ben says who is playing so
+      // The local file has no server to ask. ?me=player1 says who is playing so
       // host rounds can be looked at without deploying.
       try { ME = new URLSearchParams(location.search).get('me') || null; } catch (e) { /* old */ }
       return done(false);

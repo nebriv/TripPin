@@ -98,8 +98,11 @@ const staysSandbox = { window: {} };
 vm.runInNewContext(staysSrc, staysSandbox);
 const REAL_STAYS = staysSandbox.window.STAYS;
 
-const PLAYERS = ['ben', 'benjamin', 'andrew', 'maddie', 'anna'];
-const NAMES = { ben: 'Ben', benjamin: 'Benjamin', andrew: 'Andrew', maddie: 'Maddie', anna: 'Anna' };
+const PLAYERS = ['player1', 'player2', 'player3', 'player4', 'player5'];
+const NAMES = {
+  player1: 'Player 1', player2: 'Player 2', player3: 'Player 3',
+  player4: 'Player 4', player5: 'Player 5',
+};
 
 /* ---------------------------------------------------------------------------
    Build the synthetic, balanced deck: real coordinates/place/amenities/

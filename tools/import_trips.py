@@ -9,9 +9,9 @@ This is the intended way to fill the game. Each of you does this once:
      the trip cards, right-click it -> Copy -> Copy outerHTML.
   3. Paste it into a file and run:
 
-         python tools/import_trips.py --html andrew.html --owner andrew
+         python tools/import_trips.py --html player3.html --owner player3
 
-Every stay from that file is tagged `booker: "andrew"`, which is exactly the
+Every stay from that file is tagged `booker: "player3"`, which is exactly the
 thing the game asks players to name. It also pulls out the town, the dates,
 the co-travellers Airbnb shows on the card, and the listing photo.
 

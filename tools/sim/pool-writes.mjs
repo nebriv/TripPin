@@ -92,13 +92,13 @@ const submit = (owner, n) => (pool, retried) => {
 const env = { TRIPPIN: fakeKV() };
 dropPoolCache();
 const [a, b] = await Promise.all([
-  writePool(env, submit('andrew', 3)),
-  writePool(env, submit('maddie', 2)),
+  writePool(env, submit('player3', 3)),
+  writePool(env, submit('player4', 2)),
 ]);
 const pool = JSON.parse(env.TRIPPIN.store.get('stays:v1'));
 const owners = {};
 for (const s of pool.stays) owners[s.owner] = (owners[s.owner] || 0) + 1;
-check('both imports survive a dead heat', owners, { andrew: 3, maddie: 2 });
+check('both imports survive a dead heat', owners, { player3: 3, player4: 2 });
 check('both callers were told it worked', [!!a, !!b], [true, true]);
 check('the second write saw the first', pool.writes.length, 2);
 check('rev counted both writes', pool.rev, 2);
@@ -108,7 +108,7 @@ check('backup holds the generation before',
 // 2. a writer beaten to every turn is told so rather than clobbering
 const env2 = { TRIPPIN: fakeKV() };
 dropPoolCache();
-await writePool(env2, submit('ben', 1));
+await writePool(env2, submit('player1', 1));
 const realGet = env2.TRIPPIN.get.bind(env2.TRIPPIN);
 let bumped = 0;
 env2.TRIPPIN.get = async (k, t) => {
@@ -118,7 +118,7 @@ env2.TRIPPIN.get = async (k, t) => {
   return v;
 };
 check('a writer that never gets a clean turn returns null',
-  await writePool(env2, submit('anna', 4)), null);
+  await writePool(env2, submit('player5', 4)), null);
 check('and wrote nothing',
   JSON.parse(env2.TRIPPIN.store.get('stays:v1')).stays.length, 1);
 
@@ -126,7 +126,7 @@ check('and wrote nothing',
 const env3 = { TRIPPIN: fakeKV() };
 dropPoolCache();
 const boom = writePool(env3, () => { throw new Error('merge blew up'); });
-const after = writePool(env3, submit('ben', 2));
+const after = writePool(env3, submit('player1', 2));
 await boom.catch(() => {});
 check('the next writer still gets its turn', (await after).total, 2);
 

@@ -169,7 +169,7 @@ function mulberry32(seed) {
   };
 }
 
-const PLAYERS = ['ben', 'benjamin', 'andrew', 'maddie', 'anna'];
+const PLAYERS = ['player1', 'player2', 'player3', 'player4', 'player5'];
 
 function buildPool(n, seed) {
   const rng = mulberry32(seed);

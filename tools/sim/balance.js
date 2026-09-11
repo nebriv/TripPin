@@ -5,7 +5,7 @@
    normal round and each of the eight host formats from src/host.js, using a
    synthetic, evenly-owned deck built from the real 41 stays (coordinates and
    `coast` fields kept, owner/crew reassigned round-robin across the five
-   players so the host-round rate is not skewed by ben owning every stay).
+   players so the host-round rate is not skewed by player1 owning every stay).
 
    Usage:  node tools/sim/balance.js [--days N] [--seed N]
    =========================================================================== */
@@ -20,7 +20,7 @@ const Host = require('../../src/host.js');
 const HAV = Host._internals.hav;
 const MI_PER_RAD = 3958.7613;
 
-const PLAYERS = ['ben', 'benjamin', 'andrew', 'maddie', 'anna'];
+const PLAYERS = ['player1', 'player2', 'player3', 'player4', 'player5'];
 
 // The four formats whose "target" is a constructed point (an antipode, a
 // latitude-matched city, a penguin colony, a coastline point) rather than a
@@ -88,7 +88,7 @@ function loadCities() {
   return rows.map(function (r) { return { name: r[0], lng: r[1], lat: r[2], rank: 0 }; });
 }
 
-// Only `ben` owns any real stay, so a straight replay would host-round ben
+// Only `player1` owns any real stay, so a straight replay would host-round player1
 // four-fifths of the time and nobody else almost never. Reassign owner/crew
 // round-robin across the five players, keeping real coordinates, `coast`
 // fields, and the real crew-size distribution (16 solo / 17 pairs / 8 trios),

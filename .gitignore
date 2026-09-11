@@ -9,6 +9,13 @@ __pycache__/
 src/stays.js
 build/
 design/
-data/ben-trips.json
+data/*-trips.json
 data/cache/
 data/geo/
+
+# Working documents: session reports and the design brief. They name the crew
+# and the towns throughout, which is the one thing this repo does not carry.
+docs/overnight-brief.md
+docs/overnight-report.md
+docs/design-brief.md
+docs/design-brief.html

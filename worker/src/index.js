@@ -561,8 +561,9 @@ function cleanPerson(raw) {
 
 // --------------------------------------------------------------- per person --
 //
-// The shared word proves you are in the group. It does not prove you are Ben.
-// Without something per-person, anyone holding the word could read Ben's stays
+// The shared word proves you are in the group. It does not prove you are any
+// particular person. Without something per-person, anyone holding the word
+// could read somebody else's stays
 // or overwrite them by posting as him. So each player claims their own name
 // once and sets a passcode; after that only that passcode can read or write
 // their stays.
@@ -1369,7 +1370,7 @@ export default {
     }
 
     // Just the roster: names and colours, no stays. The import page needs
-    // this to match "Andrew" on a facepile to a player, and nothing more —
+    // this to match a name on a facepile to a player, and nothing more —
     // it must never receive anybody's travel history.
     if (url.pathname === '/api/crew') {
       if (!authorised(request, env, null)) return deny(request, env, 'Wrong word.');
@@ -2260,7 +2261,8 @@ export default {
       return json({
         updated: pool.updated,
         // The last twenty deck rewrites, so a passcode that walked off is
-        // something Ben can see rather than something he finds out about.
+        // something the admin can see rather than something they find out
+        // about.
         writes: (pool.writes || []).slice(-20).reverse(),
         // So the admin page can say out loud when the second lock is missing.
         adminLock: !!env.ADMIN_KEY,
