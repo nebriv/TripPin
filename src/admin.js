@@ -84,6 +84,8 @@
       ? 'Pool last written ' + new Date(data.updated).toLocaleString()
       : 'Nothing published yet.';
 
+    paintKV(data.kv);
+
     paintTells(rows, totals);
     paintClaims();
   }
@@ -115,6 +117,27 @@
     tile(sent, '/' + deck, 'Players sent theirs');
     tile(thinSum, null, 'Thin · town and nothing else', 'warn');
     tile(noStorySum, null, 'Without a story', 'warn3');
+  }
+
+  // How much of the day's KV allowance the game has spent. The server
+  // counts its own bookkeeping and can only undercount, so this is a floor,
+  // not a meter reading. Reads are the roomy one; writes are the one worth
+  // watching, because every import rewrites the whole deck.
+  function paintKV(kv) {
+    var node = $('#kvUsage');
+    if (!node) return;
+    if (!kv) { node.textContent = ''; return; }
+
+    var lim = kv.limits || {};
+    function part(n, of, k) {
+      n = n || 0;
+      if (!of) return n.toLocaleString() + ' ' + k;
+      return n.toLocaleString() + '/' + of.toLocaleString() + ' ' + k
+        + ' (' + Math.round((n / of) * 100) + '%)';
+    }
+
+    node.textContent = 'KV today, at least - ' + part(kv.reads, lim.reads, 'reads')
+      + ' · ' + part(kv.writes, lim.writes, 'writes');
   }
 
   function paintPlayers(rows) {

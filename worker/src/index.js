@@ -53,6 +53,109 @@ const BACKUP_KEY = 'stays:v1:previous';
 const MAX_STAYS = 2000;
 const MAX_BODY = 20 * 1024 * 1024;   // KV tops out at 25 MB per value
 
+/* ---------------------------------------------------------------------------
+   KV METERING
+
+   The free plan allows 100,000 reads and 1,000 writes a day. Five people
+   playing is nowhere near either, but the whole deck lives under one key and
+   an import rewrites all of it, so it is worth being able to look.
+
+   The count cannot live in KV on every call - that would spend a write to
+   record a write. An isolate tallies in memory and folds its tally into one
+   shared daily key once it has FLUSH_EVERY operations to report, which costs
+   two operations per twenty-five. Both are counted, so the figure includes
+   the cost of keeping it.
+
+   It undercounts rather than invents: two isolates folding at the same moment
+   can lose one tally, and an isolate evicted before it reaches the threshold
+   takes its remainder with it. Treat it as a floor. The day is UTC because
+   that is when the quotas reset.
+   --------------------------------------------------------------------------- */
+
+const KVSTATS_KEY = 'kvstats:v1';
+const FLUSH_EVERY = 25;
+const KV_LIMITS = { reads: 100000, writes: 1000, deletes: 1000, lists: 1000 };
+
+const kvZero = () => ({ reads: 0, writes: 0, deletes: 0, lists: 0 });
+
+let kvPending = kvZero();
+let kvFlushing = false;
+
+function utcDay() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function kvPendingTotal() {
+  return kvPending.reads + kvPending.writes
+    + kvPending.deletes + kvPending.lists;
+}
+
+// Wrapping the binding means no call site has to remember to count. get and
+// getWithMetadata are reads, put a write, delete a delete, list a list - the
+// four things Cloudflare counts separately.
+function meterKV(kv) {
+  return {
+    get: (...a) => { kvPending.reads += 1; return kv.get(...a); },
+    getWithMetadata: (...a) => {
+      kvPending.reads += 1; return kv.getWithMetadata(...a);
+    },
+    put: (...a) => { kvPending.writes += 1; return kv.put(...a); },
+    delete: (...a) => { kvPending.deletes += 1; return kv.delete(...a); },
+    list: (...a) => { kvPending.lists += 1; return kv.list(...a); },
+  };
+}
+
+// Folds this isolate's tally into the shared daily key. Takes the raw binding
+// so the fold is not metered by the wrapper it is reporting through.
+async function flushKV(raw) {
+  if (kvFlushing) return;
+  kvFlushing = true;
+  const mine = kvPending;
+  kvPending = kvZero();
+  try {
+    mine.reads += 1;    // the get below
+    mine.writes += 1;   // the put below
+    const day = utcDay();
+    const stored = await raw.get(KVSTATS_KEY, 'json');
+    const base = stored && stored.day === day
+      ? stored : Object.assign({ day }, kvZero());
+    await raw.put(KVSTATS_KEY, JSON.stringify({
+      day,
+      reads: base.reads + mine.reads,
+      writes: base.writes + mine.writes,
+      deletes: base.deletes + mine.deletes,
+      lists: base.lists + mine.lists,
+    }));
+  } catch {
+    // Losing the tally must never cost a request. Put it back and let the
+    // next one carry it.
+    kvPending.reads += mine.reads;
+    kvPending.writes += mine.writes;
+    kvPending.deletes += mine.deletes;
+    kvPending.lists += mine.lists;
+  } finally {
+    kvFlushing = false;
+  }
+}
+
+// What the admin page shows: the shared tally plus whatever this isolate has
+// not folded in yet, so the number does not climb in jumps of twenty-five.
+// Other isolates' unflushed remainders are not visible from here.
+async function kvUsage(env) {
+  const day = utcDay();
+  const stored = await env.TRIPPIN.get(KVSTATS_KEY, 'json');
+  const base = stored && stored.day === day
+    ? stored : Object.assign({ day }, kvZero());
+  return {
+    day,
+    limits: KV_LIMITS,
+    reads: base.reads + kvPending.reads,
+    writes: base.writes + kvPending.writes,
+    deletes: base.deletes + kvPending.deletes,
+    lists: base.lists + kvPending.lists,
+  };
+}
+
 // Burst limiting, per isolate. Deliberately not KV-backed: the free tier
 // allows 1000 KV writes a day and a write-per-request limiter would eat them.
 // This catches hammering, not a determined attacker — Access is for that.
@@ -1133,8 +1236,17 @@ async function handlePost(request, env) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
+
+    // Count every KV call this request makes. Folding the tally in at the
+    // start of a request rather than the end keeps the two operations it
+    // costs off the response path.
+    const rawKV = env.TRIPPIN;
+    if (rawKV) {
+      env = Object.assign({}, env, { TRIPPIN: meterKV(rawKV) });
+      if (ctx && kvPendingTotal() >= FLUSH_EVERY) ctx.waitUntil(flushKV(rawKV));
+    }
 
     if (rateLimited(request)) {
       return json({ error: 'Slow down.' }, 429);
@@ -2063,6 +2175,7 @@ export default {
         writes: (pool.writes || []).slice(-20).reverse(),
         // So the admin page can say out loud when the second lock is missing.
         adminLock: !!env.ADMIN_KEY,
+        kv: await kvUsage(env),
         crew: pool.crew.map((p) => ({
           id: p.id, name: p.name, tell: p.tell || '', claimed: !!claims[p.id],
         })),

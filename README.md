@@ -351,6 +351,7 @@ itself:
 | `share.js` | throws a large seeded batch of round results at the real share-grid code and checks the grids never reveal which of the three rounds were host rounds, and that the tail's numbers are exactly what the rows say |
 | `quips.mjs` | deals and scores a synthetic season and calls the line generator on every result, writing what it says to `quips-season.txt` so a season of lines can be read at once |
 | `facts-check.mjs` | runs the "did you know" fact generator over the real deck and reports how many stays got flagged |
+| `kv-meter.mjs` | drives the Worker's KV meter against a fake binding and checks the arithmetic behind the admin page's "KV today" line: that the fold charges itself, that yesterday's tally does not leak into today, and that a failed fold gives the count back rather than dropping it |
 
 ## Files
 
