@@ -45,10 +45,36 @@
 (function () {
   'use strict';
 
-  var MAX = 1000;                 // a host round is worth the same as a normal one
-  var WHO_MAX = 200;              // when a format asks for a person as well
-  var FALLOFF = 600;              // miles; matches the main game's curve
-  var BULLSEYE = 50;              // matches CFG.BULLSEYE in game.js
+  /* --------------------------------------------------------- the numbers --
+
+     THE ONLY PLACE THE SCORING CONSTANTS LIVE.
+
+     This module is loaded by the browser as a plain <script> and imported by
+     the Worker, which is what makes it the one file both halves of the game
+     can agree on. game.js builds CFG out of this block; the Worker scores
+     with wherePoints() and whoPoints() below. They used to be written out
+     three times — here, in game.js's CFG, and as bare literals in the Worker
+     — so changing the curve in the place the README pointed at moved the
+     offline file and left the live game exactly as it was.
+  */
+  var SCORE = {
+    ROUNDS:    3,      // stays a day
+    MAX:       1000,   // a whole round, host or not
+    WHERE_MAX: 800,    // the pin half of a normal round
+    WHO_MAX:   200,    // the people half, and what a host format's judgement pays
+    FALLOFF:   600,    // miles; lower = harsher
+    // Miles; inside this you get full marks. Fifty is "you named the town",
+    // which is a real thing to be right about. Fifteen was under a pixel at
+    // the zoom people actually play at, so nobody ever scored a perfect round.
+    BULLSEYE:  50,
+  };
+
+  // Local aliases, because the formats below read them constantly.
+  var MAX = SCORE.MAX;
+  var WHO_MAX = SCORE.WHO_MAX;
+  var FALLOFF = SCORE.FALLOFF;
+  var BULLSEYE = SCORE.BULLSEYE;
+
   var NEAR_RADIUS = 500;          // miles, for "who else has been near here"
   var PENGUIN_LAT = -60;          // close enough to the Antarctic convergence
   var TIE_MILES = 1;              // inside this, two people are simply level
@@ -69,6 +95,12 @@
   function pinPoints(m, max) {
     if (m <= BULLSEYE) return max;
     return Math.round(max * Math.exp(-m / FALLOFF));
+  }
+
+  // A normal round's pin half, which is the same curve against a smaller
+  // ceiling. The Worker and game.js both score with this.
+  function wherePoints(m) {
+    return typeof m === 'number' && isFinite(m) ? pinPoints(m, SCORE.WHERE_MAX) : 0;
   }
 
   function miles(n) { return Math.round(n).toLocaleString('en-US'); }
@@ -206,8 +238,14 @@
 
   function rivals(ctx, stay, pool) {
     var me = ctx.me;
+    var mute = ctx.mute || [];
     var by = {};
-    ctx.crew.forEach(function (p) { if (p.id !== me) by[p.id] = []; });
+    // Somebody on essentially every card is nearest to everywhere by
+    // construction, so 'whose is nearest' has one answer for ever and 'the
+    // stranger' has one non-answer. Leave them out of the candidate list.
+    ctx.crew.forEach(function (p) {
+      if (p.id !== me && mute.indexOf(p.id) === -1) by[p.id] = [];
+    });
     (pool || ctx.stays).forEach(function (s) {
       if (s.id === stay.id) return;
       if (typeof s.lat !== 'number' || typeof s.lng !== 'number') return;
@@ -216,6 +254,41 @@
     return Object.keys(by)
       .filter(function (id) { return by[id].length > 0; })
       .map(function (id) { return { id: id, stays: by[id] }; });
+  }
+
+  // The WHO half, for a normal round. Jaccard over the party, with anyone who
+  // is on every card struck from both sides first: the dominant strategy used
+  // to be tapping that one tile and nothing else, which paid 133 of 200 for
+  // learning nothing. Two empty sets agree, so a solo stay nobody adds to is
+  // full marks and naming a phantom on one is not.
+  function whoPoints(picks, party, mute, max) {
+    var hide = mute || [];
+    var keep = function (x) { return hide.indexOf(x) === -1; };
+    var want = (party || []).filter(keep);
+    var got = (picks || []).filter(keep);
+    var union = {};
+    want.concat(got).forEach(function (x) { union[x] = 1; });
+    var size = Object.keys(union).length;
+    var hits = got.filter(function (x) { return want.indexOf(x) !== -1; }).length;
+    return {
+      pts: size === 0 ? max : Math.round(max * (hits / size)),
+      hits: hits,
+      exact: hits === want.length && got.length === want.length,
+    };
+  }
+
+  // Players who carry no information, because they are on (almost) every card
+  // in the pool. Naming them is free, so the game must stop asking.
+  var UBIQ_FRAC = 0.95;
+  function ubiquitous(stays, crew) {
+    var n = (stays || []).length;
+    if (!n) return [];
+    var on = {};
+    stays.forEach(function (s) {
+      partyOf(s).forEach(function (id) { on[id] = (on[id] || 0) + 1; });
+    });
+    return (crew || []).map(function (p) { return p.id || p; })
+      .filter(function (id) { return (on[id] || 0) >= UBIQ_FRAC * n; });
   }
 
   // Each rival's closest approach to this place.
@@ -688,6 +761,18 @@
     if (!stay || !ctx || !ctx.me) return null;
     if (partyOf(stay).indexOf(ctx.me) === -1) return null;   // not yours: play it straight
 
+    // A HOST ROUND IS A VARIANT, NOT A REPLACEMENT FOR THE GAME.
+    //
+    // Whoever seeded the deck is on every card in it, so this gate fired every
+    // single round: three host rounds a day, for ever, for the one person who
+    // could play. They never ticked a crew, never pinned a stay, and — because
+    // only normal rounds write per-stay records — their whole record page and
+    // the standing stayed empty. Let them play it straight instead.
+    //
+    // It disarms itself: nobody is on 95% of a pooled deck once a second
+    // person imports, so ctx.mute empties out on its own.
+    if ((ctx.mute || []).indexOf(ctx.me) !== -1) return null;
+
     // Seeded on the CARD and the slot, deliberately not on the player.
     //
     // It used to include the player, which meant two friends who were on the
@@ -769,11 +854,17 @@
     if (spec.kind === 'personpin') {
       var ok = accepted(spec).indexOf(guess.person) !== -1;
       out.correct = ok;
-      // Right is 200. Second-best is 90, third 40, fourth 18 — a near miss
-      // on the person is paid the way a near miss on the pin is.
+      // Right is 200. Second-best is 60, third 18, fourth 5 — a near miss on
+      // the person is paid the way a near miss on the pin is.
+      //
+      // The decay was 0.45, which paid 90/40/18 and meant a blind tap on a
+      // four-name list averaged 87 before the pin contributed anything,
+      // against about 5 for a blind normal round. balance.js reported the
+      // three personpin formats overshooting a normal round's blind mean by
+      // up to 57 points because of it.
       var rk = spec.rank && guess.person != null ? spec.rank[guess.person] : null;
       out.whoPts = ok ? WHO_MAX
-        : (typeof rk === 'number' && rk > 0 ? Math.round(WHO_MAX * Math.pow(0.45, rk)) : 0);
+        : (typeof rk === 'number' && rk > 0 ? Math.round(WHO_MAX * Math.pow(0.30, rk)) : 0);
       // Pin against the stay belonging to whoever they actually named, so a
       // player who picks the other half of a tie is not then marked down for
       // pinning the right place.
@@ -885,6 +976,11 @@
     challenge: challenge,
     score: score,
     accepted: accepted,
+    ubiquitous: ubiquitous,
+    whoPoints: whoPoints,
+    wherePoints: wherePoints,
+    pinPoints: pinPoints,
+    SCORE: SCORE,
     FORMATS: FORMATS,
     byId: BY_ID,
     MAX: MAX,

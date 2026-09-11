@@ -61,6 +61,15 @@
 }
 .signin__err a { display: inline-block; margin-top: 4px; color: var(--ink); font-weight: 700; }
 
+/* Two ways off this screen now, and on a narrow phone they wrap rather than
+   squeeze: this is the only screen with no topbar above it. */
+.signin__skips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px var(--s4);
+}
+
 .signin__skip {
   justify-self: start;
   min-height: var(--hit);
@@ -114,11 +123,20 @@
 }
 .ecode__pad--homes.is-live { opacity: 1; pointer-events: auto; }
 
+/* Six across is fine on the sign-in overlay, which is full width. On the
+   import page the same pad sits inside a step gutter inside the shell
+   padding: at 375px that is 42px a tile, and at 320px it is 33 — under the
+   floor tokens.css says has no exceptions. Fewer columns, never a smaller
+   tile. */
+@media (max-width: 460px) {
+  .ecode__pad--animals, .ecode__pad--homes { grid-template-columns: repeat(4, 1fr); }
+}
+
 .ecode__key {
   aspect-ratio: 1;
   min-width: 0;
   min-height: var(--hit);
-  border: 1px solid var(--line);
+  border: 1px solid var(--edge);
   background: var(--paper);
   font-size: 24px;
   line-height: 1;
@@ -152,7 +170,7 @@
   justify-self: start;
   min-height: var(--hit);
   padding: 0 14px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--edge);
   background: transparent;
   color: var(--muted);
   font: 400 var(--t-label)/1 var(--mono);

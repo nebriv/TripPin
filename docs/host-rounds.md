@@ -1,3 +1,10 @@
+> **Historical brief.** Written before the host formats shipped. Some of it
+> no longer matches the code: the `pin`, `people` and `choice` kinds it
+> describes were never built (every live format ends in `pin`), and its
+> note that the share grid needs a mark for these is the opposite of the
+> rule the grid now enforces — see "Results share as an emoji grid" in the
+> README. Read it for the reasoning, not the specifics.
+
 # TripPin — host rounds (design brief)
 
 A handoff note for whoever is redesigning the app. This covers one feature: what
@@ -11,7 +18,7 @@ TripPin is a daily guessing game built from the Airbnb stays of five friends.
 Each day deals **3 stays**. For each one you answer two halves — **WHO** was
 there (tap one or more faces) and **WHERE** it is (drop a pin on a world map).
 Scoring is **800 for the pin** (exponential falloff by distance, full marks
-within 15 miles) and **200 for the people** (set overlap), so **1,000 a round,
+within 50 miles) and **200 for the people** (set overlap), so **1,000 a round,
 3,000 a day**. Then you share a spoiler-free emoji grid.
 
 ---

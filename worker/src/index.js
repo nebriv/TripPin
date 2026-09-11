@@ -46,7 +46,7 @@
 import Host from '../../src/host.js';
 import CITIES from './cities.js';
 import { computeFacts, flagOf } from './facts.js';
-import { quip } from './quips.js';
+import { quip, redact } from './quips.js';
 
 const KEY = 'stays:v1';
 const BACKUP_KEY = 'stays:v1:previous';
@@ -456,12 +456,30 @@ async function deny(request, env, message, status = 401, scope = 'word', owner =
     return json({ error: message }, status);
   }
 
+  // An ABSENT secret is not a wrong one. A page loaded with no word yet sends
+  // no header at all, and counting that shut people out of a door they had not
+  // tried: ten reloads while waiting for a friend to send the word was enough.
+  // Something has to have been offered before it can have been got wrong.
+  if (!offeredSomething(request)) {
+    await new Promise((r) => setTimeout(r, FAIL_DELAY_MS));
+    return json({ error: message }, status);
+  }
+
   const n = await failBump(ip, scope);
   if (n >= MAX_FAILS) {
     return json({ error: 'Too many wrong guesses. Try again later.' }, 429);
   }
   await new Promise((r) => setTimeout(r, FAIL_DELAY_MS));
   return json({ error: message }, status);
+}
+
+// Reads only: a POST can carry its word in the body, which is long gone by the
+// time deny() runs, so a write is always treated as having offered something.
+function offeredSomething(request) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') return true;
+  return !!(request.headers.get('x-trippin-key')
+    || request.headers.get('x-trippin-admin')
+    || request.headers.get('x-trippin-pass'));
 }
 
 // Getting in clears the slate, so a friend who fat-fingers it twice and then
@@ -755,7 +773,7 @@ async function writePool(env, merge, attempts = 3) {
    --------------------------------------------------------------------------- */
 
 const DEALS_KEY = 'deals:v1';
-const ROUNDS = 3;
+const ROUNDS = Host.SCORE.ROUNDS;
 const MAX_LEDGER_DAYS = 400;
 
 function seeded(n) {
@@ -800,6 +818,11 @@ function hashId(str) {
 }
 
 const partyOfStay = (s) => (s.crew && s.crew.length ? s.crew : [stayOwner(s)]);
+
+// Players who are on (almost) every card, so naming them says nothing. Whoever
+// seeds the deck is one of these until a second person imports, at which point
+// this returns [] on its own and everything below goes back to normal.
+const muted = (pool) => Host.ubiquitous(pool.stays || [], pool.crew || []);
 
 function computeDeal(pool, ledger, day) {
   const used = new Set(ledger.used || []);
@@ -862,7 +885,15 @@ function computeDeal(pool, ledger, day) {
       // come back seven days after its last appearance whenever its crew
       // happened to suit the spread, which reads as a memory test.
       const triple = load >= ROUNDS ? 1 : 0;
-      const key = [triple, age, load, dup, dealt, hashId(day + '|' + s.id)];
+      // Nothing in the key knew how much a card GIVES you, so richness
+      // clustered by chance: one day in five dealt three stays with no
+      // listing record at all — a photograph and nothing else, three times
+      // over — and day 0 was one of them. Only a tie-break, and only once
+      // two thin ones are already down, so it cannot disturb the no-repeat
+      // or minimum-gap promises above it.
+      const isThin = (x) => !(x.amenities && x.amenities.length) && !x.type;
+      const spread = out.filter(isThin).length >= ROUNDS - 1 && isThin(s) ? 1 : 0;
+      const key = [triple, age, spread, load, dup, dealt, hashId(day + '|' + s.id)];
       if (!best || cmpKey(key, best.key) < 0) best = { s: s, key: key };
     }
     if (!best) break;
@@ -998,6 +1029,59 @@ function recordRound(st, owner, day, round, stay, result, at, line) {
   }
 }
 
+/* ------------------------------------------------------------ the record --
+
+   Days played, the run they are on, the longest run they have had, the best
+   day, and the last sixty totals for the sparkline.
+
+   COMPUTED HERE, NOT IN THE BROWSER. This lived in localStorage, which made a
+   streak a property of a device rather than of a person: play on your phone on
+   Monday and your laptop on Tuesday and it reset to 1, the best day read 0,
+   the sparkline was empty and the flame in the posted grid was wrong. Five
+   friends who share laptops hit it constantly. The play records this Worker
+   already holds are the only thing that knows the answer.
+
+   A day counts only once it was FINISHED, and how many rounds that took is
+   whatever was dealt on the day — a two-stay deck deals two, so counting to
+   three would mean nobody ever finished. Days too old to be in the ledger fall
+   back to ROUNDS, which is what they were dealt.
+   -------------------------------------------------------------------------- */
+
+function recordFor(stats, ledger, owner) {
+  const out = { played: 0, streak: 0, max: 0, best: 0, prevBest: 0, last: null, totals: [] };
+  const p = stats.players[owner];
+  if (!p || !p.days) return out;
+
+  const days = (ledger && ledger.days) || {};
+  const finished = Object.keys(p.days).map(Number).sort((a, b) => a - b).filter((d) => {
+    const want = (days[String(d)] || []).length || ROUNDS;
+    return (p.days[d].r || []).filter(Boolean).length >= want;
+  });
+  if (!finished.length) return out;
+
+  const total = (d) => p.days[d].p || 0;
+  out.played = finished.length;
+  out.last = finished[finished.length - 1];
+  out.totals = finished.map(total).slice(-60);
+  out.best = Math.max(...finished.map(total));
+  // Everything before the most recent day, so the summary can say whether the
+  // day just played was a personal best without the browser keeping a flag.
+  out.prevBest = finished.length > 1
+    ? Math.max(...finished.slice(0, -1).map(total))
+    : 0;
+
+  // The run ending at the most recent finished day, and the longest ever.
+  // Deliberately not "broken because you missed yesterday": the number stands
+  // until the next day you finish, which is what the browser used to do.
+  let run = 0;
+  for (let i = 0; i < finished.length; i++) {
+    run = i > 0 && finished[i] - finished[i - 1] === 1 ? run + 1 : 1;
+    if (run > out.max) out.max = run;
+  }
+  out.streak = run;
+  return out;
+}
+
 // The player's recent rounds, flattened, oldest first — what the callback
 // strategy reads patterns from.
 function recentRounds(st, owner, today, days) {
@@ -1028,12 +1112,16 @@ async function activePlayers(env, pool) {
   return out;
 }
 
-async function playedCount(env, day, players) {
+// `rounds` is how many the day actually deals, which is min(ROUNDS, deck).
+// Hardcoding three meant that on a two-stay deck nobody ever counted as having
+// played, so the day never opened and the summary waited for ever.
+async function playedCount(env, day, players, rounds = ROUNDS) {
   let n = 0;
   const played = {};
   for (const id of players) {
     const rec = await readPlay(env, day, id);
-    const done = [0, 1, 2].every((i) => rec[i]);
+    let done = rounds > 0;
+    for (let i = 0; i < rounds; i++) if (!rec[i]) done = false;
     played[id] = done;
     if (done) n += 1;
   }
@@ -1085,14 +1173,31 @@ function stayStats(sr) {
 // Place, coordinates, crew, month, title and story are all answers.
 // No id: ids are made from the place name ("troms-2025-2"), so the id is
 // the answer. The truth carries it after the guess is recorded.
+// `photos` IS NOT IN HERE, AND MUST NOT GO BACK IN.
+//
+// The hero photo is a data: URI and carries nothing. The extra photos are live
+// muscache.com URLs, and every one of them has the listing id in its path:
+//   .../pictures/miso/Hosting-734767411770032778/original/...
+// which is airbnb.com/rooms/734767411770032778, which is the town, the state
+// and a map. Sixteen of the deck's forty-one stays have them, so on two cards
+// in five the answer was one right-click away, no devtools needed. The card is
+// otherwise scrupulous about this — no id, no place, no coordinates, no month.
+//
+// Putting the filmstrip back means proxying the extras through this Worker
+// behind an opaque path, not shipping the URL.
 const CARD_FIELDS = [
-  'photo', 'photos', 'type', 'guests', 'bedrooms', 'beds', 'baths',
+  'photo', 'type', 'guests', 'bedrooms', 'beds', 'baths',
   'amenities', 'nights', 'others', 'rating', 'reviews',
 ];
 
 function cardOf(stay) {
   const out = {};
   for (const f of CARD_FIELDS) if (stay[f] != null) out[f] = stay[f];
+  // Redaction has to happen HERE, where both halves are in hand. src/listing.js
+  // has a redact() too, but it needs `stay.place` to know what to strike out
+  // and the card deliberately withholds it — so on exactly the rounds it
+  // existed to protect, it returned every amenity verbatim.
+  if (out.amenities) out.amenities = out.amenities.map((a) => redact(a, stay.place));
   return out;
 }
 
@@ -1149,6 +1254,7 @@ async function readPlay(env, day, owner) {
 function specFor(pool, stay, owner, day, round, seen) {
   return Host.challenge(stay, {
     me: owner,
+    mute: muted(pool),
     crew: pool.crew,
     stays: pool.stays,
     cities: CITIES,             // the `level` format picks its four from these
@@ -1401,6 +1507,15 @@ export default {
         }
         const owned = {};
         for (const st of pool.stays) owned[st.owner] = (owned[st.owner] || 0) + 1;
+        // On how many cards they are the answer, which is not the same number
+        // and is the one that matters for learning to read the WHO question.
+        // The help screen used to print "nothing sent in yet" beside somebody
+        // who is the right answer on two cards in five.
+        const onCards = {};
+        for (const st of pool.stays) {
+          for (const id of partyOfStay(st)) onCards[id] = (onCards[id] || 0) + 1;
+        }
+        const mute = muted(pool);
         return json({
           crew: pool.crew.map((p) => ({
             id: p.id, name: p.name, color: p.color, tell: p.tell,
@@ -1410,6 +1525,10 @@ export default {
             // somebody they are one import away from playing, and the reveal
             // needs it to show the group how lopsided the deck still is.
             stays: owned[p.id] || 0,
+            onCards: onCards[p.id] || 0,
+            // On every card, so naming them is worth nothing and the game says
+            // so rather than letting people tap it for ever expecting credit.
+            everywhere: mute.indexOf(p.id) !== -1,
           })),
           deck: pool.stays.length,
         });
@@ -1726,6 +1845,12 @@ export default {
             nights: stay.nights || null,
             title: stay.title || null, story: stay.story || null,
             crew: partyOfStay(stay), others: stay.others || 0,
+            // These are deck-relative — '2nd northernmost of 41', 'joint
+            // shortest' — so they are new even to the person who booked it.
+            // The host reveal was the one that told you least about the card
+            // you know best.
+            facts: stay.facts || [],
+            flag: flagOf(stay.facts || []),
             answer: spec.answers || spec.answer,
             target: spec.target || null, targetName: spec.targetName || null,
             note: spec.note || null,
@@ -1734,17 +1859,11 @@ export default {
       } else {
         const party = partyOfStay(stay);
         const d = at ? Host._internals.hav(at.lat, at.lng, stay.lat, stay.lng) : null;
-        const wp = d == null ? 0 : (d <= 50 ? 800 : Math.round(800 * Math.exp(-d / 600)));
-        const want = party.slice().sort();
-        const gotp = picks.slice().sort();
-        const union = {};
-        want.concat(gotp).forEach((x) => { union[x] = 1; });
-        const hits = gotp.filter((x) => want.indexOf(x) !== -1).length;
-        const exact = hits === want.length && gotp.length === want.length;
-        const wpt = want.length ? Math.round(200 * (hits / Object.keys(union).length)) : 0;
+        const wp = Host.wherePoints(d);
+        const w = Host.whoPoints(picks, party, muted(pool), Host.SCORE.WHO_MAX);
         result = {
-          host: false, who: picks, whoCorrect: exact, whoHits: hits,
-          whoPts: wpt, wherePts: wp, dist: d, pts: wp + wpt,
+          host: false, who: picks, whoCorrect: w.exact, whoHits: w.hits,
+          whoPts: w.pts, wherePts: wp, dist: d, pts: wp + w.pts,
           truth: {
             id: stay.id, owner: stay.owner,
             place: stay.place, lat: stay.lat, lng: stay.lng, when: stay.when,
@@ -1805,11 +1924,11 @@ export default {
 
       // How many friends have finished today, so the summary can say so.
       const players = await activePlayers(env, pool);
-      const count = await playedCount(env, day, players);
+      const count = await playedCount(env, day, players, got.ids.length);
       result.played = count.n;
       result.total = players.length;
       result.waiting = pool.crew.length - players.length;   // named, not set up
-      return json({ result });
+      return json({ result, record: recordFor(stats, got.ledger, who) });
     }
 
     /* ---------------------------------------------------------------------
@@ -1959,7 +2078,7 @@ export default {
       const pool = await readPool(env);
       const stats = await readStats(env);
       const players = await activePlayers(env, pool);
-      const count = await playedCount(env, day, players);
+      const count = await playedCount(env, day, players, got.ids.length);
       const everyone = count.n >= players.length;
       const names = {};
       for (const p of pool.crew) names[p.id] = p.name;
@@ -2103,6 +2222,8 @@ export default {
       const names = {};
       for (const p of pool.crew) names[p.id] = p.name;
 
+      const record = recordFor(stats, await readDeals(env), who);
+
       const days = Object.keys(me.days).map(Number).sort((a, b) => a - b).map((d) => ({
         day: d, pts: me.days[d].p,
         rounds: (me.days[d].r || []).filter(Boolean).map((r) => ({
@@ -2152,7 +2273,7 @@ export default {
 
       // Passport: stays you have been within fifty miles of.
       const been = new Set();
-      normal.forEach((r) => { if (r.dist <= 50) been.add(r.stayId); });
+      normal.forEach((r) => { if (r.dist <= Host.SCORE.BULLSEYE) been.add(r.stayId); });
       const passport = { count: been.size, deck: pool.stays.length };
 
       // The standing: resistance summed over every card you contributed, so
@@ -2185,7 +2306,7 @@ export default {
       if (water >= 3) titles.push('Certified Atlantic Enjoyer');
       const neverBlamed = pool.crew.filter((p) => p.id !== who && !blame[p.id]);
       if (normal.length >= 9 && neverBlamed.length === 1) titles.push('Has Never Once Suspected ' + names[neverBlamed[0].id]);
-      const bulls = normal.filter((r) => r.dist <= 50).length;
+      const bulls = normal.filter((r) => r.dist <= Host.SCORE.BULLSEYE).length;
       if (bulls >= 3) titles.push('Suspiciously Well Informed');
       const perfectWho = days.filter((d) => d.rounds.length === 3 && d.rounds.every((r) => r.host || r.whoCorrect)).length;
       if (perfectWho >= 3) titles.push('Knows Exactly Who Books What');
@@ -2194,7 +2315,9 @@ export default {
       if (far >= 3) titles.push('Wrong Ocean Specialist');
       const hosted = [];
       days.forEach((d) => d.rounds.forEach((r) => { if (r.host) hosted.push(r); }));
-      if (hosted.length >= 4 && hosted.every((r) => r.pts >= 800)) titles.push('Cannot Be Fooled About Their Own Bed');
+      // Four fifths of a whole round, every time, on their own beds.
+      const ownBed = Host.SCORE.MAX * 0.8;
+      if (hosted.length >= 4 && hosted.every((r) => r.pts >= ownBed)) titles.push('Cannot Be Fooled About Their Own Bed');
       if (hosted.length >= 3 && hosted.filter((r) => r.pts < 300).length >= 2) titles.push('Was There. Cannot Prove It.');
 
       // The deck's own oddities, only over stays this player has been dealt.
@@ -2207,7 +2330,7 @@ export default {
       });
 
       return json({
-        owner: who, days, centre, blamed, beat, passport, curators, titles,
+        owner: who, record, days, centre, blamed, beat, passport, curators, titles,
         records: records.slice(0, 12),
       });
     }
@@ -2227,7 +2350,13 @@ export default {
       }
       await forgive(request, env, 'id', who);
       await backfillAnimal(env, who, passOf(request, null));
-      return json({ ok: true, owner: who });
+      // The record rides along with signing in, which is the one call every
+      // session makes before it shows anything. Without it a player opening
+      // the game on a second device sees a blank streak until they finish a
+      // day there.
+      const stats = await readStats(env);
+      const ledger = await readDeals(env);
+      return json({ ok: true, owner: who, record: recordFor(stats, ledger, who) });
     }
 
     // One person's own stays. Friends edit their own entries through this,

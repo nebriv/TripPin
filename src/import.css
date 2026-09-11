@@ -80,17 +80,23 @@ body.imp { display: block; }
 
 /* Geocode hits under a town field. */
 .hits { margin: 4px 0 0; padding: 0; list-style: none; display: grid; gap: 2px; }
-.hits li {
+/* A real button, not a click handler on an <li>: setting a coordinate is the
+   only thing the by-hand import and the per-stay fix can do, and there was no
+   keyboard path to either. */
+.hits__pick {
+  width: 100%;
   min-height: var(--hit);
   display: flex;
   align-items: center;
+  text-align: left;
   padding: 8px 10px;
   border: 1px solid var(--hair);
   background: var(--paper);
+  color: var(--ink);
   font: 400 var(--t-data)/1.4 var(--mono);
   cursor: pointer;
 }
-.hits li:hover { border-color: var(--ink); }
+.hits__pick:hover { border-color: var(--ink); }
 
 /* The rows a paste turns into. */
 .trips { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; }
@@ -128,10 +134,10 @@ body.imp { display: block; }
   text-overflow: ellipsis;
 }
 .trip__warn { color: var(--thread); }
-.trip--missing .trip__head { color: var(--muted); }
+.trip--missing .trip__head, .trip--down .trip__head { color: var(--muted); }
 .trip__drop {
   width: var(--hit); height: var(--hit);
-  border: 1px solid var(--line);
+  border: 1px solid var(--edge);
   background: transparent;
   color: var(--muted);
   font: 400 14px/1 var(--mono);

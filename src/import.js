@@ -33,7 +33,8 @@
   var SNIPPET =
     "(()=>{const s='a[href*=\"/trips/\"]',n=document.querySelectorAll(s).length," +
     "d=[...document.querySelectorAll('div')].filter(e=>e.querySelectorAll(s).length===n).pop();" +
-    "copy(d?d.outerHTML:'');console.log(n+' trips copied');})()";
+    "copy(d?d.outerHTML:'');console.log(n?n+' trips copied':" +
+    "'No trips on this page - scroll to the bottom and run it again');})()";
 
   var COLORS = ['#3d7a8c', '#8c4a6b', '#5c7a4a', '#b07c2e', '#4a5c8c', '#8c5a3d'];
 
@@ -90,6 +91,9 @@
   function openFlow() {
     $('#gate').hidden = true;
     $('#flow').hidden = false;
+    // Nothing below step 2 works until a name is proved, so nothing below
+    // step 2 looks like it does.
+    gateSteps(false);
     paintPick();
     paintMates();
   }
@@ -109,6 +113,7 @@
     crew.forEach(function (p) {
       var b = el('button', 'who');
       b.type = 'button';
+      b.setAttribute('aria-pressed', 'false');
       b.dataset.id = p.id;
       var top = el('span', 'who__top');
       top.appendChild(dot(p));
@@ -121,11 +126,16 @@
     nb.type = 'button';
     nb.appendChild(el('span', 'who__name', "I'm not on this list"));
     nb.addEventListener('click', function () {
-      $$('.who', box).forEach(function (x) { x.classList.remove('is-on'); });
+      $$('.who', box).forEach(function (x) {
+        x.classList.remove('is-on');
+        x.setAttribute('aria-pressed', 'false');
+      });
       nb.classList.add('is-on');
       $('#newRow').hidden = false;
       $('#tripNewName').focus();
-      $('#claimStep').hidden = true;
+      // Step 2 stays on the page and goes back to waiting; hiding it is what
+      // made the page count 1, 3, 4, 5.
+      onOwnerChange(null);
       owner = null; pass = null; chosen = null;
     });
     box.appendChild(nb);
@@ -175,7 +185,10 @@
     $('#claimOk').hidden = true;
     $('#whoSlot').hidden = true;
     $('#backLink').hidden = false;
-    $('#claimStep').hidden = !v;
+    gateSteps(false);
+    $('#claimWait').hidden = !!v;
+    ['#claimHead', '#claimNote', '#claimBox'].forEach(function (sel) { $(sel).hidden = !v; });
+    $('#claimStep').classList.toggle('is-waiting', !v);
     if (!v) return;
 
     api('/api/claim?owner=' + encodeURIComponent(v))
@@ -184,7 +197,7 @@
         var claimed = j && j.claimed;
         $('#claimHead').textContent = claimed ? 'Put your animal back where it lives' : 'Your animal, and where it lives';
         $('#claimNote').textContent = claimed
-          ? 'The same two you set the first time.'
+          ? 'Somebody has already set a pair for this name. If that was you, put the animal back where it lives.'
           : 'Pick an animal and somewhere for it to live. That pair is how you sign in, and it is what stops anybody else editing your stays. Drag the animal onto the home, or tap one then the other.';
         $('#claimGo').textContent = claimed ? 'That is me' : 'Claim it';
         pad = window.EmojiCode.create($('#claimPad'), {
@@ -240,11 +253,21 @@
         slot.appendChild(dot(Object.assign({}, p || { id: candidate }, { animal: window.EmojiCode.parts(value).animal })));
         slot.appendChild(document.createTextNode((p ? p.name : candidate)));
         slot.hidden = false;
-        $('#backLink').hidden = true;
+        gateSteps(true);
         mine = (j && j.stays) || [];
         dirty = {};
         paintMates();
         renderMine();
+        // Coming back to fix one town, or to write the line they read after
+        // they miss, is the visit the story pipeline depends on. It used to
+        // open on instructions for a job already done, with the list of stays
+        // below all five steps and nothing scrolling to it.
+        if (mine.length) {
+          $('#pageLabel').textContent = 'Already in';
+          $('#pageH1').textContent = 'Your stays';
+          $('#pageP').textContent = 'Fix a wrong town, or write the line they read after they miss it. Adding more trips is below.';
+          $('#mine').scrollIntoView({ behavior: still() ? 'auto' : 'smooth', block: 'start' });
+        }
       })
       .catch(function (e) {
         owner = null;
@@ -277,11 +300,32 @@
     choose(id);
   }
 
-  function ensureOwner() {
+  // Steps 3 to 5 are entirely client-side, so they used to work perfectly for
+  // anyone who scrolled past step 1 — and the refusal only arrived at "Send
+  // them in", four minutes later, in a message box two steps further up.
+  function gateSteps(on) {
+    $$('.step').forEach(function (st, i) {
+      if (i < 2) return;                     // 1 is the name, 2 is the pair
+      st.classList.toggle('is-locked', !on);
+    });
+    var fold = $('.fold');
+    if (fold) fold.classList.toggle('is-locked', !on);
+  }
+
+  function ensureOwner(where) {
     if (owner && pass) return owner;
-    msg('Pick your name and put your animal where it lives first.', true);
+    var text = 'Pick your name and put your animal where it lives first.';
+    if (where) {
+      where.hidden = false;
+      where.textContent = text;
+    } else {
+      msg(text, true);
+    }
     return null;
   }
+
+  var stillMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function still() { return stillMq.matches; }
 
   var msgTimer = null;
   function msg(text, bad) {
@@ -336,15 +380,20 @@
 
   // -------------------------------------------------------------- geocode --
 
+  // Resolves to a hit, null for "no such place", or {down:true} when the
+  // lookup itself did not answer. Collapsing the last two told forty-one
+  // people's trips they did not exist because OpenStreetMap was rate-limiting.
   function lookup(place) {
     return fetch(NOMINATIM + '?format=jsonv2&limit=1&q=' + encodeURIComponent(place),
                  { headers: { Accept: 'application/json' } })
-      .then(function (r) { return r.json(); })
-      .then(function (hits) {
-        if (!hits || !hits.length) return null;
-        return { lat: +hits[0].lat, lng: +hits[0].lon, label: hits[0].display_name };
+      .then(function (r) {
+        if (!r.ok) return { down: true };
+        return r.json().then(function (hits) {
+          if (!hits || !hits.length) return null;
+          return { lat: +hits[0].lat, lng: +hits[0].lon, label: hits[0].display_name };
+        }).catch(function () { return { down: true }; });
       })
-      .catch(function () { return null; });
+      .catch(function () { return { down: true }; });
   }
 
   function lookupMany(place) {
@@ -382,7 +431,9 @@
       row.status = 'looking';
       render();
       lookup(row.place).then(function (hit) {
-        if (hit) {
+        if (hit && hit.down) {
+          row.status = 'down';
+        } else if (hit) {
           row.lat = hit.lat; row.lng = hit.lng;
           row.resolved = hit.label; row.status = 'found';
         } else {
@@ -401,9 +452,14 @@
       bar.hidden = true;
       fill.style.width = '0%';
       var ok = rows.filter(function (r) { return r.lat != null; }).length;
+      var down = rows.filter(function (r) { return r.status === 'down'; }).length;
       $('#tripSend').disabled = ok === 0;
       render();
-      msg(ok + ' of ' + rows.length + ' placed. Towns share names, so check anything odd.');
+      if (down) {
+        msg('The place lookup did not answer for ' + down + ' of them. Give it a minute and press it again.', true);
+      } else {
+        msg(ok + ' of ' + rows.length + ' placed. Towns share names, so check anything odd.');
+      }
     }
   }
 
@@ -436,6 +492,9 @@
       } else if (row.status === 'missing') {
         sub.appendChild(document.createTextNode(' · '));
         sub.appendChild(el('span', 'trip__warn', 'not found'));
+      } else if (row.status === 'down') {
+        sub.appendChild(document.createTextNode(' · '));
+        sub.appendChild(el('span', 'trip__warn', 'lookup failed'));
       } else if (row.status === 'looking') {
         sub.appendChild(document.createTextNode(' · looking'));
       }
@@ -482,14 +541,17 @@
         lookupMany(q).then(function (list) {
           hits.replaceChildren();
           list.slice(0, 4).forEach(function (hit) {
-            var li = el('li', null, hit.label);
-            li.addEventListener('click', function () {
+            var li = el('li');
+            var opt = el('button', 'hits__pick', hit.label);
+            opt.type = 'button';
+            opt.addEventListener('click', function () {
               manHit = hit;
               town.value = shortPlace(hit.label);
               hits.replaceChildren();
               $('#manPlaced').textContent = 'Placed at ' + hit.lat.toFixed(2) + ', ' + hit.lng.toFixed(2);
               $('#manAdd').disabled = false;
             });
+            li.appendChild(opt);
             hits.appendChild(li);
           });
         });
@@ -522,7 +584,9 @@
   // ----------------------------------------------------------------- send --
 
   function send() {
-    var who = ensureOwner();
+    var sendMsg = $('#sendMsg');
+    sendMsg.hidden = true;
+    var who = ensureOwner(sendMsg);
     if (!who) return;
     var usable = rows.filter(function (r) { return r.lat != null; });
     if (!usable.length) return msg('Nothing has a location yet.', true);
@@ -531,17 +595,51 @@
     btn.disabled = true;
     btn.textContent = 'Sending…';
 
+    // A SECOND IMPORT MUST NOT BE ABLE TO DESTROY WHAT THE DECK ALREADY HOLDS.
+    //
+    // The normal reason to come back is "add the trips I have taken since",
+    // and a trips page knows far less than the pool does: no story, no
+    // amenities, no enriched coordinates, no id. Matching rows used to be
+    // dropped and replaced by the freshly parsed ones, which silently wiped
+    // every line anyone had written, threw away the real coordinates
+    // enrich_stays.py had found, and minted new ids that orphaned the deal
+    // ledger and the per-stay records.
+    //
+    // So: a stay already in the pool keeps everything it has, and the fresh
+    // row only fills blanks.
+    var held = {};
+    mine.forEach(function (s) { held[s.place + '|' + s.when] = s; });
+
     var stays = usable.map(function (r) {
-      return {
+      var fresh = {
         booker: who,
         crew: [who].concat(r.mates.filter(function (m) { return m !== who; })),
         others: r.others || 0,
         lat: r.lat, lng: r.lng,
         place: r.place, when: r.when, nights: r.nights, photo: r.photo,
       };
+      var old = held[fresh.place + '|' + fresh.when];
+      if (!old) return fresh;
+      var out = {};
+      Object.keys(fresh).forEach(function (k) { out[k] = fresh[k]; });
+      Object.keys(old).forEach(function (k) {
+        var v = old[k];
+        if (v === null || v === undefined || v === '') return;
+        if (Array.isArray(v) && !v.length) return;
+        out[k] = v;
+      });
+      // The one thing the trips page is still the authority on is who is on
+      // the facepile — and names only ever get ADDED, as friends join the
+      // roster and stop being an anonymous head count.
+      out.crew = fresh.crew.concat((old.crew || []).filter(function (c) {
+        return fresh.crew.indexOf(c) === -1;
+      }));
+      out.others = fresh.others;
+      return out;
     });
-    // Anything already in the pool for this person rides along, with its
-    // story, because a submission replaces that person's stays outright.
+
+    // Anything in the pool the new paste did not mention rides along
+    // untouched, because a submission replaces that person's stays outright.
     var keep = mine.filter(function (s) {
       return !stays.some(function (n) { return n.place === s.place && n.when === s.when; });
     });
@@ -698,7 +796,9 @@
           ? written + (written === 1 ? ' line set.' : ' lines set.') + ' Somebody is going to read one of those after being three thousand miles out.'
           : 'None set. That is fine. The game asks again, one at a time, after you have played.'));
         var a = el('a', 'btn btn--wide', 'Play →');
-        a.href = '/';
+        // The game keeps the word under its own key, so a bare '/' here lands
+        // on the gate asking for the word typed four minutes ago.
+        a.href = $('#homeLink') ? $('#homeLink').getAttribute('href') : '/';
         box.appendChild(a);
         renderMine();
       });
@@ -739,8 +839,19 @@
   function renderMine() {
     var list = $('#mineList');
     list.replaceChildren();
-    $('#mine').hidden = mine.length === 0;
-    if (!mine.length) return;
+    // An empty list normally means "not signed in yet" and the panel hides.
+    // But emptying it BY dropping your last stay has to stay on screen, or
+    // the Save button goes with it and the deletion is never sent.
+    var pending = Object.keys(dirty).length > 0;
+    $('#mine').hidden = mine.length === 0 && !pending;
+    if (!mine.length) {
+      if (pending) {
+        $('#mineCount').textContent = 'Your stays · 0';
+        $('#mineNote').textContent = 'That was your last one. Saving now takes you out of the deck, '
+          + 'and the game will stop dealing you in.';
+      }
+      return;
+    }
     $('#mineCount').textContent = 'Your stays · ' + mine.length;
     var missing = mine.filter(function (s) { return !s.story; }).length;
     var acts = $('#mineActs');
@@ -804,7 +915,9 @@
           lookupMany(q).then(function (found) {
             hits.replaceChildren();
             found.slice(0, 4).forEach(function (hit) {
-              var opt = el('li', null, hit.label);
+              var li = el('li');
+              var opt = el('button', 'hits__pick', hit.label);
+              opt.type = 'button';
               opt.addEventListener('click', function () {
                 stay.lat = Math.round(hit.lat * 1e5) / 1e5;
                 stay.lng = Math.round(hit.lng * 1e5) / 1e5;
@@ -814,7 +927,8 @@
                 placeEl.textContent = stay.place;
                 markDirty(stay.id);
               });
-              hits.appendChild(opt);
+              li.appendChild(opt);
+              hits.appendChild(li);
             });
           });
         }, 550);
@@ -903,10 +1017,18 @@
     wireManual();
     window.addEventListener('beforeunload', function () { flushStories(); });
 
+    // Both ways back carry the word, or the game would only gate them again.
+    // The lockup is the one that survives signing in; #backLink goes away.
+    function pointHome(w) {
+      w = w || remembered();
+      var href = '/' + (w ? '?k=' + encodeURIComponent(w) : '');
+      [$('#backLink'), $('#homeLink')].forEach(function (a) { if (a) a.href = href; });
+    }
+
     function attempt(candidate) {
       if (!candidate) return;
       tryWord(candidate).then(function (ok) {
-        if (ok) { remember(candidate); openFlow(); }
+        if (ok) { remember(candidate); pointHome(); openFlow(); }
         else { $('#gateErr').hidden = false; $('#gateWord').select(); }
       });
     }
@@ -925,8 +1047,7 @@
         history.replaceState(null, '', u.pathname + u.hash);
       } catch (e) { /* fine */ }
     }
-    var back = $('#backLink');
-    if (back) back.href = '/' + (fromUrl || remembered() ? '?k=' + encodeURIComponent(fromUrl || remembered()) : '');
+    pointHome(fromUrl);
     attempt(fromUrl || remembered());
   }
 

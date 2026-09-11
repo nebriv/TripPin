@@ -37,8 +37,14 @@
   --faint:      #5a564c;
 
   /* -- rules ------------------------------------------------------------- */
-  --line:       #c8c2b6;
-  --hair:       #e2ded5;
+  --line:       #c8c2b6;   /* a rule you read past */
+  --hair:       #e2ded5;   /* an internal divider */
+  /* The border that IS the control — a field, a tile, a ghost button. --line
+     measures 1.7:1 on paper and 1.3:1 in dark, so on a panel that is also
+     --paper it was the only thing saying "this is a field" and it was
+     invisible. WCAG 1.4.11 wants 3:1; this clears it on paper, board and
+     sunk in both themes. Decorative hairlines keep --line. */
+  --edge:       #6f6a5e;
 
   /* -- brand ------------------------------------------------------------- */
   --thread:     #b02a1f;
@@ -137,6 +143,7 @@
 
     --line:       #38342d;
     --hair:       #2c2925;
+    --edge:       #7b7566;
 
     --thread:     #e8695c;
     --on-thread:  #1a0f0d;
@@ -178,7 +185,7 @@
 [data-theme="dark"] {
   --board:#171614; --paper:#211f1c; --sunk:#2a2723;
   --ink:#efe9dd; --muted:#a8a294; --faint:#969082;
-  --line:#38342d; --hair:#2c2925;
+  --line:#38342d; --hair:#2c2925; --edge:#7b7566;
   --thread:#e8695c; --on-thread:#1a0f0d;
   --pro:#d9b552; --on-pro:#17120a;
   --band-0:#4f9f7c; --band-1:#c6a23a; --band-2:#cf7b45; --band-3:#7fa0bd;
@@ -253,6 +260,28 @@ button { font-family: inherit; }
 .mark__thread { stroke: var(--thread); }
 .mark__answer { fill: var(--ink); }
 .mark__guess  { fill: var(--paper); stroke: var(--ink); }
+.mark__guess  { transition: fill var(--swap), stroke var(--swap); }
+
+/* The lockup is the way back, on every page. It takes its gap from whichever
+   header it sits in, so the mark keeps the spacing that header already used.
+   Hovering lands the pin: the open circle fills with the thread. */
+.homelink {
+  display: flex;
+  align-items: center;
+  gap: inherit;
+  min-height: var(--hit);   /* the bar is already this tall; the link was not */
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+.homelink:hover { color: inherit; }
+.homelink:hover .mark__guess { fill: var(--thread); stroke: var(--thread); }
+.homelink:hover :is(.brand__name, .shell-bar__name) {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
 
 /* Player dot. The name is always rendered beside it — two names begin
    with B, so a colour is never the identifier on its own. */
@@ -308,7 +337,7 @@ button { font-family: inherit; }
 .iconbtn {
   width: var(--hit); height: var(--hit);
   display: grid; place-items: center;
-  border: 1px solid var(--line);
+  border: 1px solid var(--edge);
   background: transparent;
   color: var(--muted);
   font: 700 13px/1 var(--mono);
@@ -326,7 +355,7 @@ button { font-family: inherit; }
   min-height: var(--hit);
   max-width: 150px;
   padding: 0 10px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--edge);
   background: var(--paper);
   color: var(--muted);
   font: 400 var(--t-label)/1 var(--mono);
@@ -502,16 +531,23 @@ body.is-revealed .maphelp { visibility: hidden; }
   gap: 4px;
   margin-top: 4px;
 }
+/* The button carries the frame; the image inside it is decorative. */
+.listing__thumbbtn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--ink);
+  background: none;
+  cursor: pointer;
+  transition: opacity var(--swap);
+}
+.listing__thumbbtn:hover { opacity: .85; }
 .listing__thumb {
   display: block;
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  border: 1px solid var(--ink);
-  cursor: pointer;
-  transition: opacity var(--swap);
 }
-.listing__thumb:hover { opacity: .85; }
 
 .listing__body { padding: 12px 4px 13px; }
 
@@ -702,7 +738,7 @@ body.is-host .qlabel--who { display: none; }
   gap: 8px;
   min-height: 46px;
   padding: 8px 7px 9px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--edge);
   background: var(--paper);
   color: var(--ink);
   cursor: pointer;
@@ -715,7 +751,7 @@ body.is-host .qlabel--who { display: none; }
 .who__top { display: flex; align-items: center; gap: 5px; width: 100%; }
 .who__box {
   width: 11px; height: 11px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--edge);
   display: grid; place-items: center;
   flex: none;
 }
@@ -726,6 +762,20 @@ body.is-host .qlabel--who { display: none; }
 .who__top .avatar { margin-left: auto; width: 8px; height: 8px; }
 .who__top .avatar--glyph { width: auto; height: auto; font-size: 14px; }
 .who__name { font: 600 11.5px/1 var(--display); }
+
+/* Somebody on every card in the deck. The tile still ticks — it just says
+   out loud that the scoring struck them out of both sides of the question. */
+.who.is-free .who__name { color: var(--faint); }
+.who__free {
+  display: block;
+  margin-top: 3px;
+  font: 400 var(--t-label)/1 var(--mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--faint);
+  white-space: nowrap;
+}
+.who.is-on .who__free { color: inherit; }
 .who__unset {
   display: block;
   font: 400 var(--t-label)/1 var(--mono);
@@ -754,7 +804,7 @@ body.is-host .qlabel--who { display: none; }
   width: 100%;
   min-height: 46px;
   padding: 11px 13px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--edge);
   background: var(--paper);
   color: var(--ink);
   cursor: pointer;
@@ -769,7 +819,7 @@ body.is-host .qlabel--who { display: none; }
 .choice__dot {
   width: 11px; height: 11px;
   border-radius: 50%;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--edge);
   display: grid; place-items: center;
   flex: none;
 }
@@ -790,7 +840,7 @@ body.is-host .qlabel--who { display: none; }
 
 .map-host { position: absolute; inset: 0; touch-action: none; cursor: crosshair; outline: none; }
 .map-host.is-grabbing { cursor: grabbing; }
-.map-host.is-locked { cursor: default; }
+.map-host.is-locked { cursor: default; touch-action: pan-y; }
 .map-host:focus-visible { box-shadow: inset 0 0 0 3px var(--thread); outline: none; }
 
 .map-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
@@ -1091,7 +1141,7 @@ body.is-host .qlabel--who { display: none; }
   min-width: 0;
   min-height: var(--hit);
   padding: 10px 12px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--edge);
   border-radius: 0;
   background: var(--paper);
   color: var(--ink);
@@ -1115,6 +1165,12 @@ body.is-host .qlabel--who { display: none; }
   margin: 0;
   font: 400 var(--t-data)/1.4 var(--mono);
   color: var(--muted);
+}
+/* What a thing costs, under the thing. Quieter than the question above it. */
+.ask__note {
+  margin: 6px 0 0;
+  font: 400 var(--t-data)/1.5 var(--display);
+  color: var(--faint);
 }
 
 /* A two-way call: [ they won't ] [ they will ] */
@@ -1280,7 +1336,7 @@ body.is-host .qlabel--who { display: none; }
 }
 .btn:hover:not(:disabled) { opacity: .88; }
 .btn:disabled { opacity: .38; cursor: not-allowed; }
-.btn--ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+.btn--ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--edge); }
 .btn--ghost:hover:not(:disabled) { opacity: 1; border-color: var(--ink); }
 .btn--wide { width: 100%; }
 .btn--mono {
@@ -1308,7 +1364,7 @@ body.is-host .qlabel--who { display: none; }
 .modal__box {
   position: relative;
   width: min(460px, 100%);
-  max-height: 92vh;
+  max-height: 92dvh;
   overflow-y: auto;
   padding: 22px;
   background: var(--paper);
@@ -1317,8 +1373,8 @@ body.is-host .qlabel--who { display: none; }
 }
 .modal__x {
   position: absolute;
-  top: 14px; right: 14px;
-  width: 32px; height: 32px;
+  top: 8px; right: 8px;      /* a 44px box, same optical inset as the 32 was */
+  width: var(--hit); height: var(--hit);
   border: 1px solid var(--line);
   background: transparent;
   color: var(--muted);
@@ -1402,7 +1458,7 @@ body.modal-open { overflow: hidden; }
 
 body.is-gated > *:not(.gate) { display: none !important; }
 
-.gate { flex: 1; display: grid; place-items: center; padding: var(--s6); min-height: 100vh; }
+.gate { flex: 1; display: grid; place-items: center; padding: var(--s6); min-height: 100dvh; }
 .gate__box { width: min(360px, 100%); animation: beat var(--beat) var(--ease) both; }
 .gate__brand { display: flex; align-items: center; gap: 11px; margin: 0 0 20px; }
 .gate__brand h1 { margin: 0; font: 700 27px/1 var(--display); letter-spacing: var(--ls-tight); }
@@ -1463,8 +1519,8 @@ body.is-gated > *:not(.gate) { display: none !important; }
   padding: 13px 22px;
   border-bottom: 1px solid var(--line);
 }
-.shell-bar__lockup { display: flex; align-items: center; gap: 11px; min-width: 0; }
-.shell-bar__name { font: 700 21px/1 var(--display); letter-spacing: var(--ls-tight); color: var(--ink); }
+.shell-bar__lockup { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.shell-bar__name { font: 700 var(--t-brand)/1 var(--display); letter-spacing: var(--ls-tight); color: var(--ink); }
 .shell-bar__page {
   font: 400 var(--t-label)/1 var(--mono);
   letter-spacing: var(--ls-label);
@@ -1532,6 +1588,16 @@ body.is-gated > *:not(.gate) { display: none !important; }
 }
 .step__body { padding: 18px 20px; min-width: 0; }
 
+/* Steps 3 to 5 are entirely client-side, so without this a friend can do the
+   whole console dance before the page tells them it will not take it. Waiting
+   is step 2 before a name is picked; locked is everything below it. */
+.step.is-waiting .step__n, .step.is-locked .step__n { color: var(--faint); background: var(--sunk); }
+.step.is-locked .step__body, .fold.is-locked {
+  opacity: .45;
+  pointer-events: none;
+}
+.fold.is-locked { filter: grayscale(1); }
+
 .shell-foot {
   margin: 18px 0 0;
   font: 400 var(--t-label)/1.7 var(--mono);
@@ -1555,7 +1621,7 @@ body.is-gated > *:not(.gate) { display: none !important; }
   width: 100%;
   min-height: var(--hit);
   padding: 11px 12px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--edge);
   border-radius: 0;
   background: var(--paper);
   color: var(--ink);
@@ -1572,8 +1638,14 @@ body.is-gated > *:not(.gate) { display: none !important; }
 .msg--bad { color: var(--thread); }
 .msg--ok { color: var(--band-0); }
 
+/* A wide table on a narrow phone. body has overflow-x: hidden, which
+   propagates to the viewport, so without this the overflow is unreachable
+   rather than merely off to the side. admin.css had this rule; index.html
+   does not load admin.css, and both game tables needed it. */
+.tablewrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
 /* A fold: collapsed by default, never a second page. */
-.fold { border: 1px solid var(--line); }
+.fold { border: 1px solid var(--edge); }
 .fold__btn {
   display: flex;
   align-items: center;
@@ -1946,7 +2018,12 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
   body.is-playing main { padding: 0; overflow: hidden; }
   body.is-playing .board { gap: 0; }
 
-  .topbar { padding: 8px 14px; gap: 8px; }
+  /* The page declares viewport-fit=cover, so in landscape on a notched phone
+     the bar's ends sit under the cutout. */
+  .topbar {
+    padding: 8px max(14px, env(safe-area-inset-right)) 8px max(14px, env(safe-area-inset-left));
+    gap: 8px;
+  }
   .brand__name { font-size: 17px; }
   .brand__no { display: none; }
   .iconbtn { width: 36px; height: 44px; }
@@ -1957,15 +2034,25 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
   body.is-playing .col--card { padding: 10px 14px 0; gap: 10px; }
   body.is-playing .col--map { flex: 1; min-height: 0; gap: 0; }
   body.is-playing .col--map .qlabel { display: none; }
+  /* NO 300px FLOOR HERE.
+     .col--card does not shrink, so whatever the card leaves is all the map
+     can have. A floor taller than that was clipped by main, which is
+     `overflow: hidden` with no scroll to recover it — on a 375x667 phone
+     the card leaves about 99px, so roughly 200px of map including the
+     bottom two controls sat outside the page with no way to reach them.
+     That is the state the player is in while deciding where to pin. */
   body.is-playing .mapwrap {
     flex: 1;
     aspect-ratio: auto;
     max-height: none;
-    min-height: 300px;
+    min-height: 150px;
     border-left: 0; border-right: 0;
     box-shadow: none;
     margin-top: 10px;
   }
+  /* Stacked, the four controls are 185px tall — taller than the map before
+     the card folds. In a row they are 185px wide, which always fits. */
+  .map-ctl { flex-direction: row; }
   body.is-playing .maphelp { display: none; }
   .listing__img { aspect-ratio: 2 / 1; }
   .listing__media--empty { aspect-ratio: 2 / 1; }
@@ -1991,7 +2078,11 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
 
   /* Sits in the column rather than over the map, so the map's controls are
      never under it. Sticky keeps it in view when a revealed page scrolls. */
-  .actionbar { position: sticky; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); gap: 10px; }
+  .actionbar {
+    position: sticky;
+    padding: 10px max(14px, env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+    gap: 10px;
+  }
   .hint { font-size: 11px; }
   .actionbar .btn { padding: 0 18px; font-size: 13px; }
 
@@ -2031,7 +2122,6 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
    scroll sideways instead of the page.
    =========================================================================== */
 
-.tablewrap { overflow-x: auto; }
 
 .gateRow { margin-top: var(--s3); }
 
@@ -2077,14 +2167,16 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
      place name and never a photo, because the person running the game still
      has to play it. -->
 
-<div class="shell-bar">
+<header class="shell-bar">
   <div class="shell-bar__lockup">
-    <svg class="mark" width="26" height="26" viewBox="0 0 34 34" aria-hidden="true"><line class="mark__thread" x1="8.5" y1="24.5" x2="25.5" y2="9.5" stroke-width="2.6"/><circle class="mark__answer" cx="25.5" cy="9.5" r="5.2"/><circle class="mark__guess" cx="8.5" cy="24.5" r="4.4" stroke-width="2.6"/></svg>
-    <span class="shell-bar__name">TripPin</span>
+    <a class="homelink" href="/" title="Back to the game">
+      <svg class="mark" width="26" height="26" viewBox="0 0 34 34" aria-hidden="true"><line class="mark__thread" x1="8.5" y1="24.5" x2="25.5" y2="9.5" stroke-width="2.6"/><circle class="mark__answer" cx="25.5" cy="9.5" r="5.2"/><circle class="mark__guess" cx="8.5" cy="24.5" r="4.4" stroke-width="2.6"/></svg>
+      <span class="shell-bar__name">TripPin</span>
+    </a>
     <span class="shell-bar__page">/ ADMIN</span>
   </div>
-  <span class="shell-bar__slot shell-bar__slot--box shell-bar__slot--ok"><i></i>Spoiler-free by design</span>
-</div>
+  <a class="shell-bar__slot shell-bar__slot--link" href="/"><span>← Back to the game</span></a>
+</header>
 
 <main class="shell-main">
   <div class="shell-inner shell-inner--wide">
@@ -2093,6 +2185,7 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
       <p class="page-head__label">Counts and health only</p>
       <h1 class="page-head__h1">Admin</h1>
       <p class="page-head__p">No place names, no coordinates, no photos, no stories. You still have to play.</p>
+      <p class="shell-bar__slot shell-bar__slot--box shell-bar__slot--ok" style="margin:0 0 24px"><i></i>Spoiler-free by design</p>
     </div>
 
     <div class="panel" id="gate">
@@ -2103,7 +2196,7 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
       <div class="row gateRow">
         <button class="btn" id="gateGo">Continue</button>
       </div>
-      <p class="msg msg--bad" id="gateErr" hidden>That's not it.</p>
+      <p class="msg msg--bad" id="gateErr" role="alert" hidden>That's not it.</p>
     </div>
 
     <div class="panels" id="flow" hidden>
@@ -2113,6 +2206,16 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
         <div class="tiles" id="tiles"></div>
         <p class="panel__p" id="updated"></p>
         <p class="panel__p" id="kvUsage"></p>
+
+        <p class="panel__label">The facts</p>
+        <p class="panel__p">The “did you know” lines on the reveal — northernmost of 41, joint
+          shortest, 7th of 16 by rating — are worked out once against the whole deck and stored
+          on each stay. Run this after somebody imports, or after the wording of a fact changes,
+          or they carry on saying the old thing. It reads no place names back to this page.</p>
+        <div class="row">
+          <button class="btn btn--ghost" id="refactsBtn" type="button">Recompute the facts</button>
+          <span class="msg" id="refactsMsg" role="status"></span>
+        </div>
       </div>
 
       <div class="panel">
@@ -2145,7 +2248,7 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
         <div id="tells"></div>
         <div class="row">
           <button class="btn" id="saveTells" disabled>Save tells</button>
-          <span class="msg" id="tellMsg"></span>
+          <span class="msg" id="tellMsg" role="status"></span>
         </div>
       </div>
 
@@ -2156,7 +2259,7 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
           stays. Reset one only when somebody has forgotten theirs. The next person to open
           that name gets to set a new one.</p>
         <div id="claims"></div>
-        <p class="msg msg--bad" id="adminWarn" hidden></p>
+        <p class="msg msg--bad" id="adminWarn" role="alert" hidden></p>
 
         <p class="panel__label">Recent deck writes</p>
         <p class="panel__p">Every time somebody sends their stays in. A passcode is two tiles on
@@ -2182,7 +2285,7 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
           I accept that this ruins the game for me
         </label>
         <button class="btn btn--danger" id="dumpBtn" disabled>Download everything</button>
-        <span class="msg" id="dumpMsg"></span>
+        <span class="msg" id="dumpMsg" role="status"></span>
       </div>
 
     </div>
@@ -2517,6 +2620,40 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
       .catch(function (e) { window.alert('Failed: ' + e.message); btn.disabled = false; });
   }
 
+  /* ---------------------------------------------------------------- facts --
+
+     Deck facts are derived from every other stay in the pool — "2nd
+     northernmost of 41" is only true against a particular 41 — so they are
+     computed once and stored, not worked out on the reveal. Which means a new
+     import, or a change to how a fact is worded, leaves the whole deck saying
+     the old thing until this is run.
+
+     Safe to press twice: it recomputes from the stays themselves and writes
+     nothing a player typed. The response is counts only, so the one page that
+     must not spoil its reader stays spoiler-free.
+  */
+  function refacts() {
+    var btn = $('#refactsBtn');
+    btn.disabled = true;
+    // Set directly rather than through note(), whose five-second timer would
+    // otherwise still be running and would wipe the result early.
+    $('#refactsMsg').textContent = 'Recomputing…';
+    api('/api/refacts', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: '{}',
+    })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (res) {
+        if (!res.ok) throw new Error(res.j.error || 'refused');
+        note('#refactsMsg', res.j.stays + ' stays done · ' + res.j.flagged + ' worth a flag');
+        // The pool's timestamp just moved, so the panel above it is now wrong.
+        return tryWord(word).then(function (data) { if (data) paint(data); });
+      })
+      .catch(function (e) { note('#refactsMsg', 'Failed: ' + e.message, true); })
+      .finally(function () { btn.disabled = false; });
+  }
+
   // ----------------------------------------------------------------- dump --
 
   function quote(s) {
@@ -2574,6 +2711,7 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
 
   function boot() {
     $('#saveTells').addEventListener('click', saveTells);
+    $('#refactsBtn').addEventListener('click', refacts);
     $('#dumpBtn').addEventListener('click', dump);
     $('#dumpConsent').addEventListener('change', function (e) {
       $('#dumpBtn').disabled = !e.target.checked;

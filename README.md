@@ -27,16 +27,26 @@ Everyone gets the same three until local midnight. Results share as an emoji gri
 > game runs. For your own trips, start from `data/stays-template.csv`.
 
 ```
-TripPin #1  2,524/3,000
-✅ 🟩🟩🟩🟩🟩  12 mi
-✅ 🟨🟨🟨🟨⬜  178 mi
-✅ 🟨🟨🟨⬜⬜  382 mi
-🎯 best 12 mi · 🌍 572 mi off
+TripPin #1 · 2,118
+📌 🟩🟩🟩🟩🟩 12 mi ✔
+📌 🟩🟩🟩🟩⬜ 178 mi ✔
+📌 🟨🟨🟨⬜⬜ 382 mi ~
+🧭 best 12 mi · 572 mi off
 ```
 
-Five squares per round for how close the pin was, a tick/diamond/cross for the
-people, and the two numbers worth arguing about. Nothing in it gives away where
-anything is, so it is safe to post before your friends have played.
+Five squares per round for how close the pin was, then a tick, a tilde or a
+cross for how the round went overall, and the two numbers worth arguing about.
+
+Nothing in it gives away where anything is, so it is safe to post before your
+friends have played — and nothing in it says which rounds were yours either. The
+mark is graded off the round's total for **every** round, host or not, because
+grading the people half separately meant a host round could almost never show a
+cross: a ✘ in a posted grid was proof the round was not one you slept in.
+`tools/sim/share.js` is the audit that holds that line.
+
+The link the Copy button puts on the end carries the group word, which is how a
+friend who has not played yet gets in. That is fine for the group chat and
+nowhere else, so the box on screen shows it rather than hiding it.
 
 ## The idea
 
@@ -152,7 +162,7 @@ the good one — see below.
 
 | | |
 |---|---|
-| `tools/enrich_stays.py` | listing detail: type, guests, bedrooms, beds, baths, rating, amenities, extra photos, **real coordinates** |
+| `tools/enrich_stays.py` | listing detail: type, guests, bedrooms, beds, baths, rating, amenities, extra photos, **real coordinates** (the extra photos stay out of the dealt card — see Security) |
 | `tools/import_url.py` | one listing URL. `--serve` powers the editor's URL box |
 | `tools/import_csv.py` | a spreadsheet, or Airbnb's own data export |
 | `editor.html` | by hand, with a map picker and a photo box that takes a pasted screenshot |
@@ -212,8 +222,8 @@ python ../tools/build_single.py
 npx wrangler deploy
 ```
 
-Needs Node 22+. `dist/` holds only `index.html` and `import.html`; the editor is
-excluded on purpose.
+Needs Node 22+. `dist/` holds `index.html`, `import.html` and `admin.html`; the
+editor is excluded on purpose.
 
 ## Security
 
@@ -247,6 +257,26 @@ What's in place:
 - `noindex` + `robots.txt` + `X-Frame-Options` + `no-store` on every response
 - burst rate limiting, and one generation of backup in KV so a bad publish is undoable
 - the editor, which embeds the library, is never deployed
+- **the dealt card carries no listing id.** The hero photo is embedded as a
+  `data:` URI, but the extra photos `enrich_stays.py` collects are live
+  `muscache.com` URLs and every one has the listing id in its path
+  (`.../Hosting-734767411770032778/...`), which is `airbnb.com/rooms/<id>`,
+  which is the town, the state and a map. Sixteen of the forty-one stays have
+  them, so on two cards in five the answer was one right-click away. `photos`
+  is no longer in the Worker's `CARD_FIELDS`; the filmstrip survives in the
+  offline file and the editor, where you already own the answers. Putting it
+  back in the deployed game means proxying the extras behind an opaque
+  same-origin path, not shipping the URL
+- **the amenities are redacted server-side.** `src/listing.js` has a `redact()`
+  too, but it needs the place name to know what to strike out and the card
+  deliberately withholds it — so on exactly the rounds it existed for, it
+  returned every amenity verbatim. The Worker is the only party holding both
+  halves, so that is where it runs
+- **an absent word is not a wrong one.** Loading the page with no word yet sends
+  no header at all, and counting that as a failed guess meant ten reloads while
+  waiting for a friend to send the word bought a fifteen-minute lockout. Reads
+  with no secret offered are refused without being counted; writes still count,
+  because a write can carry its word in the body
 
 **What it is not: confidentiality inside the group.** Anyone you send the link to
 has the word and can keep it, and there is no way to take it back from one person
@@ -273,13 +303,39 @@ users, five minutes to set up, real per-person email auth with revocation:
 
 | | |
 |---|---|
-| **Where** | 0–800, `800 · e^(−miles/600)`. Within 15 miles is full marks. |
-| **Who** | 0–200, by overlap. Naming the whole party exactly is 200; naming some of it earns a share; naming people who weren't there costs you. |
+| **Where** | 0–800, `800 · e^(−miles/600)`. Within 50 miles is full marks. |
+| **Who** | 0–200, by overlap. Naming the whole party exactly is 200; naming some of it earns a share; naming people who weren't there costs you. Anybody who is on *every* card in the pool is struck out of both sides first — see below. |
 | **A day** | 3,000. |
 
-100 miles out still earns 675. A thousand miles earns 149. Tuning is at the top of
-`src/game.js` — `CFG.ROUNDS` changes how many stays a day, and the help screen
-figures follow it automatically.
+100 miles out still earns 677. A thousand miles earns 151.
+
+All of it is tuned in one place: the `SCORE` block at the top of
+`src/host.js`. That file is loaded by the browser as a plain `<script>` and
+imported by the Worker, which is what makes it the one thing both halves of the
+game can agree on — `game.js` builds its `CFG` out of it and the Worker scores
+with its `wherePoints()` and `whoPoints()`. Change `ROUNDS` there and the deal,
+the walk-forward loop, the pips and the help screen's figures all follow.
+
+It was written out three times until recently — here, in `game.js`, and as bare
+literals in the Worker — so editing the curve in the place this README pointed
+at moved the offline file and left the live game exactly as it was.
+
+### The freebie, and how it closes itself
+
+Whoever seeds the deck is on every card in it, which used to mean two things at
+once: they hosted every single round for ever — never pinning a stay, never
+ticking a crew, and never writing a per-stay record, so their own record page
+stayed empty — and for everyone else, tapping that one name and nothing else
+paid 133 of the 200 on offer for learning nothing at all.
+
+So a player on 95% or more of the pool is *muted*: they never trigger a host
+round, they are struck out of both sides of the WHO scoring, they are left out
+of the candidate lists the `nearest` / `stranger` / `orbit` formats draw from,
+and the picker labels their tile **on every card** so nobody taps it expecting
+credit. Ticking them is neither rewarded nor punished.
+
+It disarms itself. Nobody is on 95% of a pooled deck once a second person
+imports, so the rule stops firing on its own and nothing has to be undone.
 
 ## TripPin Pro
 
@@ -320,6 +376,24 @@ than each re-reading a season of play records.
 It's best effort under concurrency — two guesses landing in the same second
 can lose one of these updates, though the play record that actually decides
 scoring never does — and it's pruned to the last 120 days.
+
+### Your record is not in your browser
+
+Days played, the run you're on, the longest run you've had, your best day and
+the totals behind the sparkline are all computed by the Worker from that same
+document, and arrive with signing in, with every guess, and with the record
+page.
+
+They used to live in `localStorage`, which made a streak a property of a
+*device*: play on your phone on Monday and your laptop on Tuesday and it reset
+to 1, the best day read 0, the sparkline was empty and the flame in the grid
+you posted was wrong. Five friends who share laptops hit that constantly.
+
+A day only counts once it was finished, and how many rounds that took is
+whatever was dealt that day — a two-stay deck deals two, so counting to three
+would have meant nobody ever finished one. The browser still keeps a local
+copy: it is the whole record in the offline file, where there is no server to
+ask, and it is what the share grid reads before the first answer lands.
 
 ## The map
 

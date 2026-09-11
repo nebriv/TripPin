@@ -14,7 +14,10 @@
 <link rel="stylesheet" href="src/style.css">
 <link rel="stylesheet" href="src/emoji.css">
 </head>
-<body>
+<!-- Starts gated so nothing of the board shows until boot() knows which of
+     the three screens this is. An empty card, an empty name row and a dead
+     'Lock it in' for the length of a fetch is indistinguishable from broken. -->
+<body class="is-gated">
 
 <!-- The word. Authentication: it keeps the internet out. The animal below
      is authorisation only — which of five friends you are. Both stay. -->
@@ -43,11 +46,17 @@
 <header class="topbar">
   <div class="topbar__side">
     <button class="iconbtn" data-open="help" aria-label="How to play" title="How to play">?</button>
-    <button class="iconbtn" data-open="stats" aria-label="Your record" title="Your record">▟</button>
+    <!-- A bar chart, because the record IS one: a quadrant block was not a
+         guessable icon for the one screen holding the game's best writing. -->
+    <button class="iconbtn" data-open="stats" aria-label="Your record" title="Your record"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" fill="currentColor"><rect x="1" y="8" width="3" height="5"/><rect x="5.5" y="4" width="3" height="9"/><rect x="10" y="1" width="3" height="12"/></svg></button>
   </div>
+  <!-- The lockup is the way back. game.js intercepts it to peel off whatever
+       page is over the board; the href is what a middle-click gets. -->
   <div class="brand">
-    <svg class="mark" width="26" height="26" viewBox="0 0 34 34" aria-hidden="true"><line class="mark__thread" x1="8.5" y1="24.5" x2="25.5" y2="9.5" stroke-width="2.6"/><circle class="mark__answer" cx="25.5" cy="9.5" r="5.2"/><circle class="mark__guess" cx="8.5" cy="24.5" r="4.4" stroke-width="2.6"/></svg>
-    <h1 class="brand__name">TripPin</h1>
+    <a class="homelink" id="brandHome" href="/" title="Back to today">
+      <svg class="mark" width="26" height="26" viewBox="0 0 34 34" aria-hidden="true"><line class="mark__thread" x1="8.5" y1="24.5" x2="25.5" y2="9.5" stroke-width="2.6"/><circle class="mark__answer" cx="25.5" cy="9.5" r="5.2"/><circle class="mark__guess" cx="8.5" cy="24.5" r="4.4" stroke-width="2.6"/></svg>
+      <h1 class="brand__name">TripPin</h1>
+    </a>
     <p class="brand__no" id="todayLabel"></p>
   </div>
   <div class="topbar__side topbar__side--end">
@@ -68,17 +77,19 @@
       <button class="cardfold" id="cardfold" type="button" hidden></button>
       <div class="whoblock">
         <p class="qlabel qlabel--who" id="whoLabel">Who was there · tick all</p>
-        <div id="whoPicker" class="whopicker" role="group" aria-label="Who was there"></div>
-        <div id="choice" class="choice" role="group" aria-label="Pick one" hidden></div>
+        <!-- Labelled BY the visible line above, which renderHost rewrites. A
+             fixed aria-label went stale the moment the question changed. -->
+        <div id="whoPicker" class="whopicker" role="group" aria-labelledby="whoLabel"></div>
+        <div id="choice" class="choice" role="group" aria-labelledby="whoLabel" hidden></div>
       </div>
     </div>
 
-    <section class="col col--reveal" id="reveal" hidden aria-live="polite"></section>
+    <section class="col col--reveal" id="reveal" hidden></section>
 
     <div class="col col--map">
       <p class="qlabel">Where was it · drop a pin</p>
       <div class="mapwrap"><div id="map" tabindex="0" role="application" aria-label="World map. Click to drop a pin. Arrow keys pan, plus and minus zoom, Enter drops a pin at the centre."></div></div>
-      <p class="maphelp">Drag to pan · scroll to zoom · ◍ switches projection</p>
+      <p class="maphelp">Drag to pan · scroll to zoom · the globe button switches projection</p>
     </div>
 
   </section>
@@ -90,7 +101,7 @@
 </main>
 
 <div class="actionbar">
-  <p class="hint" id="hint"></p>
+  <p class="hint" id="hint" role="status"></p>
   <p class="proguess" id="proguess" hidden></p>
   <button class="btn" id="lockin" disabled>Lock it in</button>
 </div>

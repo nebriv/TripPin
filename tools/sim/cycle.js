@@ -109,7 +109,12 @@ function computeDeal(pool, ledger, day) {
       // come back seven days after its last appearance whenever its crew
       // happened to suit the spread, which reads as a memory test.
       const triple = load >= ROUNDS ? 1 : 0;
-      const key = [triple, age, load, dup, dealt, hashId(day + '|' + s.id)];
+      // Keep in step with worker/src/index.js: a card with no listing
+      // record gives you a photograph and nothing else, and a day of
+      // three of those is not a puzzle. Tie-break only.
+      const isThin = (x) => !(x.amenities && x.amenities.length) && !x.type;
+      const spread = out.filter(isThin).length >= ROUNDS - 1 && isThin(s) ? 1 : 0;
+      const key = [triple, age, spread, load, dup, dealt, hashId(day + '|' + s.id)];
       if (!best || cmpKey(key, best.key) < 0) best = { s: s, key: key };
     }
     if (!best) break;

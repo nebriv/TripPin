@@ -168,11 +168,14 @@
 
   function hint(markup) {
     if (!markup || markup.trim().length < 40) return 'Nothing pasted yet.';
+    // Nobody selected anything: the snippet picked the element for them. So
+    // name the three things that actually go wrong instead of asking them to
+    // redo a step that does not exist.
     if (!/muscache|trips\//i.test(markup)) {
-      return 'No trip cards in there. Make sure you copied the element that ' +
-             'holds the list of trips, not the whole page or a single card.';
+      return 'No trip cards in there. Check you were signed in to Airbnb, on ' +
+             'the trips page, and scrolled to the bottom before you ran it.';
     }
-    return 'Found the markup but no trips in it — try selecting one level up.';
+    return 'Found the page but no trips on it — scroll further down and run the snippet again.';
   }
 
   // "August 1 – 4, 2026" -> { label: "August 2026", nights: 3 }

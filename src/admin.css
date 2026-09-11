@@ -8,7 +8,6 @@
    scroll sideways instead of the page.
    =========================================================================== */
 
-.tablewrap { overflow-x: auto; }
 
 .gateRow { margin-top: var(--s3); }
 

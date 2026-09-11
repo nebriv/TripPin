@@ -237,7 +237,7 @@ function oddOf(stay) {
   return ranked.length && ranked[0].s >= 5 ? ranked[0].a : null;
 }
 
-function redact(text, place) {
+export function redact(text, place) {
   if (!text || !place) return text || '';
   let out = text;
   place.split(/[,/]/).forEach((part) => {

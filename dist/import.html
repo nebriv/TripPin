@@ -37,8 +37,14 @@
   --faint:      #5a564c;
 
   /* -- rules ------------------------------------------------------------- */
-  --line:       #c8c2b6;
-  --hair:       #e2ded5;
+  --line:       #c8c2b6;   /* a rule you read past */
+  --hair:       #e2ded5;   /* an internal divider */
+  /* The border that IS the control — a field, a tile, a ghost button. --line
+     measures 1.7:1 on paper and 1.3:1 in dark, so on a panel that is also
+     --paper it was the only thing saying "this is a field" and it was
+     invisible. WCAG 1.4.11 wants 3:1; this clears it on paper, board and
+     sunk in both themes. Decorative hairlines keep --line. */
+  --edge:       #6f6a5e;
 
   /* -- brand ------------------------------------------------------------- */
   --thread:     #b02a1f;
@@ -137,6 +143,7 @@
 
     --line:       #38342d;
     --hair:       #2c2925;
+    --edge:       #7b7566;
 
     --thread:     #e8695c;
     --on-thread:  #1a0f0d;
@@ -178,7 +185,7 @@
 [data-theme="dark"] {
   --board:#171614; --paper:#211f1c; --sunk:#2a2723;
   --ink:#efe9dd; --muted:#a8a294; --faint:#969082;
-  --line:#38342d; --hair:#2c2925;
+  --line:#38342d; --hair:#2c2925; --edge:#7b7566;
   --thread:#e8695c; --on-thread:#1a0f0d;
   --pro:#d9b552; --on-pro:#17120a;
   --band-0:#4f9f7c; --band-1:#c6a23a; --band-2:#cf7b45; --band-3:#7fa0bd;
@@ -253,6 +260,28 @@ button { font-family: inherit; }
 .mark__thread { stroke: var(--thread); }
 .mark__answer { fill: var(--ink); }
 .mark__guess  { fill: var(--paper); stroke: var(--ink); }
+.mark__guess  { transition: fill var(--swap), stroke var(--swap); }
+
+/* The lockup is the way back, on every page. It takes its gap from whichever
+   header it sits in, so the mark keeps the spacing that header already used.
+   Hovering lands the pin: the open circle fills with the thread. */
+.homelink {
+  display: flex;
+  align-items: center;
+  gap: inherit;
+  min-height: var(--hit);   /* the bar is already this tall; the link was not */
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+.homelink:hover { color: inherit; }
+.homelink:hover .mark__guess { fill: var(--thread); stroke: var(--thread); }
+.homelink:hover :is(.brand__name, .shell-bar__name) {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
 
 /* Player dot. The name is always rendered beside it — two names begin
    with B, so a colour is never the identifier on its own. */
@@ -308,7 +337,7 @@ button { font-family: inherit; }
 .iconbtn {
   width: var(--hit); height: var(--hit);
   display: grid; place-items: center;
-  border: 1px solid var(--line);
+  border: 1px solid var(--edge);
   background: transparent;
   color: var(--muted);
   font: 700 13px/1 var(--mono);
@@ -326,7 +355,7 @@ button { font-family: inherit; }
   min-height: var(--hit);
   max-width: 150px;
   padding: 0 10px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--edge);
   background: var(--paper);
   color: var(--muted);
   font: 400 var(--t-label)/1 var(--mono);
@@ -502,16 +531,23 @@ body.is-revealed .maphelp { visibility: hidden; }
   gap: 4px;
   margin-top: 4px;
 }
+/* The button carries the frame; the image inside it is decorative. */
+.listing__thumbbtn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--ink);
+  background: none;
+  cursor: pointer;
+  transition: opacity var(--swap);
+}
+.listing__thumbbtn:hover { opacity: .85; }
 .listing__thumb {
   display: block;
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  border: 1px solid var(--ink);
-  cursor: pointer;
-  transition: opacity var(--swap);
 }
-.listing__thumb:hover { opacity: .85; }
 
 .listing__body { padding: 12px 4px 13px; }
 
@@ -702,7 +738,7 @@ body.is-host .qlabel--who { display: none; }
   gap: 8px;
   min-height: 46px;
   padding: 8px 7px 9px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--edge);
   background: var(--paper);
   color: var(--ink);
   cursor: pointer;
@@ -715,7 +751,7 @@ body.is-host .qlabel--who { display: none; }
 .who__top { display: flex; align-items: center; gap: 5px; width: 100%; }
 .who__box {
   width: 11px; height: 11px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--edge);
   display: grid; place-items: center;
   flex: none;
 }
@@ -726,6 +762,20 @@ body.is-host .qlabel--who { display: none; }
 .who__top .avatar { margin-left: auto; width: 8px; height: 8px; }
 .who__top .avatar--glyph { width: auto; height: auto; font-size: 14px; }
 .who__name { font: 600 11.5px/1 var(--display); }
+
+/* Somebody on every card in the deck. The tile still ticks — it just says
+   out loud that the scoring struck them out of both sides of the question. */
+.who.is-free .who__name { color: var(--faint); }
+.who__free {
+  display: block;
+  margin-top: 3px;
+  font: 400 var(--t-label)/1 var(--mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--faint);
+  white-space: nowrap;
+}
+.who.is-on .who__free { color: inherit; }
 .who__unset {
   display: block;
   font: 400 var(--t-label)/1 var(--mono);
@@ -754,7 +804,7 @@ body.is-host .qlabel--who { display: none; }
   width: 100%;
   min-height: 46px;
   padding: 11px 13px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--edge);
   background: var(--paper);
   color: var(--ink);
   cursor: pointer;
@@ -769,7 +819,7 @@ body.is-host .qlabel--who { display: none; }
 .choice__dot {
   width: 11px; height: 11px;
   border-radius: 50%;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--edge);
   display: grid; place-items: center;
   flex: none;
 }
@@ -790,7 +840,7 @@ body.is-host .qlabel--who { display: none; }
 
 .map-host { position: absolute; inset: 0; touch-action: none; cursor: crosshair; outline: none; }
 .map-host.is-grabbing { cursor: grabbing; }
-.map-host.is-locked { cursor: default; }
+.map-host.is-locked { cursor: default; touch-action: pan-y; }
 .map-host:focus-visible { box-shadow: inset 0 0 0 3px var(--thread); outline: none; }
 
 .map-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
@@ -1091,7 +1141,7 @@ body.is-host .qlabel--who { display: none; }
   min-width: 0;
   min-height: var(--hit);
   padding: 10px 12px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--edge);
   border-radius: 0;
   background: var(--paper);
   color: var(--ink);
@@ -1115,6 +1165,12 @@ body.is-host .qlabel--who { display: none; }
   margin: 0;
   font: 400 var(--t-data)/1.4 var(--mono);
   color: var(--muted);
+}
+/* What a thing costs, under the thing. Quieter than the question above it. */
+.ask__note {
+  margin: 6px 0 0;
+  font: 400 var(--t-data)/1.5 var(--display);
+  color: var(--faint);
 }
 
 /* A two-way call: [ they won't ] [ they will ] */
@@ -1280,7 +1336,7 @@ body.is-host .qlabel--who { display: none; }
 }
 .btn:hover:not(:disabled) { opacity: .88; }
 .btn:disabled { opacity: .38; cursor: not-allowed; }
-.btn--ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+.btn--ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--edge); }
 .btn--ghost:hover:not(:disabled) { opacity: 1; border-color: var(--ink); }
 .btn--wide { width: 100%; }
 .btn--mono {
@@ -1308,7 +1364,7 @@ body.is-host .qlabel--who { display: none; }
 .modal__box {
   position: relative;
   width: min(460px, 100%);
-  max-height: 92vh;
+  max-height: 92dvh;
   overflow-y: auto;
   padding: 22px;
   background: var(--paper);
@@ -1317,8 +1373,8 @@ body.is-host .qlabel--who { display: none; }
 }
 .modal__x {
   position: absolute;
-  top: 14px; right: 14px;
-  width: 32px; height: 32px;
+  top: 8px; right: 8px;      /* a 44px box, same optical inset as the 32 was */
+  width: var(--hit); height: var(--hit);
   border: 1px solid var(--line);
   background: transparent;
   color: var(--muted);
@@ -1402,7 +1458,7 @@ body.modal-open { overflow: hidden; }
 
 body.is-gated > *:not(.gate) { display: none !important; }
 
-.gate { flex: 1; display: grid; place-items: center; padding: var(--s6); min-height: 100vh; }
+.gate { flex: 1; display: grid; place-items: center; padding: var(--s6); min-height: 100dvh; }
 .gate__box { width: min(360px, 100%); animation: beat var(--beat) var(--ease) both; }
 .gate__brand { display: flex; align-items: center; gap: 11px; margin: 0 0 20px; }
 .gate__brand h1 { margin: 0; font: 700 27px/1 var(--display); letter-spacing: var(--ls-tight); }
@@ -1463,8 +1519,8 @@ body.is-gated > *:not(.gate) { display: none !important; }
   padding: 13px 22px;
   border-bottom: 1px solid var(--line);
 }
-.shell-bar__lockup { display: flex; align-items: center; gap: 11px; min-width: 0; }
-.shell-bar__name { font: 700 21px/1 var(--display); letter-spacing: var(--ls-tight); color: var(--ink); }
+.shell-bar__lockup { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.shell-bar__name { font: 700 var(--t-brand)/1 var(--display); letter-spacing: var(--ls-tight); color: var(--ink); }
 .shell-bar__page {
   font: 400 var(--t-label)/1 var(--mono);
   letter-spacing: var(--ls-label);
@@ -1532,6 +1588,16 @@ body.is-gated > *:not(.gate) { display: none !important; }
 }
 .step__body { padding: 18px 20px; min-width: 0; }
 
+/* Steps 3 to 5 are entirely client-side, so without this a friend can do the
+   whole console dance before the page tells them it will not take it. Waiting
+   is step 2 before a name is picked; locked is everything below it. */
+.step.is-waiting .step__n, .step.is-locked .step__n { color: var(--faint); background: var(--sunk); }
+.step.is-locked .step__body, .fold.is-locked {
+  opacity: .45;
+  pointer-events: none;
+}
+.fold.is-locked { filter: grayscale(1); }
+
 .shell-foot {
   margin: 18px 0 0;
   font: 400 var(--t-label)/1.7 var(--mono);
@@ -1555,7 +1621,7 @@ body.is-gated > *:not(.gate) { display: none !important; }
   width: 100%;
   min-height: var(--hit);
   padding: 11px 12px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--edge);
   border-radius: 0;
   background: var(--paper);
   color: var(--ink);
@@ -1572,8 +1638,14 @@ body.is-gated > *:not(.gate) { display: none !important; }
 .msg--bad { color: var(--thread); }
 .msg--ok { color: var(--band-0); }
 
+/* A wide table on a narrow phone. body has overflow-x: hidden, which
+   propagates to the viewport, so without this the overflow is unreachable
+   rather than merely off to the side. admin.css had this rule; index.html
+   does not load admin.css, and both game tables needed it. */
+.tablewrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
 /* A fold: collapsed by default, never a second page. */
-.fold { border: 1px solid var(--line); }
+.fold { border: 1px solid var(--edge); }
 .fold__btn {
   display: flex;
   align-items: center;
@@ -1946,7 +2018,12 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
   body.is-playing main { padding: 0; overflow: hidden; }
   body.is-playing .board { gap: 0; }
 
-  .topbar { padding: 8px 14px; gap: 8px; }
+  /* The page declares viewport-fit=cover, so in landscape on a notched phone
+     the bar's ends sit under the cutout. */
+  .topbar {
+    padding: 8px max(14px, env(safe-area-inset-right)) 8px max(14px, env(safe-area-inset-left));
+    gap: 8px;
+  }
   .brand__name { font-size: 17px; }
   .brand__no { display: none; }
   .iconbtn { width: 36px; height: 44px; }
@@ -1957,15 +2034,25 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
   body.is-playing .col--card { padding: 10px 14px 0; gap: 10px; }
   body.is-playing .col--map { flex: 1; min-height: 0; gap: 0; }
   body.is-playing .col--map .qlabel { display: none; }
+  /* NO 300px FLOOR HERE.
+     .col--card does not shrink, so whatever the card leaves is all the map
+     can have. A floor taller than that was clipped by main, which is
+     `overflow: hidden` with no scroll to recover it — on a 375x667 phone
+     the card leaves about 99px, so roughly 200px of map including the
+     bottom two controls sat outside the page with no way to reach them.
+     That is the state the player is in while deciding where to pin. */
   body.is-playing .mapwrap {
     flex: 1;
     aspect-ratio: auto;
     max-height: none;
-    min-height: 300px;
+    min-height: 150px;
     border-left: 0; border-right: 0;
     box-shadow: none;
     margin-top: 10px;
   }
+  /* Stacked, the four controls are 185px tall — taller than the map before
+     the card folds. In a row they are 185px wide, which always fits. */
+  .map-ctl { flex-direction: row; }
   body.is-playing .maphelp { display: none; }
   .listing__img { aspect-ratio: 2 / 1; }
   .listing__media--empty { aspect-ratio: 2 / 1; }
@@ -1991,7 +2078,11 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
 
   /* Sits in the column rather than over the map, so the map's controls are
      never under it. Sticky keeps it in view when a revealed page scrolls. */
-  .actionbar { position: sticky; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); gap: 10px; }
+  .actionbar {
+    position: sticky;
+    padding: 10px max(14px, env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+    gap: 10px;
+  }
   .hint { font-size: 11px; }
   .actionbar .btn { padding: 0 18px; font-size: 13px; }
 
@@ -2084,6 +2175,15 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
 }
 .signin__err a { display: inline-block; margin-top: 4px; color: var(--ink); font-weight: 700; }
 
+/* Two ways off this screen now, and on a narrow phone they wrap rather than
+   squeeze: this is the only screen with no topbar above it. */
+.signin__skips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px var(--s4);
+}
+
 .signin__skip {
   justify-self: start;
   min-height: var(--hit);
@@ -2137,11 +2237,20 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
 }
 .ecode__pad--homes.is-live { opacity: 1; pointer-events: auto; }
 
+/* Six across is fine on the sign-in overlay, which is full width. On the
+   import page the same pad sits inside a step gutter inside the shell
+   padding: at 375px that is 42px a tile, and at 320px it is 33 — under the
+   floor tokens.css says has no exceptions. Fewer columns, never a smaller
+   tile. */
+@media (max-width: 460px) {
+  .ecode__pad--animals, .ecode__pad--homes { grid-template-columns: repeat(4, 1fr); }
+}
+
 .ecode__key {
   aspect-ratio: 1;
   min-width: 0;
   min-height: var(--hit);
-  border: 1px solid var(--line);
+  border: 1px solid var(--edge);
   background: var(--paper);
   font-size: 24px;
   line-height: 1;
@@ -2175,7 +2284,7 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
   justify-self: start;
   min-height: var(--hit);
   padding: 0 14px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--edge);
   background: transparent;
   color: var(--muted);
   font: 400 var(--t-label)/1 var(--mono);
@@ -2276,17 +2385,23 @@ body.imp { display: block; }
 
 /* Geocode hits under a town field. */
 .hits { margin: 4px 0 0; padding: 0; list-style: none; display: grid; gap: 2px; }
-.hits li {
+/* A real button, not a click handler on an <li>: setting a coordinate is the
+   only thing the by-hand import and the per-stay fix can do, and there was no
+   keyboard path to either. */
+.hits__pick {
+  width: 100%;
   min-height: var(--hit);
   display: flex;
   align-items: center;
+  text-align: left;
   padding: 8px 10px;
   border: 1px solid var(--hair);
   background: var(--paper);
+  color: var(--ink);
   font: 400 var(--t-data)/1.4 var(--mono);
   cursor: pointer;
 }
-.hits li:hover { border-color: var(--ink); }
+.hits__pick:hover { border-color: var(--ink); }
 
 /* The rows a paste turns into. */
 .trips { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; }
@@ -2324,10 +2439,10 @@ body.imp { display: block; }
   text-overflow: ellipsis;
 }
 .trip__warn { color: var(--thread); }
-.trip--missing .trip__head { color: var(--muted); }
+.trip--missing .trip__head, .trip--down .trip__head { color: var(--muted); }
 .trip__drop {
   width: var(--hit); height: var(--hit);
-  border: 1px solid var(--line);
+  border: 1px solid var(--edge);
   background: transparent;
   color: var(--muted);
   font: 400 14px/1 var(--mono);
@@ -2418,8 +2533,10 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
 
 <header class="shell-bar">
   <div class="shell-bar__lockup">
-    <svg class="mark" width="26" height="26" viewBox="0 0 34 34" aria-hidden="true"><line class="mark__thread" x1="8.5" y1="24.5" x2="25.5" y2="9.5" stroke-width="2.6"/><circle class="mark__answer" cx="25.5" cy="9.5" r="5.2"/><circle class="mark__guess" cx="8.5" cy="24.5" r="4.4" stroke-width="2.6"/></svg>
-    <span class="shell-bar__name">TripPin</span>
+    <a class="homelink" id="homeLink" href="/" title="Back to the game">
+      <svg class="mark" width="26" height="26" viewBox="0 0 34 34" aria-hidden="true"><line class="mark__thread" x1="8.5" y1="24.5" x2="25.5" y2="9.5" stroke-width="2.6"/><circle class="mark__answer" cx="25.5" cy="9.5" r="5.2"/><circle class="mark__guess" cx="8.5" cy="24.5" r="4.4" stroke-width="2.6"/></svg>
+      <span class="shell-bar__name">TripPin</span>
+    </a>
     <span class="shell-bar__page">/ import</span>
   </div>
   <a class="shell-bar__slot shell-bar__slot--link" id="backLink" href="/"><span>← Back to the game</span></a>
@@ -2429,16 +2546,16 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
 <main class="shell-main">
 <div class="shell-inner">
 
-  <p class="page-head__label">One time only</p>
-  <h1 class="page-head__h1">Put your trips in the deck</h1>
-  <p class="page-head__p">Five steps, about four minutes. Nothing leaves your browser except the list of towns and dates.</p>
+  <p class="page-head__label" id="pageLabel">One time only</p>
+  <h1 class="page-head__h1" id="pageH1">Put your trips in the deck</h1>
+  <p class="page-head__p" id="pageP">Five steps, about four minutes. Towns go to OpenStreetMap to be put on the map; the finished list — towns, dates, photos, who was with you — goes into the deck.</p>
 
   <section class="panel" id="gate">
     <label class="field" for="gateWord"><span>First, the word</span>
       <input id="gateWord" class="input input--mono" type="password" autocomplete="current-password" placeholder="the word you were sent"></label>
     <div class="row" style="margin-top:10px">
       <button class="btn" id="gateGo" type="button">Continue</button>
-      <span class="msg msg--bad" id="gateErr" hidden>That's not it.</span>
+      <span class="msg msg--bad" id="gateErr" role="alert" hidden>That's not it.</span>
     </div>
   </section>
 
@@ -2458,19 +2575,23 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
       </div>
     </div>
 
-    <div class="step" id="claimStep" hidden>
+    <!-- Never hidden: hiding it numbered the page 1, 3, 4, 5, which reads as
+         a bug on the one page that has to earn a friend's trust in five
+         seconds. It waits instead. -->
+    <div class="step is-waiting" id="claimStep">
       <span class="step__n">2</span>
       <div class="step__body">
-        <p class="panel__h" id="claimHead">Your animal, and where it lives</p>
-        <p class="panel__p" id="claimNote"></p>
-        <form id="claimBox">
+        <p class="panel__p" id="claimWait">Pick your name above first.</p>
+        <p class="panel__h" id="claimHead" hidden>Your animal, and where it lives</p>
+        <p class="panel__p" id="claimNote" hidden></p>
+        <form id="claimBox" hidden>
           <div id="claimPad"></div>
           <div class="row" style="margin-top:12px">
             <button class="btn" id="claimGo" type="submit" disabled>Continue</button>
-            <span class="msg msg--bad" id="claimErr" hidden></span>
+            <span class="msg msg--bad" id="claimErr" role="alert" hidden></span>
           </div>
         </form>
-        <p class="msg msg--ok" id="claimOk" hidden></p>
+        <p class="msg msg--ok" id="claimOk" role="status" hidden></p>
       </div>
     </div>
 
@@ -2492,6 +2613,7 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
           <span class="keycap">F12</span>
           <span class="msg">or ⌥⌘I on a Mac</span>
         </div>
+        <p class="shell-foot">This bit needs a laptop — phones have no console. On Safari, turn on Settings → Advanced → web developer features first.</p>
         <div class="codeblock">
           <div class="codeblock__bar">
             <span class="label">Paste in the console</span>
@@ -2510,18 +2632,18 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
         <textarea id="tripPaste" class="input input--mono" rows="3" spellcheck="false" placeholder="Paste here"></textarea>
         <div class="row" style="margin-top:11px">
           <button class="btn" id="tripRead" type="button">Find my trips</button>
-          <span class="msg" id="tripMsg"></span>
+          <span class="msg" id="tripMsg" role="status"></span>
         </div>
       </div>
     </div>
 
     <div class="fold">
-      <button class="fold__btn" id="manualToggle" type="button" aria-expanded="false"><span>Or do it by hand</span><span class="fold__mark">+</span></button>
+      <button class="fold__btn" id="manualToggle" type="button" aria-expanded="false"><span>Or do it by hand — on a phone, or if you never used Airbnb</span><span class="fold__mark">+</span></button>
       <div class="fold__body" id="manualBody" hidden>
-        <p class="panel__p" style="margin-top:14px">Never used Airbnb, or only a few trips? Type a town, say when, tick who was with you. Same deck, same game.</p>
+        <p class="panel__p" style="margin-top:14px">On a phone, never used Airbnb, or only a few trips? Type a town, say when, tick who was with you. Same deck, same game.</p>
         <label class="field"><span>Town</span><input id="manTown" class="input" placeholder="e.g. Whitehall, Montana" autocomplete="off"></label>
         <ul class="hits" id="manHits"></ul>
-        <p class="msg" id="manPlaced"></p>
+        <p class="msg" id="manPlaced" role="status"></p>
         <div class="row" style="margin-top:12px">
           <label class="field field--grow"><span>Month</span>
             <select id="manMonth" class="input">
@@ -2535,7 +2657,7 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
         <div class="pick pick--mates" id="manMates"></div>
         <div class="row" style="margin-top:12px">
           <button class="btn btn--ghost" id="manAdd" type="button" disabled>Add this one</button>
-          <span class="msg" id="manMsg"></span>
+          <span class="msg" id="manMsg" role="status"></span>
         </div>
       </div>
     </div>
@@ -2544,12 +2666,13 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
       <div class="panel__top">
         <p class="panel__label" id="tripCount"></p>
         <div class="row">
-          <button class="btn btn--ghost" id="tripLocate" type="button">Find them on the map</button>
+          <button class="btn btn--ghost" id="tripLocate" type="button">Find them on the map · about a second each</button>
           <button class="btn" id="tripSend" type="button" disabled>Send them in</button>
         </div>
       </div>
+      <p class="msg msg--bad" id="sendMsg" role="alert" hidden></p>
       <div class="progress" id="tripProgress" hidden><i></i></div>
-      <p class="shell-foot" style="margin:6px 0 12px">Drop anything you would rather not share with the ✕. Towns share names, so check anything odd.</p>
+      <p class="shell-foot" style="margin:6px 0 12px">Drop anything you would rather not share with the ✕. Towns share names, so check anything odd. Sending replaces what you sent before — stays already in the deck keep their line and everything else they have.</p>
       <ol class="trips" id="tripList"></ol>
     </section>
 
@@ -2569,7 +2692,7 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
       <ol class="mine" id="mineList"></ol>
       <div class="row" style="margin-top:14px">
         <button class="btn" id="mineSave" type="button" disabled>Save changes</button>
-        <span class="msg" id="mineMsg"></span>
+        <span class="msg" id="mineMsg" role="status"></span>
       </div>
     </section>
 
@@ -2688,6 +2811,7 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
     host.classList.add('ecode');
 
     var say = el('p', 'ecode__say');
+    say.setAttribute('role', 'status');
     var animalPad = el('div', 'ecode__pad ecode__pad--animals');
     var homeLabel = el('p', 'ecode__sub', 'and where does it live?');
     var homePad = el('div', 'ecode__pad ecode__pad--homes');
@@ -2706,6 +2830,9 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
         b.classList.toggle('is-on', b.dataset.e === home);
       });
       homePad.classList.toggle('is-live', !!animal);
+      // pointer-events: none does not take a button out of the tab order, so
+      // a keyboard user tabbed through twelve faded keys that did nothing.
+      Array.prototype.forEach.call(homePad.children, function (b) { b.disabled = !animal; });
       homeLabel.classList.toggle('is-live', !!animal);
       again.hidden = !animal;
       if (opts.onChange) opts.onChange(value(), complete());
@@ -3002,11 +3129,14 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
 
   function hint(markup) {
     if (!markup || markup.trim().length < 40) return 'Nothing pasted yet.';
+    // Nobody selected anything: the snippet picked the element for them. So
+    // name the three things that actually go wrong instead of asking them to
+    // redo a step that does not exist.
     if (!/muscache|trips\//i.test(markup)) {
-      return 'No trip cards in there. Make sure you copied the element that ' +
-             'holds the list of trips, not the whole page or a single card.';
+      return 'No trip cards in there. Check you were signed in to Airbnb, on ' +
+             'the trips page, and scrolled to the bottom before you ran it.';
     }
-    return 'Found the markup but no trips in it — try selecting one level up.';
+    return 'Found the page but no trips on it — scroll further down and run the snippet again.';
   }
 
   // "August 1 – 4, 2026" -> { label: "August 2026", nights: 3 }
@@ -3067,7 +3197,8 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
   var SNIPPET =
     "(()=>{const s='a[href*=\"/trips/\"]',n=document.querySelectorAll(s).length," +
     "d=[...document.querySelectorAll('div')].filter(e=>e.querySelectorAll(s).length===n).pop();" +
-    "copy(d?d.outerHTML:'');console.log(n+' trips copied');})()";
+    "copy(d?d.outerHTML:'');console.log(n?n+' trips copied':" +
+    "'No trips on this page - scroll to the bottom and run it again');})()";
 
   var COLORS = ['#3d7a8c', '#8c4a6b', '#5c7a4a', '#b07c2e', '#4a5c8c', '#8c5a3d'];
 
@@ -3124,6 +3255,9 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
   function openFlow() {
     $('#gate').hidden = true;
     $('#flow').hidden = false;
+    // Nothing below step 2 works until a name is proved, so nothing below
+    // step 2 looks like it does.
+    gateSteps(false);
     paintPick();
     paintMates();
   }
@@ -3143,6 +3277,7 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
     crew.forEach(function (p) {
       var b = el('button', 'who');
       b.type = 'button';
+      b.setAttribute('aria-pressed', 'false');
       b.dataset.id = p.id;
       var top = el('span', 'who__top');
       top.appendChild(dot(p));
@@ -3155,11 +3290,16 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
     nb.type = 'button';
     nb.appendChild(el('span', 'who__name', "I'm not on this list"));
     nb.addEventListener('click', function () {
-      $$('.who', box).forEach(function (x) { x.classList.remove('is-on'); });
+      $$('.who', box).forEach(function (x) {
+        x.classList.remove('is-on');
+        x.setAttribute('aria-pressed', 'false');
+      });
       nb.classList.add('is-on');
       $('#newRow').hidden = false;
       $('#tripNewName').focus();
-      $('#claimStep').hidden = true;
+      // Step 2 stays on the page and goes back to waiting; hiding it is what
+      // made the page count 1, 3, 4, 5.
+      onOwnerChange(null);
       owner = null; pass = null; chosen = null;
     });
     box.appendChild(nb);
@@ -3209,7 +3349,10 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
     $('#claimOk').hidden = true;
     $('#whoSlot').hidden = true;
     $('#backLink').hidden = false;
-    $('#claimStep').hidden = !v;
+    gateSteps(false);
+    $('#claimWait').hidden = !!v;
+    ['#claimHead', '#claimNote', '#claimBox'].forEach(function (sel) { $(sel).hidden = !v; });
+    $('#claimStep').classList.toggle('is-waiting', !v);
     if (!v) return;
 
     api('/api/claim?owner=' + encodeURIComponent(v))
@@ -3218,7 +3361,7 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
         var claimed = j && j.claimed;
         $('#claimHead').textContent = claimed ? 'Put your animal back where it lives' : 'Your animal, and where it lives';
         $('#claimNote').textContent = claimed
-          ? 'The same two you set the first time.'
+          ? 'Somebody has already set a pair for this name. If that was you, put the animal back where it lives.'
           : 'Pick an animal and somewhere for it to live. That pair is how you sign in, and it is what stops anybody else editing your stays. Drag the animal onto the home, or tap one then the other.';
         $('#claimGo').textContent = claimed ? 'That is me' : 'Claim it';
         pad = window.EmojiCode.create($('#claimPad'), {
@@ -3274,11 +3417,21 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
         slot.appendChild(dot(Object.assign({}, p || { id: candidate }, { animal: window.EmojiCode.parts(value).animal })));
         slot.appendChild(document.createTextNode((p ? p.name : candidate)));
         slot.hidden = false;
-        $('#backLink').hidden = true;
+        gateSteps(true);
         mine = (j && j.stays) || [];
         dirty = {};
         paintMates();
         renderMine();
+        // Coming back to fix one town, or to write the line they read after
+        // they miss, is the visit the story pipeline depends on. It used to
+        // open on instructions for a job already done, with the list of stays
+        // below all five steps and nothing scrolling to it.
+        if (mine.length) {
+          $('#pageLabel').textContent = 'Already in';
+          $('#pageH1').textContent = 'Your stays';
+          $('#pageP').textContent = 'Fix a wrong town, or write the line they read after they miss it. Adding more trips is below.';
+          $('#mine').scrollIntoView({ behavior: still() ? 'auto' : 'smooth', block: 'start' });
+        }
       })
       .catch(function (e) {
         owner = null;
@@ -3311,11 +3464,32 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
     choose(id);
   }
 
-  function ensureOwner() {
+  // Steps 3 to 5 are entirely client-side, so they used to work perfectly for
+  // anyone who scrolled past step 1 — and the refusal only arrived at "Send
+  // them in", four minutes later, in a message box two steps further up.
+  function gateSteps(on) {
+    $$('.step').forEach(function (st, i) {
+      if (i < 2) return;                     // 1 is the name, 2 is the pair
+      st.classList.toggle('is-locked', !on);
+    });
+    var fold = $('.fold');
+    if (fold) fold.classList.toggle('is-locked', !on);
+  }
+
+  function ensureOwner(where) {
     if (owner && pass) return owner;
-    msg('Pick your name and put your animal where it lives first.', true);
+    var text = 'Pick your name and put your animal where it lives first.';
+    if (where) {
+      where.hidden = false;
+      where.textContent = text;
+    } else {
+      msg(text, true);
+    }
     return null;
   }
+
+  var stillMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function still() { return stillMq.matches; }
 
   var msgTimer = null;
   function msg(text, bad) {
@@ -3370,15 +3544,20 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
 
   // -------------------------------------------------------------- geocode --
 
+  // Resolves to a hit, null for "no such place", or {down:true} when the
+  // lookup itself did not answer. Collapsing the last two told forty-one
+  // people's trips they did not exist because OpenStreetMap was rate-limiting.
   function lookup(place) {
     return fetch(NOMINATIM + '?format=jsonv2&limit=1&q=' + encodeURIComponent(place),
                  { headers: { Accept: 'application/json' } })
-      .then(function (r) { return r.json(); })
-      .then(function (hits) {
-        if (!hits || !hits.length) return null;
-        return { lat: +hits[0].lat, lng: +hits[0].lon, label: hits[0].display_name };
+      .then(function (r) {
+        if (!r.ok) return { down: true };
+        return r.json().then(function (hits) {
+          if (!hits || !hits.length) return null;
+          return { lat: +hits[0].lat, lng: +hits[0].lon, label: hits[0].display_name };
+        }).catch(function () { return { down: true }; });
       })
-      .catch(function () { return null; });
+      .catch(function () { return { down: true }; });
   }
 
   function lookupMany(place) {
@@ -3416,7 +3595,9 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
       row.status = 'looking';
       render();
       lookup(row.place).then(function (hit) {
-        if (hit) {
+        if (hit && hit.down) {
+          row.status = 'down';
+        } else if (hit) {
           row.lat = hit.lat; row.lng = hit.lng;
           row.resolved = hit.label; row.status = 'found';
         } else {
@@ -3435,9 +3616,14 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
       bar.hidden = true;
       fill.style.width = '0%';
       var ok = rows.filter(function (r) { return r.lat != null; }).length;
+      var down = rows.filter(function (r) { return r.status === 'down'; }).length;
       $('#tripSend').disabled = ok === 0;
       render();
-      msg(ok + ' of ' + rows.length + ' placed. Towns share names, so check anything odd.');
+      if (down) {
+        msg('The place lookup did not answer for ' + down + ' of them. Give it a minute and press it again.', true);
+      } else {
+        msg(ok + ' of ' + rows.length + ' placed. Towns share names, so check anything odd.');
+      }
     }
   }
 
@@ -3470,6 +3656,9 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
       } else if (row.status === 'missing') {
         sub.appendChild(document.createTextNode(' · '));
         sub.appendChild(el('span', 'trip__warn', 'not found'));
+      } else if (row.status === 'down') {
+        sub.appendChild(document.createTextNode(' · '));
+        sub.appendChild(el('span', 'trip__warn', 'lookup failed'));
       } else if (row.status === 'looking') {
         sub.appendChild(document.createTextNode(' · looking'));
       }
@@ -3516,14 +3705,17 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
         lookupMany(q).then(function (list) {
           hits.replaceChildren();
           list.slice(0, 4).forEach(function (hit) {
-            var li = el('li', null, hit.label);
-            li.addEventListener('click', function () {
+            var li = el('li');
+            var opt = el('button', 'hits__pick', hit.label);
+            opt.type = 'button';
+            opt.addEventListener('click', function () {
               manHit = hit;
               town.value = shortPlace(hit.label);
               hits.replaceChildren();
               $('#manPlaced').textContent = 'Placed at ' + hit.lat.toFixed(2) + ', ' + hit.lng.toFixed(2);
               $('#manAdd').disabled = false;
             });
+            li.appendChild(opt);
             hits.appendChild(li);
           });
         });
@@ -3556,7 +3748,9 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
   // ----------------------------------------------------------------- send --
 
   function send() {
-    var who = ensureOwner();
+    var sendMsg = $('#sendMsg');
+    sendMsg.hidden = true;
+    var who = ensureOwner(sendMsg);
     if (!who) return;
     var usable = rows.filter(function (r) { return r.lat != null; });
     if (!usable.length) return msg('Nothing has a location yet.', true);
@@ -3565,17 +3759,51 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
     btn.disabled = true;
     btn.textContent = 'Sending…';
 
+    // A SECOND IMPORT MUST NOT BE ABLE TO DESTROY WHAT THE DECK ALREADY HOLDS.
+    //
+    // The normal reason to come back is "add the trips I have taken since",
+    // and a trips page knows far less than the pool does: no story, no
+    // amenities, no enriched coordinates, no id. Matching rows used to be
+    // dropped and replaced by the freshly parsed ones, which silently wiped
+    // every line anyone had written, threw away the real coordinates
+    // enrich_stays.py had found, and minted new ids that orphaned the deal
+    // ledger and the per-stay records.
+    //
+    // So: a stay already in the pool keeps everything it has, and the fresh
+    // row only fills blanks.
+    var held = {};
+    mine.forEach(function (s) { held[s.place + '|' + s.when] = s; });
+
     var stays = usable.map(function (r) {
-      return {
+      var fresh = {
         booker: who,
         crew: [who].concat(r.mates.filter(function (m) { return m !== who; })),
         others: r.others || 0,
         lat: r.lat, lng: r.lng,
         place: r.place, when: r.when, nights: r.nights, photo: r.photo,
       };
+      var old = held[fresh.place + '|' + fresh.when];
+      if (!old) return fresh;
+      var out = {};
+      Object.keys(fresh).forEach(function (k) { out[k] = fresh[k]; });
+      Object.keys(old).forEach(function (k) {
+        var v = old[k];
+        if (v === null || v === undefined || v === '') return;
+        if (Array.isArray(v) && !v.length) return;
+        out[k] = v;
+      });
+      // The one thing the trips page is still the authority on is who is on
+      // the facepile — and names only ever get ADDED, as friends join the
+      // roster and stop being an anonymous head count.
+      out.crew = fresh.crew.concat((old.crew || []).filter(function (c) {
+        return fresh.crew.indexOf(c) === -1;
+      }));
+      out.others = fresh.others;
+      return out;
     });
-    // Anything already in the pool for this person rides along, with its
-    // story, because a submission replaces that person's stays outright.
+
+    // Anything in the pool the new paste did not mention rides along
+    // untouched, because a submission replaces that person's stays outright.
     var keep = mine.filter(function (s) {
       return !stays.some(function (n) { return n.place === s.place && n.when === s.when; });
     });
@@ -3732,7 +3960,9 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
           ? written + (written === 1 ? ' line set.' : ' lines set.') + ' Somebody is going to read one of those after being three thousand miles out.'
           : 'None set. That is fine. The game asks again, one at a time, after you have played.'));
         var a = el('a', 'btn btn--wide', 'Play →');
-        a.href = '/';
+        // The game keeps the word under its own key, so a bare '/' here lands
+        // on the gate asking for the word typed four minutes ago.
+        a.href = $('#homeLink') ? $('#homeLink').getAttribute('href') : '/';
         box.appendChild(a);
         renderMine();
       });
@@ -3773,8 +4003,19 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
   function renderMine() {
     var list = $('#mineList');
     list.replaceChildren();
-    $('#mine').hidden = mine.length === 0;
-    if (!mine.length) return;
+    // An empty list normally means "not signed in yet" and the panel hides.
+    // But emptying it BY dropping your last stay has to stay on screen, or
+    // the Save button goes with it and the deletion is never sent.
+    var pending = Object.keys(dirty).length > 0;
+    $('#mine').hidden = mine.length === 0 && !pending;
+    if (!mine.length) {
+      if (pending) {
+        $('#mineCount').textContent = 'Your stays · 0';
+        $('#mineNote').textContent = 'That was your last one. Saving now takes you out of the deck, '
+          + 'and the game will stop dealing you in.';
+      }
+      return;
+    }
     $('#mineCount').textContent = 'Your stays · ' + mine.length;
     var missing = mine.filter(function (s) { return !s.story; }).length;
     var acts = $('#mineActs');
@@ -3838,7 +4079,9 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
           lookupMany(q).then(function (found) {
             hits.replaceChildren();
             found.slice(0, 4).forEach(function (hit) {
-              var opt = el('li', null, hit.label);
+              var li = el('li');
+              var opt = el('button', 'hits__pick', hit.label);
+              opt.type = 'button';
               opt.addEventListener('click', function () {
                 stay.lat = Math.round(hit.lat * 1e5) / 1e5;
                 stay.lng = Math.round(hit.lng * 1e5) / 1e5;
@@ -3848,7 +4091,8 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
                 placeEl.textContent = stay.place;
                 markDirty(stay.id);
               });
-              hits.appendChild(opt);
+              li.appendChild(opt);
+              hits.appendChild(li);
             });
           });
         }, 550);
@@ -3937,10 +4181,18 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
     wireManual();
     window.addEventListener('beforeunload', function () { flushStories(); });
 
+    // Both ways back carry the word, or the game would only gate them again.
+    // The lockup is the one that survives signing in; #backLink goes away.
+    function pointHome(w) {
+      w = w || remembered();
+      var href = '/' + (w ? '?k=' + encodeURIComponent(w) : '');
+      [$('#backLink'), $('#homeLink')].forEach(function (a) { if (a) a.href = href; });
+    }
+
     function attempt(candidate) {
       if (!candidate) return;
       tryWord(candidate).then(function (ok) {
-        if (ok) { remember(candidate); openFlow(); }
+        if (ok) { remember(candidate); pointHome(); openFlow(); }
         else { $('#gateErr').hidden = false; $('#gateWord').select(); }
       });
     }
@@ -3959,8 +4211,7 @@ li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
         history.replaceState(null, '', u.pathname + u.hash);
       } catch (e) { /* fine */ }
     }
-    var back = $('#backLink');
-    if (back) back.href = '/' + (fromUrl || remembered() ? '?k=' + encodeURIComponent(fromUrl || remembered()) : '');
+    pointHome(fromUrl);
     attempt(fromUrl || remembered());
   }
 

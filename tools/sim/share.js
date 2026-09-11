@@ -47,6 +47,11 @@ const window = {
 window.Listing = { render() {}, avatar() {} };
 STUBS_ADDED.push('window.Listing = { render(){}, avatar(){} } (game.js reads window.Listing.render/.avatar at top level)');
 
+// NOT a stub: the real module. game.js builds CFG out of Host.SCORE and
+// scores the pin half with Host.wherePoints, so the grid this file audits
+// is graded by the same constants the Worker uses.
+window.Host = require(path.join(__dirname, '..', '..', 'src', 'host.js'));
+
 const document = {
   readyState: 'loading',
   addEventListener() {},
@@ -122,11 +127,24 @@ function tierFor(archetype) {
   return 'miss';
 }
 
-// One result object per round. Host "pin" rounds have no whoPts/whoCorrect
-// judgement at all (gridText grades them off wherePts instead), so they get
-// a wherePts value picked to land in the same hit/mid/miss tier as every
-// other archetype — that's what makes the mark distribution line up with
-// non-pin rounds of the same archetype.
+// One result object per round.
+//
+// THE JUDGEMENT HALF IS SCORED THE WAY EACH KIND ACTUALLY SCORES IT.
+//
+// This used to synthesise whoPts from the archetype tier for host and normal
+// rounds alike, which made the two pools identical by construction and meant
+// the audit below could not fail. It duly passed while six of the seven host
+// formats were incapable of rendering a cross at all.
+function hostWhoPts(kind, tier) {
+  if (tier === 'hit') return 200;
+  // Wrong, but every host format except `near` floors its near-miss credit
+  // well above zero: gradeChoice bottoms out near 14 and personpin's rank
+  // credit near 18. Nothing here may return a clean 0 for those.
+  if (kind === 'personpin') return tier === 'mid' ? 90 : 18;
+  if (kind === 'choicepin') return tier === 'mid' ? 82 : 14;
+  return tier === 'mid' ? 100 : 0;              // peoplepin can be a clean miss
+}
+
 function buildResult(isHost, kind, archetype) {
   const dist = distFor(archetype);
   const tier = tierFor(archetype);
@@ -140,7 +158,10 @@ function buildResult(isHost, kind, archetype) {
   }
 
   let whoPts, whoCorrect;
-  if (tier === 'hit') { whoCorrect = true; whoPts = 200; }
+  if (isHost) {
+    whoPts = hostWhoPts(kind, tier);
+    whoCorrect = tier === 'hit';
+  } else if (tier === 'hit') { whoCorrect = true; whoPts = 200; }
   else if (tier === 'mid') { whoCorrect = false; whoPts = 100; }
   else { whoCorrect = false; whoPts = 0; }
 

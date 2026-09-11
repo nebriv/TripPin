@@ -16,10 +16,15 @@
 
    StayMap.create(hostEl, opts) -> map
      opts.onPick(lat, lng)   fired when the player drops a pin
+     opts.controls           false to leave off the zoom/reset/projection stack
    =========================================================================== */
 
 (function () {
   'use strict';
+
+  // Checked in JS because the fly-to is a requestAnimationFrame tween, which
+  // no CSS media query can reach.
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   var W = 1024;                   // world width in projected units
   var H;                          // world height, derived below
@@ -500,6 +505,11 @@
 
     // Keyboard: arrows pan, +/- zoom, Enter drops a pin at the centre.
     host.addEventListener('keydown', function (e) {
+      // The zoom/reset/projection buttons are children of host, so their own
+      // Enter and Space bubbled to this handler, which dropped a pin at the
+      // centre and preventDefault'd the click. A keyboard player could not
+      // zoom, reset or switch projection at all.
+      if (e.target !== host) return;
       var s = viewSize(), step = s.vw / 12, handled = true;
       switch (e.key) {
         case 'ArrowLeft':  view.x -= step; break;
@@ -536,7 +546,9 @@
       else if (b.dataset.act === 'proj') setProjection(P.round ? 'mercator' : 'equalearth');
       else reset(true);
     });
-    host.appendChild(ctl);
+    // The record page's inline map is 171px tall and decorative; the stacked
+    // controls are 185px, so they overflowed its frame upward.
+    if (opts.controls !== false) host.appendChild(ctl);
 
     // ------------------------------------------------------------- api --
 
@@ -588,6 +600,15 @@
     var anim = null;
     function animateTo(target, ms) {
       if (anim) cancelAnimationFrame(anim);
+      // The whole world sliding and zooming on every reveal is the largest
+      // motion in the product, and style.css's reduced-motion block cannot
+      // reach a requestAnimationFrame tween. Jump instead.
+      if (still.matches) {
+        view.x = target.x; view.y = target.y;
+        view.z = Math.max(minZoom(), Math.min(MAX_ZOOM, target.z));
+        clampView(); applyView();
+        return;
+      }
       var from = { x: view.x, y: view.y, z: view.z };
       var t0 = performance.now();
       var lz0 = Math.log(from.z);

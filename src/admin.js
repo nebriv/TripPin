@@ -320,6 +320,40 @@
       .catch(function (e) { window.alert('Failed: ' + e.message); btn.disabled = false; });
   }
 
+  /* ---------------------------------------------------------------- facts --
+
+     Deck facts are derived from every other stay in the pool — "2nd
+     northernmost of 41" is only true against a particular 41 — so they are
+     computed once and stored, not worked out on the reveal. Which means a new
+     import, or a change to how a fact is worded, leaves the whole deck saying
+     the old thing until this is run.
+
+     Safe to press twice: it recomputes from the stays themselves and writes
+     nothing a player typed. The response is counts only, so the one page that
+     must not spoil its reader stays spoiler-free.
+  */
+  function refacts() {
+    var btn = $('#refactsBtn');
+    btn.disabled = true;
+    // Set directly rather than through note(), whose five-second timer would
+    // otherwise still be running and would wipe the result early.
+    $('#refactsMsg').textContent = 'Recomputing…';
+    api('/api/refacts', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: '{}',
+    })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (res) {
+        if (!res.ok) throw new Error(res.j.error || 'refused');
+        note('#refactsMsg', res.j.stays + ' stays done · ' + res.j.flagged + ' worth a flag');
+        // The pool's timestamp just moved, so the panel above it is now wrong.
+        return tryWord(word).then(function (data) { if (data) paint(data); });
+      })
+      .catch(function (e) { note('#refactsMsg', 'Failed: ' + e.message, true); })
+      .finally(function () { btn.disabled = false; });
+  }
+
   // ----------------------------------------------------------------- dump --
 
   function quote(s) {
@@ -377,6 +411,7 @@
 
   function boot() {
     $('#saveTells').addEventListener('click', saveTells);
+    $('#refactsBtn').addEventListener('click', refacts);
     $('#dumpBtn').addEventListener('click', dump);
     $('#dumpConsent').addEventListener('change', function (e) {
       $('#dumpBtn').disabled = !e.target.checked;

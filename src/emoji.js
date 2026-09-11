@@ -104,6 +104,7 @@
     host.classList.add('ecode');
 
     var say = el('p', 'ecode__say');
+    say.setAttribute('role', 'status');
     var animalPad = el('div', 'ecode__pad ecode__pad--animals');
     var homeLabel = el('p', 'ecode__sub', 'and where does it live?');
     var homePad = el('div', 'ecode__pad ecode__pad--homes');
@@ -122,6 +123,9 @@
         b.classList.toggle('is-on', b.dataset.e === home);
       });
       homePad.classList.toggle('is-live', !!animal);
+      // pointer-events: none does not take a button out of the tab order, so
+      // a keyboard user tabbed through twelve faded keys that did nothing.
+      Array.prototype.forEach.call(homePad.children, function (b) { b.disabled = !animal; });
       homeLabel.classList.toggle('is-live', !!animal);
       again.hidden = !animal;
       if (opts.onChange) opts.onChange(value(), complete());

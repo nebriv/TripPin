@@ -30,14 +30,6 @@ function ordinal(n) {
   return n + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
 }
 
-function townOf(place) {
-  if (typeof place !== 'string' || !place) return '';
-  const idx = place.indexOf(',');
-  if (idx === -1) return place.trim();
-  const town = place.slice(0, idx).trim();
-  return town.length < 3 ? place.trim() : town;
-}
-
 function fmtMiles(d) {
   const n = d < 10 ? Math.round(d * 10) / 10 : Math.round(d);
   return `${n} mi`;
@@ -125,8 +117,10 @@ export function computeFacts(stays) {
         if (nearestDist > 1500) {
           push(bucket, i, { k: 'ISOLATED', v: `nearest other stay ${fmtMiles(nearestDist)}`, w: 4 });
         } else {
-          const town = townOf(out[nearestIdx].place);
-          push(bucket, i, { k: 'NEAREST', v: `${town} · ${fmtMiles(nearestDist)}`, w: 2 });
+          // NOT THE TOWN. This lands on the reveal, and the nearest stay is
+          // another card in the same deck — naming it handed out a town three
+          // weeks before it was dealt. ISOLATED above already gets this right.
+          push(bucket, i, { k: 'NEAREST', v: `another stay · ${fmtMiles(nearestDist)}`, w: 2 });
         }
       }
 

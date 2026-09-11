@@ -19,14 +19,16 @@
      place name and never a photo, because the person running the game still
      has to play it. -->
 
-<div class="shell-bar">
+<header class="shell-bar">
   <div class="shell-bar__lockup">
-    <svg class="mark" width="26" height="26" viewBox="0 0 34 34" aria-hidden="true"><line class="mark__thread" x1="8.5" y1="24.5" x2="25.5" y2="9.5" stroke-width="2.6"/><circle class="mark__answer" cx="25.5" cy="9.5" r="5.2"/><circle class="mark__guess" cx="8.5" cy="24.5" r="4.4" stroke-width="2.6"/></svg>
-    <span class="shell-bar__name">TripPin</span>
+    <a class="homelink" href="/" title="Back to the game">
+      <svg class="mark" width="26" height="26" viewBox="0 0 34 34" aria-hidden="true"><line class="mark__thread" x1="8.5" y1="24.5" x2="25.5" y2="9.5" stroke-width="2.6"/><circle class="mark__answer" cx="25.5" cy="9.5" r="5.2"/><circle class="mark__guess" cx="8.5" cy="24.5" r="4.4" stroke-width="2.6"/></svg>
+      <span class="shell-bar__name">TripPin</span>
+    </a>
     <span class="shell-bar__page">/ ADMIN</span>
   </div>
-  <span class="shell-bar__slot shell-bar__slot--box shell-bar__slot--ok"><i></i>Spoiler-free by design</span>
-</div>
+  <a class="shell-bar__slot shell-bar__slot--link" href="/"><span>← Back to the game</span></a>
+</header>
 
 <main class="shell-main">
   <div class="shell-inner shell-inner--wide">
@@ -35,6 +37,7 @@
       <p class="page-head__label">Counts and health only</p>
       <h1 class="page-head__h1">Admin</h1>
       <p class="page-head__p">No place names, no coordinates, no photos, no stories. You still have to play.</p>
+      <p class="shell-bar__slot shell-bar__slot--box shell-bar__slot--ok" style="margin:0 0 24px"><i></i>Spoiler-free by design</p>
     </div>
 
     <div class="panel" id="gate">
@@ -45,7 +48,7 @@
       <div class="row gateRow">
         <button class="btn" id="gateGo">Continue</button>
       </div>
-      <p class="msg msg--bad" id="gateErr" hidden>That's not it.</p>
+      <p class="msg msg--bad" id="gateErr" role="alert" hidden>That's not it.</p>
     </div>
 
     <div class="panels" id="flow" hidden>
@@ -55,6 +58,16 @@
         <div class="tiles" id="tiles"></div>
         <p class="panel__p" id="updated"></p>
         <p class="panel__p" id="kvUsage"></p>
+
+        <p class="panel__label">The facts</p>
+        <p class="panel__p">The “did you know” lines on the reveal — northernmost of 41, joint
+          shortest, 7th of 16 by rating — are worked out once against the whole deck and stored
+          on each stay. Run this after somebody imports, or after the wording of a fact changes,
+          or they carry on saying the old thing. It reads no place names back to this page.</p>
+        <div class="row">
+          <button class="btn btn--ghost" id="refactsBtn" type="button">Recompute the facts</button>
+          <span class="msg" id="refactsMsg" role="status"></span>
+        </div>
       </div>
 
       <div class="panel">
@@ -87,7 +100,7 @@
         <div id="tells"></div>
         <div class="row">
           <button class="btn" id="saveTells" disabled>Save tells</button>
-          <span class="msg" id="tellMsg"></span>
+          <span class="msg" id="tellMsg" role="status"></span>
         </div>
       </div>
 
@@ -98,7 +111,7 @@
           stays. Reset one only when somebody has forgotten theirs. The next person to open
           that name gets to set a new one.</p>
         <div id="claims"></div>
-        <p class="msg msg--bad" id="adminWarn" hidden></p>
+        <p class="msg msg--bad" id="adminWarn" role="alert" hidden></p>
 
         <p class="panel__label">Recent deck writes</p>
         <p class="panel__p">Every time somebody sends their stays in. A passcode is two tiles on
@@ -124,7 +137,7 @@
           I accept that this ruins the game for me
         </label>
         <button class="btn btn--danger" id="dumpBtn" disabled>Download everything</button>
-        <span class="msg" id="dumpMsg"></span>
+        <span class="msg" id="dumpMsg" role="status"></span>
       </div>
 
     </div>

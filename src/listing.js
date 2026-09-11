@@ -168,17 +168,24 @@
       if (extras.length) {
         var strip = el('div', 'listing__strip');
         extras.forEach(function (src) {
+          // A real button: it swaps the hero photo, so it is a control, and a
+          // bare <img> with a listener has no keyboard path and announces
+          // itself as a picture that does nothing.
+          var b = el('button', 'listing__thumbbtn');
+          b.type = 'button';
+          b.setAttribute('aria-label', 'Show this photo instead');
           var t = el('img', 'listing__thumb');
           t.src = src;
-          t.alt = 'Another photo of this place';
+          t.alt = '';
           t.loading = 'lazy';
-          t.addEventListener('error', function () { t.remove(); });
-          t.addEventListener('click', function () {
+          t.addEventListener('error', function () { b.remove(); });
+          b.addEventListener('click', function () {
             var was = img.src;
             img.src = t.src;
             t.src = was;
           });
-          strip.appendChild(t);
+          b.appendChild(t);
+          strip.appendChild(b);
         });
         card.appendChild(strip);
       }

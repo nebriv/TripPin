@@ -38,8 +38,14 @@
   --faint:      #5a564c;
 
   /* -- rules ------------------------------------------------------------- */
-  --line:       #c8c2b6;
-  --hair:       #e2ded5;
+  --line:       #c8c2b6;   /* a rule you read past */
+  --hair:       #e2ded5;   /* an internal divider */
+  /* The border that IS the control — a field, a tile, a ghost button. --line
+     measures 1.7:1 on paper and 1.3:1 in dark, so on a panel that is also
+     --paper it was the only thing saying "this is a field" and it was
+     invisible. WCAG 1.4.11 wants 3:1; this clears it on paper, board and
+     sunk in both themes. Decorative hairlines keep --line. */
+  --edge:       #6f6a5e;
 
   /* -- brand ------------------------------------------------------------- */
   --thread:     #b02a1f;
@@ -138,6 +144,7 @@
 
     --line:       #38342d;
     --hair:       #2c2925;
+    --edge:       #7b7566;
 
     --thread:     #e8695c;
     --on-thread:  #1a0f0d;
@@ -179,7 +186,7 @@
 [data-theme="dark"] {
   --board:#171614; --paper:#211f1c; --sunk:#2a2723;
   --ink:#efe9dd; --muted:#a8a294; --faint:#969082;
-  --line:#38342d; --hair:#2c2925;
+  --line:#38342d; --hair:#2c2925; --edge:#7b7566;
   --thread:#e8695c; --on-thread:#1a0f0d;
   --pro:#d9b552; --on-pro:#17120a;
   --band-0:#4f9f7c; --band-1:#c6a23a; --band-2:#cf7b45; --band-3:#7fa0bd;
@@ -254,6 +261,28 @@ button { font-family: inherit; }
 .mark__thread { stroke: var(--thread); }
 .mark__answer { fill: var(--ink); }
 .mark__guess  { fill: var(--paper); stroke: var(--ink); }
+.mark__guess  { transition: fill var(--swap), stroke var(--swap); }
+
+/* The lockup is the way back, on every page. It takes its gap from whichever
+   header it sits in, so the mark keeps the spacing that header already used.
+   Hovering lands the pin: the open circle fills with the thread. */
+.homelink {
+  display: flex;
+  align-items: center;
+  gap: inherit;
+  min-height: var(--hit);   /* the bar is already this tall; the link was not */
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+.homelink:hover { color: inherit; }
+.homelink:hover .mark__guess { fill: var(--thread); stroke: var(--thread); }
+.homelink:hover :is(.brand__name, .shell-bar__name) {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
 
 /* Player dot. The name is always rendered beside it — two names begin
    with B, so a colour is never the identifier on its own. */
@@ -309,7 +338,7 @@ button { font-family: inherit; }
 .iconbtn {
   width: var(--hit); height: var(--hit);
   display: grid; place-items: center;
-  border: 1px solid var(--line);
+  border: 1px solid var(--edge);
   background: transparent;
   color: var(--muted);
   font: 700 13px/1 var(--mono);
@@ -327,7 +356,7 @@ button { font-family: inherit; }
   min-height: var(--hit);
   max-width: 150px;
   padding: 0 10px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--edge);
   background: var(--paper);
   color: var(--muted);
   font: 400 var(--t-label)/1 var(--mono);
@@ -503,16 +532,23 @@ body.is-revealed .maphelp { visibility: hidden; }
   gap: 4px;
   margin-top: 4px;
 }
+/* The button carries the frame; the image inside it is decorative. */
+.listing__thumbbtn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--ink);
+  background: none;
+  cursor: pointer;
+  transition: opacity var(--swap);
+}
+.listing__thumbbtn:hover { opacity: .85; }
 .listing__thumb {
   display: block;
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  border: 1px solid var(--ink);
-  cursor: pointer;
-  transition: opacity var(--swap);
 }
-.listing__thumb:hover { opacity: .85; }
 
 .listing__body { padding: 12px 4px 13px; }
 
@@ -703,7 +739,7 @@ body.is-host .qlabel--who { display: none; }
   gap: 8px;
   min-height: 46px;
   padding: 8px 7px 9px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--edge);
   background: var(--paper);
   color: var(--ink);
   cursor: pointer;
@@ -716,7 +752,7 @@ body.is-host .qlabel--who { display: none; }
 .who__top { display: flex; align-items: center; gap: 5px; width: 100%; }
 .who__box {
   width: 11px; height: 11px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--edge);
   display: grid; place-items: center;
   flex: none;
 }
@@ -727,6 +763,20 @@ body.is-host .qlabel--who { display: none; }
 .who__top .avatar { margin-left: auto; width: 8px; height: 8px; }
 .who__top .avatar--glyph { width: auto; height: auto; font-size: 14px; }
 .who__name { font: 600 11.5px/1 var(--display); }
+
+/* Somebody on every card in the deck. The tile still ticks — it just says
+   out loud that the scoring struck them out of both sides of the question. */
+.who.is-free .who__name { color: var(--faint); }
+.who__free {
+  display: block;
+  margin-top: 3px;
+  font: 400 var(--t-label)/1 var(--mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--faint);
+  white-space: nowrap;
+}
+.who.is-on .who__free { color: inherit; }
 .who__unset {
   display: block;
   font: 400 var(--t-label)/1 var(--mono);
@@ -755,7 +805,7 @@ body.is-host .qlabel--who { display: none; }
   width: 100%;
   min-height: 46px;
   padding: 11px 13px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--edge);
   background: var(--paper);
   color: var(--ink);
   cursor: pointer;
@@ -770,7 +820,7 @@ body.is-host .qlabel--who { display: none; }
 .choice__dot {
   width: 11px; height: 11px;
   border-radius: 50%;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--edge);
   display: grid; place-items: center;
   flex: none;
 }
@@ -791,7 +841,7 @@ body.is-host .qlabel--who { display: none; }
 
 .map-host { position: absolute; inset: 0; touch-action: none; cursor: crosshair; outline: none; }
 .map-host.is-grabbing { cursor: grabbing; }
-.map-host.is-locked { cursor: default; }
+.map-host.is-locked { cursor: default; touch-action: pan-y; }
 .map-host:focus-visible { box-shadow: inset 0 0 0 3px var(--thread); outline: none; }
 
 .map-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
@@ -1092,7 +1142,7 @@ body.is-host .qlabel--who { display: none; }
   min-width: 0;
   min-height: var(--hit);
   padding: 10px 12px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--edge);
   border-radius: 0;
   background: var(--paper);
   color: var(--ink);
@@ -1116,6 +1166,12 @@ body.is-host .qlabel--who { display: none; }
   margin: 0;
   font: 400 var(--t-data)/1.4 var(--mono);
   color: var(--muted);
+}
+/* What a thing costs, under the thing. Quieter than the question above it. */
+.ask__note {
+  margin: 6px 0 0;
+  font: 400 var(--t-data)/1.5 var(--display);
+  color: var(--faint);
 }
 
 /* A two-way call: [ they won't ] [ they will ] */
@@ -1281,7 +1337,7 @@ body.is-host .qlabel--who { display: none; }
 }
 .btn:hover:not(:disabled) { opacity: .88; }
 .btn:disabled { opacity: .38; cursor: not-allowed; }
-.btn--ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+.btn--ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--edge); }
 .btn--ghost:hover:not(:disabled) { opacity: 1; border-color: var(--ink); }
 .btn--wide { width: 100%; }
 .btn--mono {
@@ -1309,7 +1365,7 @@ body.is-host .qlabel--who { display: none; }
 .modal__box {
   position: relative;
   width: min(460px, 100%);
-  max-height: 92vh;
+  max-height: 92dvh;
   overflow-y: auto;
   padding: 22px;
   background: var(--paper);
@@ -1318,8 +1374,8 @@ body.is-host .qlabel--who { display: none; }
 }
 .modal__x {
   position: absolute;
-  top: 14px; right: 14px;
-  width: 32px; height: 32px;
+  top: 8px; right: 8px;      /* a 44px box, same optical inset as the 32 was */
+  width: var(--hit); height: var(--hit);
   border: 1px solid var(--line);
   background: transparent;
   color: var(--muted);
@@ -1403,7 +1459,7 @@ body.modal-open { overflow: hidden; }
 
 body.is-gated > *:not(.gate) { display: none !important; }
 
-.gate { flex: 1; display: grid; place-items: center; padding: var(--s6); min-height: 100vh; }
+.gate { flex: 1; display: grid; place-items: center; padding: var(--s6); min-height: 100dvh; }
 .gate__box { width: min(360px, 100%); animation: beat var(--beat) var(--ease) both; }
 .gate__brand { display: flex; align-items: center; gap: 11px; margin: 0 0 20px; }
 .gate__brand h1 { margin: 0; font: 700 27px/1 var(--display); letter-spacing: var(--ls-tight); }
@@ -1464,8 +1520,8 @@ body.is-gated > *:not(.gate) { display: none !important; }
   padding: 13px 22px;
   border-bottom: 1px solid var(--line);
 }
-.shell-bar__lockup { display: flex; align-items: center; gap: 11px; min-width: 0; }
-.shell-bar__name { font: 700 21px/1 var(--display); letter-spacing: var(--ls-tight); color: var(--ink); }
+.shell-bar__lockup { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.shell-bar__name { font: 700 var(--t-brand)/1 var(--display); letter-spacing: var(--ls-tight); color: var(--ink); }
 .shell-bar__page {
   font: 400 var(--t-label)/1 var(--mono);
   letter-spacing: var(--ls-label);
@@ -1533,6 +1589,16 @@ body.is-gated > *:not(.gate) { display: none !important; }
 }
 .step__body { padding: 18px 20px; min-width: 0; }
 
+/* Steps 3 to 5 are entirely client-side, so without this a friend can do the
+   whole console dance before the page tells them it will not take it. Waiting
+   is step 2 before a name is picked; locked is everything below it. */
+.step.is-waiting .step__n, .step.is-locked .step__n { color: var(--faint); background: var(--sunk); }
+.step.is-locked .step__body, .fold.is-locked {
+  opacity: .45;
+  pointer-events: none;
+}
+.fold.is-locked { filter: grayscale(1); }
+
 .shell-foot {
   margin: 18px 0 0;
   font: 400 var(--t-label)/1.7 var(--mono);
@@ -1556,7 +1622,7 @@ body.is-gated > *:not(.gate) { display: none !important; }
   width: 100%;
   min-height: var(--hit);
   padding: 11px 12px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--edge);
   border-radius: 0;
   background: var(--paper);
   color: var(--ink);
@@ -1573,8 +1639,14 @@ body.is-gated > *:not(.gate) { display: none !important; }
 .msg--bad { color: var(--thread); }
 .msg--ok { color: var(--band-0); }
 
+/* A wide table on a narrow phone. body has overflow-x: hidden, which
+   propagates to the viewport, so without this the overflow is unreachable
+   rather than merely off to the side. admin.css had this rule; index.html
+   does not load admin.css, and both game tables needed it. */
+.tablewrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
 /* A fold: collapsed by default, never a second page. */
-.fold { border: 1px solid var(--line); }
+.fold { border: 1px solid var(--edge); }
 .fold__btn {
   display: flex;
   align-items: center;
@@ -1947,7 +2019,12 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
   body.is-playing main { padding: 0; overflow: hidden; }
   body.is-playing .board { gap: 0; }
 
-  .topbar { padding: 8px 14px; gap: 8px; }
+  /* The page declares viewport-fit=cover, so in landscape on a notched phone
+     the bar's ends sit under the cutout. */
+  .topbar {
+    padding: 8px max(14px, env(safe-area-inset-right)) 8px max(14px, env(safe-area-inset-left));
+    gap: 8px;
+  }
   .brand__name { font-size: 17px; }
   .brand__no { display: none; }
   .iconbtn { width: 36px; height: 44px; }
@@ -1958,15 +2035,25 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
   body.is-playing .col--card { padding: 10px 14px 0; gap: 10px; }
   body.is-playing .col--map { flex: 1; min-height: 0; gap: 0; }
   body.is-playing .col--map .qlabel { display: none; }
+  /* NO 300px FLOOR HERE.
+     .col--card does not shrink, so whatever the card leaves is all the map
+     can have. A floor taller than that was clipped by main, which is
+     `overflow: hidden` with no scroll to recover it — on a 375x667 phone
+     the card leaves about 99px, so roughly 200px of map including the
+     bottom two controls sat outside the page with no way to reach them.
+     That is the state the player is in while deciding where to pin. */
   body.is-playing .mapwrap {
     flex: 1;
     aspect-ratio: auto;
     max-height: none;
-    min-height: 300px;
+    min-height: 150px;
     border-left: 0; border-right: 0;
     box-shadow: none;
     margin-top: 10px;
   }
+  /* Stacked, the four controls are 185px tall — taller than the map before
+     the card folds. In a row they are 185px wide, which always fits. */
+  .map-ctl { flex-direction: row; }
   body.is-playing .maphelp { display: none; }
   .listing__img { aspect-ratio: 2 / 1; }
   .listing__media--empty { aspect-ratio: 2 / 1; }
@@ -1992,7 +2079,11 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
 
   /* Sits in the column rather than over the map, so the map's controls are
      never under it. Sticky keeps it in view when a revealed page scrolls. */
-  .actionbar { position: sticky; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); gap: 10px; }
+  .actionbar {
+    position: sticky;
+    padding: 10px max(14px, env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+    gap: 10px;
+  }
   .hint { font-size: 11px; }
   .actionbar .btn { padding: 0 18px; font-size: 13px; }
 
@@ -2085,6 +2176,15 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
 }
 .signin__err a { display: inline-block; margin-top: 4px; color: var(--ink); font-weight: 700; }
 
+/* Two ways off this screen now, and on a narrow phone they wrap rather than
+   squeeze: this is the only screen with no topbar above it. */
+.signin__skips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px var(--s4);
+}
+
 .signin__skip {
   justify-self: start;
   min-height: var(--hit);
@@ -2138,11 +2238,20 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
 }
 .ecode__pad--homes.is-live { opacity: 1; pointer-events: auto; }
 
+/* Six across is fine on the sign-in overlay, which is full width. On the
+   import page the same pad sits inside a step gutter inside the shell
+   padding: at 375px that is 42px a tile, and at 320px it is 33 — under the
+   floor tokens.css says has no exceptions. Fewer columns, never a smaller
+   tile. */
+@media (max-width: 460px) {
+  .ecode__pad--animals, .ecode__pad--homes { grid-template-columns: repeat(4, 1fr); }
+}
+
 .ecode__key {
   aspect-ratio: 1;
   min-width: 0;
   min-height: var(--hit);
-  border: 1px solid var(--line);
+  border: 1px solid var(--edge);
   background: var(--paper);
   font-size: 24px;
   line-height: 1;
@@ -2176,7 +2285,7 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
   justify-self: start;
   min-height: var(--hit);
   padding: 0 14px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--edge);
   background: transparent;
   color: var(--muted);
   font: 400 var(--t-label)/1 var(--mono);
@@ -2194,7 +2303,10 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
 
 </style>
 </head>
-<body>
+<!-- Starts gated so nothing of the board shows until boot() knows which of
+     the three screens this is. An empty card, an empty name row and a dead
+     'Lock it in' for the length of a fetch is indistinguishable from broken. -->
+<body class="is-gated">
 
 <!-- The word. Authentication: it keeps the internet out. The animal below
      is authorisation only — which of five friends you are. Both stay. -->
@@ -2223,11 +2335,17 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
 <header class="topbar">
   <div class="topbar__side">
     <button class="iconbtn" data-open="help" aria-label="How to play" title="How to play">?</button>
-    <button class="iconbtn" data-open="stats" aria-label="Your record" title="Your record">▟</button>
+    <!-- A bar chart, because the record IS one: a quadrant block was not a
+         guessable icon for the one screen holding the game's best writing. -->
+    <button class="iconbtn" data-open="stats" aria-label="Your record" title="Your record"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" fill="currentColor"><rect x="1" y="8" width="3" height="5"/><rect x="5.5" y="4" width="3" height="9"/><rect x="10" y="1" width="3" height="12"/></svg></button>
   </div>
+  <!-- The lockup is the way back. game.js intercepts it to peel off whatever
+       page is over the board; the href is what a middle-click gets. -->
   <div class="brand">
-    <svg class="mark" width="26" height="26" viewBox="0 0 34 34" aria-hidden="true"><line class="mark__thread" x1="8.5" y1="24.5" x2="25.5" y2="9.5" stroke-width="2.6"/><circle class="mark__answer" cx="25.5" cy="9.5" r="5.2"/><circle class="mark__guess" cx="8.5" cy="24.5" r="4.4" stroke-width="2.6"/></svg>
-    <h1 class="brand__name">TripPin</h1>
+    <a class="homelink" id="brandHome" href="/" title="Back to today">
+      <svg class="mark" width="26" height="26" viewBox="0 0 34 34" aria-hidden="true"><line class="mark__thread" x1="8.5" y1="24.5" x2="25.5" y2="9.5" stroke-width="2.6"/><circle class="mark__answer" cx="25.5" cy="9.5" r="5.2"/><circle class="mark__guess" cx="8.5" cy="24.5" r="4.4" stroke-width="2.6"/></svg>
+      <h1 class="brand__name">TripPin</h1>
+    </a>
     <p class="brand__no" id="todayLabel"></p>
   </div>
   <div class="topbar__side topbar__side--end">
@@ -2248,17 +2366,19 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
       <button class="cardfold" id="cardfold" type="button" hidden></button>
       <div class="whoblock">
         <p class="qlabel qlabel--who" id="whoLabel">Who was there · tick all</p>
-        <div id="whoPicker" class="whopicker" role="group" aria-label="Who was there"></div>
-        <div id="choice" class="choice" role="group" aria-label="Pick one" hidden></div>
+        <!-- Labelled BY the visible line above, which renderHost rewrites. A
+             fixed aria-label went stale the moment the question changed. -->
+        <div id="whoPicker" class="whopicker" role="group" aria-labelledby="whoLabel"></div>
+        <div id="choice" class="choice" role="group" aria-labelledby="whoLabel" hidden></div>
       </div>
     </div>
 
-    <section class="col col--reveal" id="reveal" hidden aria-live="polite"></section>
+    <section class="col col--reveal" id="reveal" hidden></section>
 
     <div class="col col--map">
       <p class="qlabel">Where was it · drop a pin</p>
       <div class="mapwrap"><div id="map" tabindex="0" role="application" aria-label="World map. Click to drop a pin. Arrow keys pan, plus and minus zoom, Enter drops a pin at the centre."></div></div>
-      <p class="maphelp">Drag to pan · scroll to zoom · ◍ switches projection</p>
+      <p class="maphelp">Drag to pan · scroll to zoom · the globe button switches projection</p>
     </div>
 
   </section>
@@ -2270,7 +2390,7 @@ body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
 </main>
 
 <div class="actionbar">
-  <p class="hint" id="hint"></p>
+  <p class="hint" id="hint" role="status"></p>
   <p class="proguess" id="proguess" hidden></p>
   <button class="btn" id="lockin" disabled>Lock it in</button>
 </div>
@@ -2347,10 +2467,15 @@ window.WORLDMAP = {"factor":1000,"countries":["kb|@bwj@fL}Dbv@_@b`@aHrQ~AzFcFdKy
 
    StayMap.create(hostEl, opts) -> map
      opts.onPick(lat, lng)   fired when the player drops a pin
+     opts.controls           false to leave off the zoom/reset/projection stack
    =========================================================================== */
 
 (function () {
   'use strict';
+
+  // Checked in JS because the fly-to is a requestAnimationFrame tween, which
+  // no CSS media query can reach.
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   var W = 1024;                   // world width in projected units
   var H;                          // world height, derived below
@@ -2831,6 +2956,11 @@ window.WORLDMAP = {"factor":1000,"countries":["kb|@bwj@fL}Dbv@_@b`@aHrQ~AzFcFdKy
 
     // Keyboard: arrows pan, +/- zoom, Enter drops a pin at the centre.
     host.addEventListener('keydown', function (e) {
+      // The zoom/reset/projection buttons are children of host, so their own
+      // Enter and Space bubbled to this handler, which dropped a pin at the
+      // centre and preventDefault'd the click. A keyboard player could not
+      // zoom, reset or switch projection at all.
+      if (e.target !== host) return;
       var s = viewSize(), step = s.vw / 12, handled = true;
       switch (e.key) {
         case 'ArrowLeft':  view.x -= step; break;
@@ -2867,7 +2997,9 @@ window.WORLDMAP = {"factor":1000,"countries":["kb|@bwj@fL}Dbv@_@b`@aHrQ~AzFcFdKy
       else if (b.dataset.act === 'proj') setProjection(P.round ? 'mercator' : 'equalearth');
       else reset(true);
     });
-    host.appendChild(ctl);
+    // The record page's inline map is 171px tall and decorative; the stacked
+    // controls are 185px, so they overflowed its frame upward.
+    if (opts.controls !== false) host.appendChild(ctl);
 
     // ------------------------------------------------------------- api --
 
@@ -2919,6 +3051,15 @@ window.WORLDMAP = {"factor":1000,"countries":["kb|@bwj@fL}Dbv@_@b`@aHrQ~AzFcFdKy
     var anim = null;
     function animateTo(target, ms) {
       if (anim) cancelAnimationFrame(anim);
+      // The whole world sliding and zooming on every reveal is the largest
+      // motion in the product, and style.css's reduced-motion block cannot
+      // reach a requestAnimationFrame tween. Jump instead.
+      if (still.matches) {
+        view.x = target.x; view.y = target.y;
+        view.z = Math.max(minZoom(), Math.min(MAX_ZOOM, target.z));
+        clampView(); applyView();
+        return;
+      }
       var from = { x: view.x, y: view.y, z: view.z };
       var t0 = performance.now();
       var lz0 = Math.log(from.z);
@@ -3163,17 +3304,24 @@ window.WORLDMAP = {"factor":1000,"countries":["kb|@bwj@fL}Dbv@_@b`@aHrQ~AzFcFdKy
       if (extras.length) {
         var strip = el('div', 'listing__strip');
         extras.forEach(function (src) {
+          // A real button: it swaps the hero photo, so it is a control, and a
+          // bare <img> with a listener has no keyboard path and announces
+          // itself as a picture that does nothing.
+          var b = el('button', 'listing__thumbbtn');
+          b.type = 'button';
+          b.setAttribute('aria-label', 'Show this photo instead');
           var t = el('img', 'listing__thumb');
           t.src = src;
-          t.alt = 'Another photo of this place';
+          t.alt = '';
           t.loading = 'lazy';
-          t.addEventListener('error', function () { t.remove(); });
-          t.addEventListener('click', function () {
+          t.addEventListener('error', function () { b.remove(); });
+          b.addEventListener('click', function () {
             var was = img.src;
             img.src = t.src;
             t.src = was;
           });
-          strip.appendChild(t);
+          b.appendChild(t);
+          strip.appendChild(b);
         });
         card.appendChild(strip);
       }
@@ -3382,6 +3530,7 @@ window.WORLDMAP = {"factor":1000,"countries":["kb|@bwj@fL}Dbv@_@b`@aHrQ~AzFcFdKy
     host.classList.add('ecode');
 
     var say = el('p', 'ecode__say');
+    say.setAttribute('role', 'status');
     var animalPad = el('div', 'ecode__pad ecode__pad--animals');
     var homeLabel = el('p', 'ecode__sub', 'and where does it live?');
     var homePad = el('div', 'ecode__pad ecode__pad--homes');
@@ -3400,6 +3549,9 @@ window.WORLDMAP = {"factor":1000,"countries":["kb|@bwj@fL}Dbv@_@b`@aHrQ~AzFcFdKy
         b.classList.toggle('is-on', b.dataset.e === home);
       });
       homePad.classList.toggle('is-live', !!animal);
+      // pointer-events: none does not take a button out of the tab order, so
+      // a keyboard user tabbed through twelve faded keys that did nothing.
+      Array.prototype.forEach.call(homePad.children, function (b) { b.disabled = !animal; });
       homeLabel.classList.toggle('is-live', !!animal);
       again.hidden = !animal;
       if (opts.onChange) opts.onChange(value(), complete());
@@ -3573,10 +3725,36 @@ window.WORLDMAP = {"factor":1000,"countries":["kb|@bwj@fL}Dbv@_@b`@aHrQ~AzFcFdKy
 (function () {
   'use strict';
 
-  var MAX = 1000;                 // a host round is worth the same as a normal one
-  var WHO_MAX = 200;              // when a format asks for a person as well
-  var FALLOFF = 600;              // miles; matches the main game's curve
-  var BULLSEYE = 50;              // matches CFG.BULLSEYE in game.js
+  /* --------------------------------------------------------- the numbers --
+
+     THE ONLY PLACE THE SCORING CONSTANTS LIVE.
+
+     This module is loaded by the browser as a plain <script> and imported by
+     the Worker, which is what makes it the one file both halves of the game
+     can agree on. game.js builds CFG out of this block; the Worker scores
+     with wherePoints() and whoPoints() below. They used to be written out
+     three times — here, in game.js's CFG, and as bare literals in the Worker
+     — so changing the curve in the place the README pointed at moved the
+     offline file and left the live game exactly as it was.
+  */
+  var SCORE = {
+    ROUNDS:    3,      // stays a day
+    MAX:       1000,   // a whole round, host or not
+    WHERE_MAX: 800,    // the pin half of a normal round
+    WHO_MAX:   200,    // the people half, and what a host format's judgement pays
+    FALLOFF:   600,    // miles; lower = harsher
+    // Miles; inside this you get full marks. Fifty is "you named the town",
+    // which is a real thing to be right about. Fifteen was under a pixel at
+    // the zoom people actually play at, so nobody ever scored a perfect round.
+    BULLSEYE:  50,
+  };
+
+  // Local aliases, because the formats below read them constantly.
+  var MAX = SCORE.MAX;
+  var WHO_MAX = SCORE.WHO_MAX;
+  var FALLOFF = SCORE.FALLOFF;
+  var BULLSEYE = SCORE.BULLSEYE;
+
   var NEAR_RADIUS = 500;          // miles, for "who else has been near here"
   var PENGUIN_LAT = -60;          // close enough to the Antarctic convergence
   var TIE_MILES = 1;              // inside this, two people are simply level
@@ -3597,6 +3775,12 @@ window.WORLDMAP = {"factor":1000,"countries":["kb|@bwj@fL}Dbv@_@b`@aHrQ~AzFcFdKy
   function pinPoints(m, max) {
     if (m <= BULLSEYE) return max;
     return Math.round(max * Math.exp(-m / FALLOFF));
+  }
+
+  // A normal round's pin half, which is the same curve against a smaller
+  // ceiling. The Worker and game.js both score with this.
+  function wherePoints(m) {
+    return typeof m === 'number' && isFinite(m) ? pinPoints(m, SCORE.WHERE_MAX) : 0;
   }
 
   function miles(n) { return Math.round(n).toLocaleString('en-US'); }
@@ -3734,8 +3918,14 @@ window.WORLDMAP = {"factor":1000,"countries":["kb|@bwj@fL}Dbv@_@b`@aHrQ~AzFcFdKy
 
   function rivals(ctx, stay, pool) {
     var me = ctx.me;
+    var mute = ctx.mute || [];
     var by = {};
-    ctx.crew.forEach(function (p) { if (p.id !== me) by[p.id] = []; });
+    // Somebody on essentially every card is nearest to everywhere by
+    // construction, so 'whose is nearest' has one answer for ever and 'the
+    // stranger' has one non-answer. Leave them out of the candidate list.
+    ctx.crew.forEach(function (p) {
+      if (p.id !== me && mute.indexOf(p.id) === -1) by[p.id] = [];
+    });
     (pool || ctx.stays).forEach(function (s) {
       if (s.id === stay.id) return;
       if (typeof s.lat !== 'number' || typeof s.lng !== 'number') return;
@@ -3744,6 +3934,41 @@ window.WORLDMAP = {"factor":1000,"countries":["kb|@bwj@fL}Dbv@_@b`@aHrQ~AzFcFdKy
     return Object.keys(by)
       .filter(function (id) { return by[id].length > 0; })
       .map(function (id) { return { id: id, stays: by[id] }; });
+  }
+
+  // The WHO half, for a normal round. Jaccard over the party, with anyone who
+  // is on every card struck from both sides first: the dominant strategy used
+  // to be tapping that one tile and nothing else, which paid 133 of 200 for
+  // learning nothing. Two empty sets agree, so a solo stay nobody adds to is
+  // full marks and naming a phantom on one is not.
+  function whoPoints(picks, party, mute, max) {
+    var hide = mute || [];
+    var keep = function (x) { return hide.indexOf(x) === -1; };
+    var want = (party || []).filter(keep);
+    var got = (picks || []).filter(keep);
+    var union = {};
+    want.concat(got).forEach(function (x) { union[x] = 1; });
+    var size = Object.keys(union).length;
+    var hits = got.filter(function (x) { return want.indexOf(x) !== -1; }).length;
+    return {
+      pts: size === 0 ? max : Math.round(max * (hits / size)),
+      hits: hits,
+      exact: hits === want.length && got.length === want.length,
+    };
+  }
+
+  // Players who carry no information, because they are on (almost) every card
+  // in the pool. Naming them is free, so the game must stop asking.
+  var UBIQ_FRAC = 0.95;
+  function ubiquitous(stays, crew) {
+    var n = (stays || []).length;
+    if (!n) return [];
+    var on = {};
+    stays.forEach(function (s) {
+      partyOf(s).forEach(function (id) { on[id] = (on[id] || 0) + 1; });
+    });
+    return (crew || []).map(function (p) { return p.id || p; })
+      .filter(function (id) { return (on[id] || 0) >= UBIQ_FRAC * n; });
   }
 
   // Each rival's closest approach to this place.
@@ -4216,6 +4441,18 @@ window.WORLDMAP = {"factor":1000,"countries":["kb|@bwj@fL}Dbv@_@b`@aHrQ~AzFcFdKy
     if (!stay || !ctx || !ctx.me) return null;
     if (partyOf(stay).indexOf(ctx.me) === -1) return null;   // not yours: play it straight
 
+    // A HOST ROUND IS A VARIANT, NOT A REPLACEMENT FOR THE GAME.
+    //
+    // Whoever seeded the deck is on every card in it, so this gate fired every
+    // single round: three host rounds a day, for ever, for the one person who
+    // could play. They never ticked a crew, never pinned a stay, and — because
+    // only normal rounds write per-stay records — their whole record page and
+    // the standing stayed empty. Let them play it straight instead.
+    //
+    // It disarms itself: nobody is on 95% of a pooled deck once a second
+    // person imports, so ctx.mute empties out on its own.
+    if ((ctx.mute || []).indexOf(ctx.me) !== -1) return null;
+
     // Seeded on the CARD and the slot, deliberately not on the player.
     //
     // It used to include the player, which meant two friends who were on the
@@ -4297,11 +4534,17 @@ window.WORLDMAP = {"factor":1000,"countries":["kb|@bwj@fL}Dbv@_@b`@aHrQ~AzFcFdKy
     if (spec.kind === 'personpin') {
       var ok = accepted(spec).indexOf(guess.person) !== -1;
       out.correct = ok;
-      // Right is 200. Second-best is 90, third 40, fourth 18 — a near miss
-      // on the person is paid the way a near miss on the pin is.
+      // Right is 200. Second-best is 60, third 18, fourth 5 — a near miss on
+      // the person is paid the way a near miss on the pin is.
+      //
+      // The decay was 0.45, which paid 90/40/18 and meant a blind tap on a
+      // four-name list averaged 87 before the pin contributed anything,
+      // against about 5 for a blind normal round. balance.js reported the
+      // three personpin formats overshooting a normal round's blind mean by
+      // up to 57 points because of it.
       var rk = spec.rank && guess.person != null ? spec.rank[guess.person] : null;
       out.whoPts = ok ? WHO_MAX
-        : (typeof rk === 'number' && rk > 0 ? Math.round(WHO_MAX * Math.pow(0.45, rk)) : 0);
+        : (typeof rk === 'number' && rk > 0 ? Math.round(WHO_MAX * Math.pow(0.30, rk)) : 0);
       // Pin against the stay belonging to whoever they actually named, so a
       // player who picks the other half of a tie is not then marked down for
       // pinning the right place.
@@ -4413,6 +4656,11 @@ window.WORLDMAP = {"factor":1000,"countries":["kb|@bwj@fL}Dbv@_@b`@aHrQ~AzFcFdKy
     challenge: challenge,
     score: score,
     accepted: accepted,
+    ubiquitous: ubiquitous,
+    whoPoints: whoPoints,
+    wherePoints: wherePoints,
+    pinPoints: pinPoints,
+    SCORE: SCORE,
     FORMATS: FORMATS,
     byId: BY_ID,
     MAX: MAX,
@@ -4766,15 +5014,18 @@ window.STAYS = [];
 (function () {
   'use strict';
 
+  // The scoring numbers are NOT declared here. They live in src/host.js, which
+  // is the one module the browser and the Worker both load, so the live game
+  // and the offline file cannot drift apart. Change them there.
+  var SCORE = (window.Host && window.Host.SCORE) || {};
+
   var CFG = {
-    ROUNDS: 3,
-    WHERE_MAX: 800,
-    WHO_MAX: 200,
-    FALLOFF: 600,          // miles; lower = harsher
-    // Miles; inside this you get full marks. Fifty is "you named the town",
-    // which is a real thing to be right about. Fifteen was under a pixel at
-    // the zoom people actually play at, so nobody ever scored a perfect round.
-    BULLSEYE: 50,
+    ROUNDS: SCORE.ROUNDS,
+    WHERE_MAX: SCORE.WHERE_MAX,
+    WHO_MAX: SCORE.WHO_MAX,
+    FALLOFF: SCORE.FALLOFF,
+    BULLSEYE: SCORE.BULLSEYE,
+    // These three are the browser's own business, so they do stay here.
     // Puzzle #1 is this local date. Change it and every puzzle number shifts.
     EPOCH: new Date(2026, 8, 10),
     KEY: 'trippin.v1',
@@ -4850,7 +5101,7 @@ window.STAYS = [];
   // who is signed in: five friends share laptops, and a streak is not a
   // property of a browser.
   var PER_PLAYER = { stats: 1, calls: 1, lines: 1, noticed: 1, seen: 1,
-                     pro: 1, pitch: 1, probanner: 1 };
+                     fmts: 1, skipped: 1, pro: 1, pitch: 1, probanner: 1 };
   function storeKey(key) {
     return CFG.KEY + '.' + (PER_PLAYER[key] && ME ? ME + '.' : '') + key;
   }
@@ -4918,8 +5169,7 @@ window.STAYS = [];
   // -------------------------------------------------------------- scoring --
 
   function wherePoints(miles) {
-    if (miles <= CFG.BULLSEYE) return CFG.WHERE_MAX;
-    return Math.round(CFG.WHERE_MAX * Math.exp(-miles / CFG.FALLOFF));
+    return window.Host.wherePoints(miles);
   }
 
   function fmtMiles(m) {
@@ -4928,16 +5178,20 @@ window.STAYS = [];
     return commas(Math.round(m)) + ' mi';
   }
 
+  // Anyone on every card in the pool. Naming them is worth nothing, so the
+  // scoring strikes them out and the picker says so. Recomputed rather than
+  // cached because the deck changes under us when a friend imports; online the
+  // Worker decides and hands it over on /api/crew.
+  function everywhere() {
+    if (online()) {
+      return CREW.filter(function (p) { return p.everywhere; })
+        .map(function (p) { return p.id; });
+    }
+    return window.Host ? window.Host.ubiquitous(STAYS, CREW) : [];
+  }
+
   function whoScore(picked, actual) {
-    var want = (actual || []).slice().sort();
-    var got = (picked || []).slice().sort();
-    if (!want.length) return { pts: 0, exact: false, hits: 0 };
-    var hits = got.filter(function (id) { return want.indexOf(id) !== -1; }).length;
-    var union = {};
-    want.concat(got).forEach(function (id) { union[id] = 1; });
-    var exact = hits === want.length && got.length === want.length;
-    var frac = hits / Object.keys(union).length;      // Jaccard
-    return { pts: Math.round(CFG.WHO_MAX * frac), exact: exact, hits: hits };
+    return window.Host.whoPoints(picked, actual, everywhere(), CFG.WHO_MAX);
   }
 
   // A normal round's colour comes from how close the pin was; a host round
@@ -4954,7 +5208,11 @@ window.STAYS = [];
     return 3;
   }
 
-  var BAND_WORD = ['Right town', 'Right region', 'Right country', 'Wrong continent'];
+  // Band 3 starts at 833 miles. Four fifths of the deck is North America, where
+  // 833 miles is Denver from New York — so 'Wrong continent' was the sentence
+  // under the score for pins that were on the right one. Describe the distance
+  // instead of a political unit a mileage cannot know.
+  var BAND_WORD = ['Right town', 'Right region', 'Same part of the world', 'Nowhere near'];
   var HOST_BAND_WORD = ['On it', 'Close enough', 'Some of it', 'Not this time'];
 
   // ---------------------------------------------------------------- state --
@@ -5047,7 +5305,12 @@ window.STAYS = [];
     else if (f >= 0.5) tags.push('dayMid');
     else tags.push('dayLow');
     if (tot >= max) tags.push('perfect');
-    if (st && st.beatBest) tags.push('beatBest');
+    // A personal best is "beat every day before this one", which the server
+    // answers with prevBest. The browser used to keep its own sticky flag.
+    var beat = st && (st.prevBest != null
+      ? (st.played > 1 && st.last === state.dayIndex && tot > st.prevBest)
+      : st.beatBest);
+    if (beat) tags.push('beatBest');
     if (st && st.streak >= 3) tags.push('streak');
     if (state.results.some(function (r) { return r && r.host; })) tags.push('host');
     return tags;
@@ -5096,7 +5359,7 @@ window.STAYS = [];
 
   function hostCtx() {
     return {
-      me: ME, crew: CREW, stays: STAYS, cities: cityList(),
+      me: ME, crew: CREW, stays: STAYS, cities: cityList(), mute: everywhere(),
       seen: state.seen || [], dayIndex: state.dayIndex, round: state.round,
       used: state.results.filter(Boolean).map(function (r) { return r.fmt; }),
     };
@@ -5164,6 +5427,13 @@ window.STAYS = [];
     b.appendChild(top);
     b.appendChild(el('span', 'who__name', p.name));
     b.setAttribute('aria-pressed', 'false');
+    // Saying so beats letting somebody tap it every round for ever expecting
+    // credit the scoring has already stopped giving.
+    if (everywhere().indexOf(p.id) !== -1) {
+      b.classList.add('is-free');
+      b.appendChild(el('span', 'who__free', 'on every card'));
+      b.title = p.name + ' is on every card, so naming them scores nothing.';
+    }
     return b;
   }
 
@@ -5205,11 +5475,19 @@ window.STAYS = [];
     if (spec.how) {
       // The prompts are deliberately silly and a silly prompt can bury the
       // rule it is dressing up. This is the plain version.
+      //
+      // Open the first time a player meets each format, shut every time after.
+      // Host rounds are rare per player, so most encounters with a given
+      // format are first encounters, and a first encounter with the joke alone
+      // is a coin flip.
+      var met = load('fmts', {});
+      var first = spec.fmt && !met[spec.fmt];
+      if (spec.fmt) { met[spec.fmt] = 1; save('fmts', met); }
       var how = el('button', 'hostq__how', 'How this one works');
       how.type = 'button';
-      how.setAttribute('aria-expanded', 'false');
+      how.setAttribute('aria-expanded', String(!!first));
       var rules = el('p', 'hostq__rules', spec.how);
-      rules.hidden = true;
+      rules.hidden = !first;
       how.addEventListener('click', function () {
         rules.hidden = !rules.hidden;
         how.setAttribute('aria-expanded', String(!rules.hidden));
@@ -5372,6 +5650,10 @@ window.STAYS = [];
     $('#cardfold').hidden = true;
 
     var head = el('div', 'reveal__head');
+    // The one-sentence summary worth announcing: distance, band, points. The
+    // live region used to sit on #reveal itself, which is hidden until the
+    // whole subtree is replaced at once.
+    head.setAttribute('role', 'status');
     var lead = el('div');
     var dist = el('p', 'reveal__dist');
     if (r.dist != null) {
@@ -5425,6 +5707,13 @@ window.STAYS = [];
     if (stay.place) {
       ledger.appendChild(ledgerRow('The stay', stay.place + (stay.when ? ' · ' + stay.when : '')));
     }
+    // Same deck-relative facts the normal reveal gets. Not a spoiler to the
+    // owner: they are about where this stay sits among all of them.
+    (stay.facts || []).filter(function (f) {
+      return f.w >= 2 && !(stay.flag && f.k === stay.flag.k && f.v === stay.flag.v);
+    }).slice(0, 4).forEach(function (f) {
+      ledger.appendChild(ledgerRow(f.k, f.v));
+    });
     box.appendChild(ledger);
 
     // Best moment in the game to ask: the card is yours and you have just
@@ -5437,7 +5726,11 @@ window.STAYS = [];
 
     box.appendChild(nextButton());
     $('#pips').replaceChildren(renderPips());
-    box.querySelector('.btn').focus({ preventScroll: true });
+    // The panel, not its last child: 'Next stay' sits below the distance, the
+    // line, the meter, the story and the ledger, so on a phone focusing it put
+    // the ring well below the fold and Enter skipped the whole reveal.
+    box.tabIndex = -1;
+    box.focus({ preventScroll: true });
     setTimeout(function () { map.refresh(); }, 30);
   }
 
@@ -5463,7 +5756,9 @@ window.STAYS = [];
       state.ask = j.ask;
       if (j.done) { state.results[state.round] = j.done; return advance(); }
       renderRound();
-    }, function () { $('#hint').textContent = 'Could not reach the server.'; });
+    }, function () {
+      serverDown(function () { state.round--; advance(); });
+    });
   }
 
   function answerLabel(spec) {
@@ -5611,15 +5906,20 @@ window.STAYS = [];
         if (res.status === 402) return showNeedStays();
         var result = res.j.result;
         if (!result) throw new Error(res.j.error || 'refused');
+        setRecord(res.j.record);
         state.results[state.round] = result;
         state.phase = 'revealed';
         if (typeof result.played === 'number') { state.played = result.played; state.total = result.total; state.waiting = result.waiting || 0; }
         persist();
         showAnswer(result);
       })
-      .catch(function () {
+      .catch(function (e) {
         btn.disabled = false;
-        $('#hint').textContent = 'Could not reach the server. Try again.';
+        // Keep the server's own words when it gave some: 'That stay is gone.'
+        // is not the same problem as the network being down, and telling
+        // someone to retry is wrong advice for it.
+        $('#hint').textContent = e && e.message && e.message !== 'refused'
+          ? e.message : 'Could not reach the server. Try again.';
       });
   }
 
@@ -5716,6 +6016,10 @@ window.STAYS = [];
 
     var b = band(r.wherePts);
     var head = el('div', 'reveal__head');
+    // The one-sentence summary worth announcing: distance, band, points. The
+    // live region used to sit on #reveal itself, which is hidden until the
+    // whole subtree is replaced at once.
+    head.setAttribute('role', 'status');
     var lead = el('div');
     var dist = el('p', 'reveal__dist');
     if (r.dist <= CFG.BULLSEYE) {
@@ -5785,7 +6089,11 @@ window.STAYS = [];
 
     box.appendChild(nextButton());
     $('#pips').replaceChildren(renderPips());
-    box.querySelector('.btn').focus({ preventScroll: true });
+    // The panel, not its last child: 'Next stay' sits below the distance, the
+    // line, the meter, the story and the ledger, so on a phone focusing it put
+    // the ring well below the fold and Enter skipped the whole reveal.
+    box.tabIndex = -1;
+    box.focus({ preventScroll: true });
     setTimeout(function () { map.refresh(); }, 30);
   }
 
@@ -5858,7 +6166,16 @@ window.STAYS = [];
       send.disabled = !input.value.trim();
     });
     input.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !send.disabled) send.click(); });
-    skip.addEventListener('click', function () { box.remove(); if (onDone) onDone(null); });
+    skip.addEventListener('click', function () {
+      // Remember the no. Skipping on the reveal and then being asked about the
+      // same stay again at the end of the day is how a thing that is never
+      // required starts to feel like it is.
+      var sk = load('skipped', {});
+      sk[state.dayIndex + ':' + stay.id] = 1;
+      save('skipped', sk);
+      box.remove();
+      if (onDone) onDone(null);
+    });
     send.addEventListener('click', function () {
       var text = input.value.trim().slice(0, CFG.STORY_MAX);
       if (!text) return;
@@ -5894,6 +6211,8 @@ window.STAYS = [];
       return box;
     }
     box.appendChild(el('p', 'ask__q', 'Will anybody get within 500 miles of this one?'));
+    var callNote = el('p', 'ask__note', 'Costs nothing, wins nothing. It shows up in the day once the others have played.');
+    box.appendChild(callNote);
     var call = el('div', 'call');
     var no = el('button', 'btn btn--ghost', "They won't");
     no.type = 'button';
@@ -5915,7 +6234,10 @@ window.STAYS = [];
         box.replaceChildren();
         box.appendChild(el('p', 'ask__label', 'Your call'));
         box.appendChild(el('p', 'ask__done', 'Noted. It settles when the others have played.'));
-      }).catch(function () { no.disabled = yes.disabled = false; });
+      }).catch(function () {
+        no.disabled = yes.disabled = false;
+        callNote.textContent = 'That did not go through. Try again.';
+      });
     }
     no.addEventListener('click', function () { place('wont'); });
     yes.addEventListener('click', function () { place('will'); });
@@ -5931,8 +6253,38 @@ window.STAYS = [];
     }, 0);
   }
 
+  /* ------------------------------------------------------------- record --
+
+     Days played, the run, the best day, the totals behind the sparkline.
+
+     THE WORKER COMPUTES THIS, not the browser. It used to live in
+     localStorage, which made a streak a property of a device: play on your
+     phone on Monday and your laptop on Tuesday and it reset to 1, the best day
+     read 0 and the flame in the posted grid was wrong. It now arrives with
+     signing in, with every guess, and with the record page.
+
+     The local copy stays for two jobs: it is the whole record in the offline
+     file, where there is no server to ask, and it is what everything reads
+     before the first server answer lands.
+  */
+  var RECORD = null;
+
+  function record() { return RECORD || load('stats', null); }
+
+  function setRecord(r) {
+    if (!r) return;
+    RECORD = r;
+    // Keep the local copy warm, so an offline open or a share posted before
+    // the next call lands still shows the right numbers.
+    var local = load('stats', {}) || {};
+    Object.keys(r).forEach(function (k) { local[k] = r[k]; });
+    save('stats', local);
+  }
+
   function finishDay() {
     if (state.mode !== 'daily') return;
+    // Online this is bookkeeping for the offline fallback only — the Worker's
+    // figures arrive with the guess and overwrite it.
     var st = load('stats', { played: 0, streak: 0, max: 0, last: null, best: 0, totals: [] });
     if (st.last === state.dayIndex) return;              // already banked
     st.played += 1;
@@ -5957,21 +6309,55 @@ window.STAYS = [];
     return 'Bold guesses throughout.';
   }
 
-  function showPage(id) {
-    state.phase = 'done';
+  var PAGES = ['summary', 'dayview', 'record', 'needstays'];
+
+  // What the board was showing before a page covered it, so the lockup can put
+  // it back rather than guess. Only the pages laid OVER the board take one;
+  // the summary and the two empty states are the board, once you are there.
+  var covered = null;
+
+  function boardNow() {
+    var snap = { cls: document.body.className, play: $('#play').hidden, reveal: $('#reveal').hidden, pages: {} };
+    PAGES.forEach(function (n) { snap.pages[n] = $('#' + n).hidden; });
+    return snap;
+  }
+
+  // `isHome` says this page IS the board now, rather than something laid over
+  // it. Note what it does not do: end the round. Looking at your record in the
+  // middle of a day used to set the phase to 'done', which quietly killed the
+  // map for the rest of that day.
+  function showPage(id, isHome) {
+    if (isHome) covered = null;
+    else if (!covered) covered = boardNow();
     setPlaying(false);
     $('#play').hidden = true;
     $('#reveal').hidden = true;
     document.body.classList.remove('is-revealed', 'is-host');
     document.body.classList.add('is-summary', 'is-page');
-    ['summary', 'dayview', 'record', 'needstays'].forEach(function (s) { $('#' + s).hidden = s !== id; });
+    PAGES.forEach(function (s) { $('#' + s).hidden = s !== id; });
     $('#pips').replaceChildren(renderPips());
     window.scrollTo(0, 0);
     return $('#' + id);
   }
 
+  // The lockup, and every '← Back'. Peels off whatever is over the board and
+  // leaves the round you were in the middle of exactly where it was.
+  function goHome() {
+    closeModals();
+    window.scrollTo(0, 0);
+    if (!covered) return;
+    var snap = covered;
+    covered = null;
+    document.body.className = snap.cls;
+    $('#play').hidden = snap.play;
+    $('#reveal').hidden = snap.reveal;
+    PAGES.forEach(function (n) { $('#' + n).hidden = snap.pages[n]; });
+    $('#pips').replaceChildren(renderPips());
+    if (map) map.refresh();
+  }
+
   function showSummary() {
-    var wrap = showPage('summary');
+    var wrap = showPage('summary', true);
     wrap.replaceChildren();
 
     var tot = totalScore(state.results);
@@ -5983,7 +6369,7 @@ window.STAYS = [];
     big.appendChild(el('small', null, ' / ' + commas(max)));
     wrap.appendChild(big);
 
-    var st = load('stats', null);
+    var st = record();
     var dl = lineFor('day', dayTags(tot, st), 'd' + state.dayIndex) || grade(tot / max);
     wrap.appendChild(lineNode(dl));
 
@@ -6026,7 +6412,12 @@ window.STAYS = [];
       studio.appendChild(el('span', 'studio__n', 'Copy takes whatever you type'));
       wrap.appendChild(studio);
     }
-    var grid = el('pre', 'sum__grid', shareText(false));
+    // THE BOX SHOWS WHAT THE BUTTON COPIES, LINK AND ALL.
+    //
+    // It used to render the grid alone while 'Copy result' copied the grid
+    // plus a link with the group word on the end. Anyone who checked the box
+    // before pasting somewhere public was checking the wrong thing.
+    var grid = el('pre', 'sum__grid', shareText(true));
     grid.id = 'sumGrid';
     if (isPro()) {
       grid.classList.add('is-studio');
@@ -6037,6 +6428,7 @@ window.STAYS = [];
       grid.setAttribute('aria-label', 'Your result. Editable.');
     }
     wrap.appendChild(grid);
+    wrap.appendChild(el('p', 'fineprint', 'The link on the end carries the word. Fine for the group chat, nowhere else.'));
 
     var acts = el('div', 'sum__acts');
     var share = el('button', 'btn', 'Copy result');
@@ -6064,8 +6456,10 @@ window.STAYS = [];
 
       // After the score, and only then: one of today's cards that is yours
       // and has no line on it yet.
+      var skipped = load('skipped', {});
       var mine = state.results.filter(function (r) {
-        return r && r.truth && r.truth.owner === ME && !r.truth.story && r.truth.id;
+        return r && r.truth && r.truth.owner === ME && !r.truth.story && r.truth.id
+          && !skipped[state.dayIndex + ':' + r.truth.id];
       })[0];
       if (mine) wrap.appendChild(storyAsk(mine.truth, 'day', function (text) {
         if (text) mine.truth.story = text;
@@ -6192,7 +6586,7 @@ window.STAYS = [];
     var b = el('button', 'btn btn--ghost btn--wide', label || '← Back');
     b.type = 'button';
     b.style.marginTop = '16px';
-    b.addEventListener('click', function () { showSummary(); });
+    b.addEventListener('click', goHome);
     return b;
   }
 
@@ -6240,9 +6634,13 @@ window.STAYS = [];
       tbody.appendChild(tr);
     });
     table.appendChild(tbody);
-    var tw = el('div', 'panel panel--table');
+    var tw = el('div', 'panel');
     tw.appendChild(el('p', 'panel__label', 'The scores · ⌂ marks a round that was theirs'));
-    tw.appendChild(table);
+    // Six columns against about 315px of phone. body's overflow-x: hidden made
+    // the overflow unreachable rather than scrollable.
+    var scroll = el('div', 'tablewrap');
+    scroll.appendChild(table);
+    tw.appendChild(scroll);
     wrap.appendChild(tw);
 
     // Each stay: the place, who was there, the story, who hosted it, the best
@@ -6353,6 +6751,7 @@ window.STAYS = [];
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (j) {
         wrap.replaceChildren();
+        setRecord(j && j.record);
         wrap.appendChild(el('p', 'sum__label', 'Your record · since No. 1'));
         if (!j) { wrap.appendChild(el('p', 'msg msg--bad', 'Could not reach the server.')); wrap.appendChild(backButton()); return; }
         paintRecord(wrap, j);
@@ -6380,8 +6779,8 @@ window.STAYS = [];
     var normal = rounds.filter(function (r) { return !r.host && typeof r.dist === 'number'; });
 
     var tiles = el('div', 'sum__stats');
-    var st = load('stats', {});
-    [['Played', days.length], ['Streak', st.streak || 0], ['Best run', st.max || 0], ['Best day', commas(st.best || 0)]]
+    var st = record() || {};
+    [['Played', st.played || days.length], ['Streak', st.streak || 0], ['Best run', st.max || 0], ['Best day', commas(st.best || 0)]]
       .forEach(function (pair) {
         var b = el('div', 'stat');
         b.appendChild(el('span', 'stat__n', String(pair[1])));
@@ -6453,7 +6852,8 @@ window.STAYS = [];
       mp.appendChild(host);
       wrap.appendChild(mp);
       setTimeout(function () {
-        var m2 = StayMap.create(inner, { onPick: function () {} });
+        // Decorative here, and the frame is shorter than the control stack.
+        var m2 = StayMap.create(inner, { onPick: function () {}, controls: false });
         m2.setInteractive(false);
         m2.showAnswer(j.centre.lat, j.centre.lng, 'you, on average');
         normal.slice(-30).forEach(function (r) { if (typeof r.lat === 'number') m2.setGuess(r.lat, r.lng); });
@@ -6486,7 +6886,9 @@ window.STAYS = [];
         tb.appendChild(tr);
       });
       table.appendChild(tb);
-      cp.appendChild(table);
+      var sw = el('div', 'tablewrap');
+      sw.appendChild(table);
+      cp.appendChild(sw);
       cp.appendChild(el('p', 'shell-foot', 'The score sums every stay of yours that has been played, so more stays beats fewer. Per stay is the same thing divided, for anyone who put in three. Neither touches the daily score.'));
       wrap.appendChild(cp);
     }
@@ -6503,13 +6905,32 @@ window.STAYS = [];
     wrap.appendChild(backButton());
   }
 
+  // A dropped request used to leave the board rendered but blank — a card with
+  // no photo, a name row with no names, a dead 'Lock it in' — and one mono line
+  // in the action bar explaining it. The empty-state language already reads
+  // properly, so use that, and put the retry where the eye already is.
+  function serverDown(retry) {
+    var wrap = showPage('needstays', true);
+    wrap.replaceChildren();
+    var e = el('div', 'empty');
+    e.appendChild(el('div', 'empty__hatch', 'No answer from the server'));
+    e.appendChild(el('p', 'empty__label', 'Nothing dealt'));
+    e.appendChild(el('p', 'empty__h', 'Could not reach the server.'));
+    e.appendChild(el('p', 'empty__p', 'The day is still there, and nothing you have already answered is lost. Try again in a moment.'));
+    var b = el('button', 'btn btn--wide', 'Try again');
+    b.type = 'button';
+    b.addEventListener('click', retry);
+    e.appendChild(b);
+    wrap.appendChild(e);
+  }
+
   // ---------------------------------------------------------- need stays --
 
   // Importing is the price of entry. This is the one screen a player who has
   // signed in but owns nothing in the pool lands on: why, what it takes, and
   // the way there in one tap.
   function showNeedStays() {
-    var wrap = showPage('needstays');
+    var wrap = showPage('needstays', true);
     wrap.replaceChildren();
     var e = el('div', 'empty');
     e.appendChild(el('div', 'empty__hatch', 'No stays of yours yet'));
@@ -6528,7 +6949,11 @@ window.STAYS = [];
   var EMPTY_SQ = '⬜';
   // Bands in miles, so the bar means the same thing to everyone reading it:
   // colour follows length by construction. Warm is near, cold is far.
-  var BAR_MILES = [50, 150, 400, 1000, 3000];      // 5,4,3,2,1 squares
+  // The band edges, then two more so the far tail is not all one square:
+  // 833 miles used to be the last boundary the grid knew about, which put
+  // a 4,000-mile miss and an 11,000-mile one in the same cell. Aligned to
+  // band() so the squares and the sentence under the score agree.
+  var BAR_MILES = [97, 358, 833, 2500, 6000];      // 5,4,3,2,1 squares
   var BAR_SQ = ['🟩', '🟩', '🟨', '🟧', '🟦'];      // by fill count, 5 down to 1
 
   function proximityBar(miles) {
@@ -6554,15 +6979,16 @@ window.STAYS = [];
     var tot = totalScore(results);
     var lines = ['TripPin #' + (dayIndex + 1) + ' · ' + commas(tot)];
     results.forEach(function (r) {
-      // Two formats are a pin and nothing else, so they have no judgement
-      // half to report and would show a cross every time — which is itself
-      // the tell this is meant to remove. Those grade the mark off the pin.
-      var who;
-      if (r.host && r.kind === 'pin') {
-        who = r.wherePts >= 680 ? '✔' : (r.wherePts >= 250 ? '~' : '✘');
-      } else {
-        who = r.whoCorrect ? '✔' : (r.whoPts ? '~' : '✘');
-      }
+      // ONE RULE FOR BOTH, off the round's total, so the two pools are the
+      // same shape by construction.
+      //
+      // Grading the judgement half separately was the tell. Six of the seven
+      // host formats floor their near-miss credit above zero — gradeChoice
+      // bottoms out around 14 points and personpin's rank credit around 18 —
+      // so a wrong host answer rendered a cross 0% of the time against a
+      // normal round's 100%. A ✘ in a posted grid was proof the round was
+      // not yours, which is exactly what this grid must never say.
+      var who = r.pts >= 680 ? '✔' : (r.pts >= 250 ? '~' : '✘');
       lines.push('📌 ' + proximityBar(r.dist) + ' ' +
                  (typeof r.dist === 'number' ? fmtMiles(r.dist) : '—') + ' ' + who);
     });
@@ -6580,7 +7006,7 @@ window.STAYS = [];
   }
 
   function shareText(withLink) {
-    var st = load('stats', null);
+    var st = record();
     var text = gridText(state.results.filter(Boolean), state.dayIndex, st ? st.streak : 0);
     if (withLink !== false) text += '\n' + shareLink();
     return text;
@@ -6671,9 +7097,12 @@ window.STAYS = [];
       // silently playing as a name they no longer hold.
       return api('/api/me?owner=' + encodeURIComponent(saved.id))
         .then(function (r) {
-          if (r.ok) return done(true);
-          forgetMe();
-          return askWho(done);
+          if (!r.ok) { forgetMe(); return askWho(done); }
+          // This is where a second device gets its streak back.
+          return r.json().catch(function () { return {}; }).then(function (j) {
+            setRecord(j.record);
+            return done(true);
+          });
         })
         .catch(function () { return done(true); });   // offline: trust the cache
     }
@@ -6730,12 +7159,26 @@ window.STAYS = [];
     err.hidden = true;
     inner.appendChild(err);
 
+    var skips = el('div', 'signin__skips');
     var skip = el('button', 'signin__skip', 'Not set up yet');
     skip.type = 'button';
     skip.addEventListener('click', function () {
       sendToSetup(err, 'Takes a few minutes: pick your name, pick an animal, paste your trips.');
     });
-    inner.appendChild(skip);
+    skips.appendChild(skip);
+
+    // Forgetting the home used to be the one screen with no way off it: the
+    // overlay covers the topbar, and the only other button sends you to a page
+    // that asks for the same pair. Nothing here can reset it, so say so.
+    var lost = el('button', 'signin__skip', 'Forgotten your pair?');
+    lost.type = 'button';
+    lost.addEventListener('click', function () {
+      err.hidden = false;
+      err.textContent = 'Nothing here can reset it. Ask whoever runs this to clear your name, '
+        + 'then pick a new animal and home on the setup page.';
+    });
+    skips.appendChild(lost);
+    inner.appendChild(skips);
     box.appendChild(inner);
 
     var chosen = null;
@@ -6744,6 +7187,7 @@ window.STAYS = [];
     CREW.forEach(function (p) {
       var b = el('button', 'who');
       b.type = 'button';
+      b.setAttribute('aria-pressed', 'false');
       var top = el('span', 'who__top');
       top.appendChild(avatar(p));
       b.appendChild(top);
@@ -6759,8 +7203,12 @@ window.STAYS = [];
           padWrap.hidden = true;
           return sendToSetup(err, 'You have not set up yet.');
         }
-        $$('.who', list).forEach(function (x) { x.classList.remove('is-on'); });
+        $$('.who', list).forEach(function (x) {
+          x.classList.remove('is-on');
+          x.setAttribute('aria-pressed', 'false');
+        });
         b.classList.add('is-on');
+        b.setAttribute('aria-pressed', 'true');
         padWrap.hidden = false;
         padWrap.replaceChildren();
         padWrap.appendChild(el('p', 'label signin__ask', 'Sign in as ' + p.name));
@@ -6769,27 +7217,45 @@ window.STAYS = [];
         pad = window.EmojiCode.create(host, {
           onComplete: function (code) { attempt(chosen, code); },
         });
+        // The animal is public by design — it is this player's mark, printed
+        // beside their score and on their cards. Making them find their own
+        // bear among thirty-six before reaching the half that is actually
+        // secret was ceremony, and every mis-tap costs a throttled attempt.
+        if (p.animal) pad.set(p.animal);
       });
       list.appendChild(b);
     });
 
     function attempt(id, code) {
-      err.hidden = true;
+      // Wrong tries are slowed by the server — up to a minute, silently — so
+      // the pad has to say it is working or it reads as broken.
+      err.hidden = false;
+      err.textContent = 'Checking…';
+      padWrap.style.pointerEvents = 'none';
+      var settle = function () { padWrap.style.pointerEvents = ''; };
       ME = id;
       MEPASS = code;
       api('/api/me?owner=' + encodeURIComponent(id))
         .then(function (r) {
+          settle();
           if (r.ok) {
             rememberMe(id, code);
             box.hidden = true;
             document.body.classList.remove('is-signin');
-            return done(true);
+            return r.json().catch(function () { return {}; }).then(function (j) {
+              setRecord(j.record);
+              return done(true);
+            });
           }
           return r.json().catch(function () { return {}; }).then(function (j) {
             ME = null; MEPASS = null;
-            if (pad) pad.clear();
+            // Put the animal back rather than making them find it again.
+            if (pad) pad.set((byId[id] || {}).animal || '');
             if (r.status === 409) {
               sendToSetup(err, 'Nobody has set up as ' + (byId[id] || {}).name + ' yet.');
+            } else if (r.status === 429) {
+              err.hidden = false;
+              err.textContent = LOCKED_OUT;
             } else {
               err.hidden = false;
               err.textContent = j.error || 'That is not it.';
@@ -6797,6 +7263,7 @@ window.STAYS = [];
           });
         })
         .catch(function () {
+          settle();
           ME = null; MEPASS = null;
           err.hidden = false;
           err.textContent = 'Could not reach the server.';
@@ -6816,7 +7283,13 @@ window.STAYS = [];
     if (isPro()) n.appendChild(el('span', 'whoami__pro', 'Pro'));
     n.title = 'Not you? Tap to switch.';
     n.setAttribute('aria-label', 'Signed in as ' + p.name + '. Tap to switch.');
-    n.onclick = function () { forgetMe(); location.reload(); };
+    n.onclick = function () {
+      // A 44px target in the topbar that wipes who you are. The title explains
+      // it to a mouse; a thumb gets nothing, so ask.
+      if (!window.confirm('Sign out and pick a different name?')) return;
+      forgetMe();
+      location.reload();
+    };
   }
 
   // ---------------------------------------------------------------- gate ---
@@ -6827,6 +7300,10 @@ window.STAYS = [];
   // ?k=<word> lets someone straight in and is remembered.
 
   var wordFromUrl = false;
+
+  // The Worker's lockout is LOCKOUT_S, which is fifteen minutes. "A few
+  // minutes" sent people back to retry after two, which does not reset it.
+  var LOCKED_OUT = 'Too many wrong tries. The door stays shut for fifteen minutes.';
 
   function firstWord() {
     var fromUrl = null;
@@ -6883,7 +7360,7 @@ window.STAYS = [];
           return;
         }
         word = null;
-        err.textContent = status === 'slow' ? 'Too many tries. Wait a few minutes.'
+        err.textContent = status === 'slow' ? LOCKED_OUT
           : status === 'offline' ? 'Could not reach the server. Try again.' : "That's not it.";
         err.hidden = false;
         input.select();
@@ -7136,16 +7613,26 @@ window.STAYS = [];
 
   // ------------------------------------------------------------- modals ---
 
+  var opener = null;
+
   function openModal(id) {
     var m = $('#' + id);
     if (!m) return;
+    opener = document.activeElement;
     m.hidden = false;
     document.body.classList.add('modal-open');
+    // aria-modal alone does not stop Tab walking out into the board behind.
+    $$('body > *').forEach(function (n) { if (n !== m) n.inert = true; });
     var f = m.querySelector('[data-close], button');
     if (f) f.focus({ preventScroll: true });
   }
   function closeModals() {
+    var was = $$('.modal').some(function (m) { return !m.hidden; });
+    $$('body > *').forEach(function (n) { n.inert = false; });
     $$('.modal').forEach(function (m) { m.hidden = true; });
+    // Back to the control that opened it, not to <body>.
+    if (was && opener && opener.isConnected) opener.focus({ preventScroll: true });
+    opener = null;
     document.body.classList.remove('modal-open');
   }
 
@@ -7158,18 +7645,42 @@ window.STAYS = [];
     var list = $('#crewTells');
     if (!list) return;
     list.replaceChildren();
+
+    // Offline there is no /api/crew to hand these over, and the deck is in
+    // the page anyway. Without it the screen that exists to teach the WHO
+    // question reads '0/— · not on any card yet' for everybody.
+    if (!online()) {
+      var on = {};
+      STAYS.forEach(function (st) {
+        (st.crew && st.crew.length ? st.crew : [st.booker]).forEach(function (id) {
+          on[id] = (on[id] || 0) + 1;
+        });
+      });
+      var free = everywhere();
+      CREW.forEach(function (p) {
+        p.onCards = on[p.id] || 0;
+        p.everywhere = free.indexOf(p.id) !== -1;
+      });
+      DECK = STAYS.length;
+    }
+
     CREW.forEach(function (p) {
       var li = el('li', 'tell');
       var head = el('div', 'tell__head');
       head.appendChild(avatar(p));
       head.appendChild(el('span', 'tell__name', p.name));
-      var count = el('span', 'tell__count', String(p.stays || 0));
+      // How many cards they are the ANSWER on, which is the number this screen
+      // exists to teach. Counting only what they filed printed '0/41 · nothing
+      // sent in yet' beside a man who is right on two cards in five.
+      var on = p.onCards != null ? p.onCards : (p.stays || 0);
+      var count = el('span', 'tell__count', String(on));
       count.appendChild(el('span', null, '/' + (DECK || '—')));
       head.appendChild(count);
       li.appendChild(head);
       var written = p.tell && !/^TODO/i.test(p.tell);
       if (written) li.appendChild(el('p', 'tell__text', '“' + p.tell + '”'));
-      else li.appendChild(el('p', 'tell__text tell__text--counted', p.stays ? p.stays + ' in the deck · nothing written yet' : 'Nothing sent in yet'));
+      else if (p.everywhere) li.appendChild(el('p', 'tell__text tell__text--counted', 'On every card · naming them scores nothing'));
+      else li.appendChild(el('p', 'tell__text tell__text--counted', on ? on + ' cards in the deck · nothing written yet' : 'Not on any card yet'));
       list.appendChild(li);
     });
     paintProLink();
@@ -7177,7 +7688,7 @@ window.STAYS = [];
 
   function buildStats() {
     var body = $('#statsBody');
-    var st = load('stats', { played: 0, streak: 0, max: 0, best: 0, totals: [] });
+    var st = record() || { played: 0, streak: 0, max: 0, best: 0, totals: [] };
     body.replaceChildren();
     var since = $('#statsSince');
     if (since) since.textContent = 'Since No. 1';
@@ -7253,10 +7764,15 @@ window.STAYS = [];
       return renderRound();
     }
 
+    $('#hint').textContent = 'Dealing today’s three…';
+
     // Walk forward over any rounds already answered so a reload lands on the
     // first unanswered one with the earlier results intact.
     (function step(n) {
-      if (n >= CFG.ROUNDS) { finishDay(); return showSummary(); }
+      // state.rounds, not CFG.ROUNDS: the Worker deals min(ROUNDS, deck), and
+      // asking for a round it never dealt 404s. That reached the failure
+      // handler, so a two-stay deck reported the server as down.
+      if (n >= (state.rounds || CFG.ROUNDS)) { finishDay(); return showSummary(); }
       loadRound(n, function (j) {
         state.rounds = j.rounds || CFG.ROUNDS;
         if (j.done) {
@@ -7267,14 +7783,12 @@ window.STAYS = [];
         state.card = j.card;
         state.ask = j.ask;
         renderRound();
-      }, function () {
-        $('#hint').textContent = 'Could not reach the server. Reload to try again.';
-      });
+      }, function () { serverDown(startDaily); });
     })(0);
   }
 
   function emptyState() {
-    var wrap = showPage('needstays');
+    var wrap = showPage('needstays', true);
     wrap.replaceChildren();
     var e = el('div', 'empty');
     e.appendChild(el('div', 'empty__hatch', 'No photo to show you'));
@@ -7300,6 +7814,14 @@ window.STAYS = [];
 
     $('#lockin').addEventListener('click', lockIn);
     $('#cardfold').addEventListener('click', unfoldCard);
+
+    // The href is real so a middle-click opens the game in a new tab, but a
+    // plain click has no business reloading a page we are already on.
+    $('#brandHome').addEventListener('click', function (e) {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+      e.preventDefault();
+      goHome();
+    });
 
     $$('[data-open]').forEach(function (b) {
       b.addEventListener('click', function () {
@@ -7334,12 +7856,15 @@ window.STAYS = [];
     }
 
     function settle(status) {
+      // index.html ships with is-gated on. Whichever screen this turns out to
+      // be, it is decided now, so the board can come back.
+      document.body.classList.remove('is-gated');
       var verified = status === 'ok' || status === 'empty';
       var haveData = online() ? CREW.length > 0 : (STAYS.length > 0 && CREW.length > 0);
       if (!verified && !(status === 'offline' && haveData)) {
         buildHelp();
         return showGate(enter, status === 'slow'
-          ? 'Too many tries. Wait a few minutes.'
+          ? LOCKED_OUT
           : status === 'offline' ? 'Could not reach the server. Try again.' : '');
       }
       if (verified && word) save('key', word);
@@ -7348,6 +7873,16 @@ window.STAYS = [];
     }
 
     word = firstWord();
+
+    // No word at all is not a wrong guess, and must not be sent as one. The
+    // Worker counts every 401 against the address it came from and shuts it
+    // out for fifteen minutes after ten, so ten bare page loads used to lock
+    // somebody out before they had typed a character.
+    if (!word) {
+      buildHelp();
+      return showGate(enter, '');
+    }
+
     loadPool().then(function (status) {
       // A stale ?k= in an old bookmark should not shut out somebody who
       // already has the current word — and should not spend a try either.
