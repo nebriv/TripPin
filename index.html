@@ -91,6 +91,7 @@
 
 <div class="actionbar">
   <p class="hint" id="hint"></p>
+  <p class="proguess" id="proguess" hidden></p>
   <button class="btn" id="lockin" disabled>Lock it in</button>
 </div>
 
@@ -113,6 +114,7 @@
     <p class="modal__h3">Know the crew</p>
     <ul class="tells" id="crewTells"></ul>
     <p class="fineprint">Everyone gets the same three. It resets at midnight, your time. When it deals you a place you slept in, it asks something else.</p>
+    <button class="prolink" id="prolink" type="button" hidden></button>
     <button class="btn btn--wide" data-close>Back to it</button>
   </div>
 </div>
@@ -124,6 +126,15 @@
     <h2 class="modal__h2" id="statsTitle">Your record</h2>
     <div id="statsBody"></div>
     <button class="btn btn--ghost btn--wide" data-close>Close</button>
+  </div>
+</div>
+
+<!-- The joke tier. Nothing in here takes a payment, asks for a card, or
+     touches a score; see the pro section of game.js. -->
+<div class="modal" id="modal-pro" hidden role="dialog" aria-modal="true" aria-labelledby="proTitle">
+  <div class="modal__box modal__box--pro">
+    <button class="modal__x" data-close aria-label="Close">&times;</button>
+    <div id="proBody"></div>
   </div>
 </div>
 

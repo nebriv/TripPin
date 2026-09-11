@@ -281,6 +281,32 @@ users, five minutes to set up, real per-person email auth with revocation:
 `src/game.js` — `CFG.ROUNDS` changes how many stays a day, and the help screen
 figures follow it automatically.
 
+## TripPin Pro
+
+A paid tier that is not paid, is not a tier, and does not move a score by a
+point. It is a joke, and nothing in it talks to a server: no payment, no card
+field, no plan on anybody else's screen. The whole subscription is one
+`localStorage` line under the player who is signed in.
+
+| | |
+|---|---|
+| **Unlimited Guesses™** | A counter in the action bar for moving your pin, which was always free. |
+| **Instant Win™** | A button on the reveal that stamps WON and changes nothing. |
+| **Share Studio™** | The share grid becomes editable and Copy takes what you typed. |
+| **The badge** | PRO, in gold, beside your name. Local to your browser. |
+
+It is kept quiet on purpose, because the game has to survive being played every
+morning for two years: the pitch pops **once ever**, after a finished day, and
+after that a dismissible strip appears on the summary every third puzzle. The
+permanent way in is a row at the foot of the help modal. Nothing ever sits on
+the puzzle.
+
+All of it lives in one marked section of `src/game.js` and one of
+`src/style.css`, and gold is its own token pair so the upsell voice cannot leak
+onto the board. To rip it out, delete those two sections, the `#modal-pro`,
+`#prolink` and `#proguess` nodes in `index.html`, and the dozen call sites they
+are named in.
+
 ## What is recorded
 
 Every guess rewrites one KV document, `stats:v1`. It holds, per player per day,

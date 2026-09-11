@@ -45,6 +45,10 @@
   --thread:     #b02a1f;
   --on-thread:  #fffaf8;
 
+  /* -- pro (the joke tier, and the only place gold is allowed) ----------- */
+  --pro:        #8a6512;
+  --on-pro:     #fffdf6;
+
   /* -- semantic distance bands (fills, never text on --board) ------------ */
   --band-0:     #1f6b4f;
   --band-1:     #7a6210;
@@ -138,6 +142,9 @@
     --thread:     #e8695c;
     --on-thread:  #1a0f0d;
 
+    --pro:        #d9b552;
+    --on-pro:     #17120a;
+
     --band-0:     #4f9f7c;
     --band-1:     #c6a23a;
     --band-2:     #cf7b45;
@@ -174,6 +181,7 @@
   --ink:#efe9dd; --muted:#a8a294; --faint:#969082;
   --line:#38342d; --hair:#2c2925;
   --thread:#e8695c; --on-thread:#1a0f0d;
+  --pro:#d9b552; --on-pro:#17120a;
   --band-0:#4f9f7c; --band-1:#c6a23a; --band-2:#cf7b45; --band-3:#7fa0bd;
   --on-band:#0d0f0e;
   --sea:#0f171a; --land:#2e2b25; --coast:#5c5545; --admin:#4a4438;
@@ -1662,6 +1670,249 @@ body.is-gated > *:not(.gate) { display: none !important; }
 }
 .consent input:checked { background: var(--thread); }
 
+/* ------------------------------------------------------------------ pro -- */
+
+/* TripPin Pro. A paid tier that takes no payment, moves no score, and exists
+   because five people think it is funny. Every perk below is either something
+   the free game has always done - moving your pin, editing text before you
+   paste it - or a sticker.
+
+   The voice in here is the one the rest of the product refuses on purpose:
+   upsold, trademarked, badge-driven. It is fenced behind this prefix and the
+   .is-pro body class so none of it can leak onto the board, and gold is a
+   token of its own so nothing else can reach for it by accident. */
+
+.whoami__pro {
+  flex: none;
+  padding: 3px 4px;
+  background: var(--pro);
+  color: var(--on-pro);
+  font: 700 9px/1 var(--mono);
+  letter-spacing: .1em;
+}
+body.is-pro .whoami { max-width: 190px; border-color: var(--pro); }
+
+/* A counter for a thing every player could always do. Action bar only, and
+   only once a pin has actually moved. */
+.proguess {
+  flex: none;
+  margin: 0;
+  font: 700 var(--t-label)/1.3 var(--mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--pro);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Instant Win, under a reveal. Dashed until it is claimed. Nothing in here is
+   a .btn, so the reveal's focus-the-first-button still lands on Next. */
+.prowin {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border: 1px dashed var(--pro);
+}
+.prowin.is-won { border-style: solid; }
+.prowin__k {
+  font: 700 var(--t-label)/1 var(--mono);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--pro);
+}
+.prowin__go {
+  min-height: 30px;
+  padding: 0 12px;
+  border: 1.5px solid var(--pro);
+  background: transparent;
+  color: var(--pro);
+  font: 700 var(--t-label)/1 var(--mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.prowin__go:hover { background: var(--pro); color: var(--on-pro); }
+.prowin__stamp {
+  padding: 3px 9px;
+  border: 2px solid var(--pro);
+  color: var(--pro);
+  font: 700 15px/1 var(--display);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  transform: rotate(-3deg);
+}
+.prowin__n { flex: 1 1 100%; margin: 0; font: 400 10.5px/1.55 var(--mono); color: var(--faint); }
+
+/* Share Studio: the same grid, except you can type in it. */
+.studio { display: flex; align-items: baseline; gap: 9px; margin: 16px 0 0; }
+.studio__k {
+  font: 700 var(--t-label)/1 var(--mono);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--pro);
+}
+.studio__n { margin-left: auto; font: 400 10.5px/1 var(--mono); color: var(--faint); }
+.sum__grid.is-studio { margin-top: 7px; border-color: var(--pro); background: var(--paper); }
+.sum__grid.is-studio:focus { outline: 2px solid var(--pro); outline-offset: -2px; }
+
+/* The strip. Summary only, every third day, and it takes a dismiss. */
+.probanner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 12px 0 0;
+  padding: 9px 11px;
+  border: 1px solid var(--pro);
+  background: var(--sunk);
+}
+.probanner__k {
+  flex: none;
+  padding: 3px 5px;
+  background: var(--pro);
+  color: var(--on-pro);
+  font: 700 var(--t-label)/1 var(--mono);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.probanner__t { flex: 1 1 150px; min-width: 0; font: 400 var(--t-data)/1.45 var(--mono); color: var(--muted); }
+.probanner__go {
+  flex: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: 700 var(--t-label)/1 var(--mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.probanner__x {
+  flex: none;
+  width: 22px; height: 22px;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--faint);
+  font: 400 13px/1 var(--mono);
+  cursor: pointer;
+}
+.probanner__x:hover { border-color: var(--ink); color: var(--ink); }
+
+/* The permanent way back in, parked at the foot of the help modal. */
+.prolink {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 3px 10px;
+  width: 100%;
+  margin: 0 0 10px;
+  padding: 11px 12px;
+  border: 1px solid var(--pro);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+.prolink:hover { background: var(--sunk); }
+.prolink__k {
+  font: 700 var(--t-label)/1 var(--mono);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--pro);
+}
+.prolink__go {
+  grid-row: 1; grid-column: 2;
+  font: 700 var(--t-label)/1 var(--mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.prolink__v { grid-column: 1 / -1; font: 400 12px/1.45 var(--display); color: var(--muted); }
+
+/* The pitch itself. Every <p> in here is scoped to the box: .modal p is more
+   specific than a lone class and would otherwise win every margin. */
+.modal__box--pro { border-top: 3px solid var(--pro); }
+.modal__box--pro .pro__kicker {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 7px;
+  font: 700 var(--t-label)/1 var(--mono);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--pro);
+}
+.modal__box--pro .pro__kicker::after { content: ''; flex: 1; height: 1px; background: var(--pro); opacity: .35; }
+.pro__h { margin: 0 0 5px; font: 700 25px/1.12 var(--display); letter-spacing: -.03em; color: var(--ink); }
+.modal__box--pro .pro__sub { margin: 0 0 15px; font: 400 13px/1.55 var(--display); color: var(--muted); }
+
+.pro__price {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.pro__was { font: 400 15px/1 var(--mono); color: var(--faint); text-decoration: line-through; }
+.pro__now { font: 700 33px/1 var(--display); letter-spacing: -.04em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.pro__per { font: 400 var(--t-label)/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.pro__tag {
+  margin-left: auto;
+  align-self: center;
+  padding: 4px 6px;
+  background: var(--pro);
+  color: var(--on-pro);
+  font: 700 var(--t-label)/1 var(--mono);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.modal__box--pro .pro__note {
+  margin: 9px 0 2px;
+  font: 400 10.5px/1.6 var(--mono);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.pro__feats { margin: 4px 0 0; padding: 0; list-style: none; }
+.profeat {
+  display: grid;
+  grid-template-columns: 15px 1fr;
+  gap: 10px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--hair);
+}
+.profeat::before { content: '+'; font: 700 13px/1.35 var(--mono); color: var(--pro); }
+.profeat.is-on::before { content: '\2713'; }
+.profeat__k { display: block; font: 600 var(--t-row)/1.3 var(--display); color: var(--ink); }
+.profeat__v { display: block; margin-top: 2px; font: 400 12.5px/1.5 var(--display); color: var(--muted); }
+.profeat__n {
+  display: block;
+  margin-top: 4px;
+  font: 400 var(--t-label)/1.5 var(--mono);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.pro__meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin: 15px 0 0;
+  padding-top: 13px;
+  border-top: 1px solid var(--hair);
+  text-align: center;
+}
+.pro__cta { margin-top: 16px; background: var(--pro); color: var(--on-pro); }
+.modal__box--pro .pro__fine { margin: 13px 0 0; font: 400 10.5px/1.7 var(--mono); color: var(--faint); }
+.modal__box--pro .pro__fine b { color: var(--muted); font-weight: 700; }
+
 /* ------------------------------------------------------------- desktop -- */
 
 @media (min-width: 900px) {
@@ -1751,6 +2002,10 @@ body.is-gated > *:not(.gate) { display: none !important; }
   .col--reveal { padding: 16px; }
   .reveal__dist { font-size: 29px; }
   .reveal__pts { font-size: 24px; }
+
+  body.is-pro .whoami { max-width: 84px; padding: 0 7px; gap: 5px; }
+  .whoami > span.whoami__pro { display: inline; }
+  .proguess { display: none; }
 
   .summary { max-width: none; }
   .modal { padding: 12px; }
@@ -2016,6 +2271,7 @@ body.is-gated > *:not(.gate) { display: none !important; }
 
 <div class="actionbar">
   <p class="hint" id="hint"></p>
+  <p class="proguess" id="proguess" hidden></p>
   <button class="btn" id="lockin" disabled>Lock it in</button>
 </div>
 
@@ -2038,6 +2294,7 @@ body.is-gated > *:not(.gate) { display: none !important; }
     <p class="modal__h3">Know the crew</p>
     <ul class="tells" id="crewTells"></ul>
     <p class="fineprint">Everyone gets the same three. It resets at midnight, your time. When it deals you a place you slept in, it asks something else.</p>
+    <button class="prolink" id="prolink" type="button" hidden></button>
     <button class="btn btn--wide" data-close>Back to it</button>
   </div>
 </div>
@@ -2049,6 +2306,15 @@ body.is-gated > *:not(.gate) { display: none !important; }
     <h2 class="modal__h2" id="statsTitle">Your record</h2>
     <div id="statsBody"></div>
     <button class="btn btn--ghost btn--wide" data-close>Close</button>
+  </div>
+</div>
+
+<!-- The joke tier. Nothing in here takes a payment, asks for a card, or
+     touches a score; see the pro section of game.js. -->
+<div class="modal" id="modal-pro" hidden role="dialog" aria-modal="true" aria-labelledby="proTitle">
+  <div class="modal__box modal__box--pro">
+    <button class="modal__x" data-close aria-label="Close">&times;</button>
+    <div id="proBody"></div>
   </div>
 </div>
 
@@ -4583,7 +4849,8 @@ window.STAYS = [];
   // Anything that belongs to a player rather than to the device is keyed by
   // who is signed in: five friends share laptops, and a streak is not a
   // property of a browser.
-  var PER_PLAYER = { stats: 1, calls: 1, lines: 1, noticed: 1, seen: 1 };
+  var PER_PLAYER = { stats: 1, calls: 1, lines: 1, noticed: 1, seen: 1,
+                     pro: 1, pitch: 1, probanner: 1 };
   function storeKey(key) {
     return CFG.KEY + '.' + (PER_PLAYER[key] && ME ? ME + '.' : '') + key;
   }
@@ -4702,6 +4969,7 @@ window.STAYS = [];
     pickWho: [],
     pickAt: null,
     pickKey: null,
+    guesses: 0,            // pin drops this round. Pro calls them guesses.
     host: null,
     seen: [],
     card: null,
@@ -5164,6 +5432,9 @@ window.STAYS = [];
     if (online() && stay.id && !stay.story) box.appendChild(storyAsk(stay, 'host'));
     if (online() && stay.id) box.appendChild(callAsk(stay));
 
+    var won = proWin();
+    if (won) box.appendChild(won);
+
     box.appendChild(nextButton());
     $('#pips').replaceChildren(renderPips());
     box.querySelector('.btn').focus({ preventScroll: true });
@@ -5207,6 +5478,7 @@ window.STAYS = [];
   function renderRound() {
     var stay = currentStay();
     if (!stay) return showSummary();
+    state.guesses = 0;
 
     var spec = currentAsk();
     if (spec) return renderHost(stay, spec);
@@ -5275,6 +5547,7 @@ window.STAYS = [];
   function updateAction() {
     var btn = $('#lockin');
     var hint = $('#hint');
+    paintGuesses();
     var named = function () {
       return state.pickWho.map(function (id) { return byId[id] ? byId[id].name : id; });
     };
@@ -5506,6 +5779,9 @@ window.STAYS = [];
       ledger.appendChild(ledgerRow(f.k, f.v));
     });
     box.appendChild(ledger);
+
+    var won = proWin();
+    if (won) box.appendChild(won);
 
     box.appendChild(nextButton());
     $('#pips').replaceChildren(renderPips());
@@ -5744,7 +6020,22 @@ window.STAYS = [];
     });
     wrap.appendChild(list);
 
+    if (isPro()) {
+      var studio = el('div', 'studio');
+      studio.appendChild(el('span', 'studio__k', 'Share Studio™'));
+      studio.appendChild(el('span', 'studio__n', 'Copy takes whatever you type'));
+      wrap.appendChild(studio);
+    }
     var grid = el('pre', 'sum__grid', shareText(false));
+    grid.id = 'sumGrid';
+    if (isPro()) {
+      grid.classList.add('is-studio');
+      grid.contentEditable = 'true';
+      grid.spellcheck = false;
+      grid.setAttribute('role', 'textbox');
+      grid.setAttribute('aria-multiline', 'true');
+      grid.setAttribute('aria-label', 'Your result. Editable.');
+    }
     wrap.appendChild(grid);
 
     var acts = el('div', 'sum__acts');
@@ -5759,6 +6050,9 @@ window.STAYS = [];
       acts.appendChild(day);
     }
     wrap.appendChild(acts);
+
+    var strip = proBanner();
+    if (strip) wrap.appendChild(strip);
 
     if (online()) {
       var played = el('p', 'sum__played');
@@ -5801,6 +6095,7 @@ window.STAYS = [];
     }
 
     if (online()) loadNotices();
+    maybePitch();
   }
 
   function describePlayed(n, total, waiting) {
@@ -6292,7 +6587,7 @@ window.STAYS = [];
   }
 
   function doShare(btn) {
-    var text = shareText(true);
+    var text = outgoingText();
     var done = function () {
       var old = btn.textContent;
       btn.textContent = 'Copied';
@@ -6518,6 +6813,7 @@ window.STAYS = [];
     if (!p) return;
     n.appendChild(avatar(p, 'sm'));
     n.appendChild(el('span', null, p.name));
+    if (isPro()) n.appendChild(el('span', 'whoami__pro', 'Pro'));
     n.title = 'Not you? Tap to switch.';
     n.setAttribute('aria-label', 'Signed in as ' + p.name + '. Tap to switch.');
     n.onclick = function () { forgetMe(); location.reload(); };
@@ -6602,6 +6898,242 @@ window.STAYS = [];
     return base;
   }
 
+  // ----------------------------------------------------------------- pro --
+  //
+  // TripPin Pro: a paid tier that is not paid, is not a tier, and does not
+  // move a score by a single point. It is a bit between five people.
+  //
+  // Every perk is real and every perk is worthless, which is the whole joke.
+  // Two of them describe what the free game has always done — you could
+  // always move your pin, and you could always edit the text after pasting
+  // it. One awards a feeling. One is a sticker. Nothing in here goes near
+  // /api/guess, the grid's anti-spoiler rules, or anybody else's screen, and
+  // the subscription itself is one line of this device's storage.
+  //
+  // It is also deliberately cheap to be near, because the game has to stay
+  // playable every morning for two years: one pitch, once, after a finished
+  // day, then a strip on every third summary, dismissible. The way back in is
+  // a row at the foot of the help modal. Nothing ever sits on the puzzle.
+
+  var PRO_PERKS = [
+    { k: 'Unlimited Guesses™',
+      v: 'Move your pin as many times as you like before locking it in.',
+      n: 'Free users may also do this.' },
+    { k: 'Instant Win™',
+      v: 'Declare victory on any round, whatever the pin actually did.',
+      n: 'Does not touch your score.' },
+    { k: 'Share Studio™',
+      v: 'Rewrite your result before you copy it.',
+      n: 'You could always do this.' },
+    { k: 'The badge',
+      v: 'PRO, beside your name, in gold.',
+      n: 'Nobody else can see it.' },
+  ];
+
+  var PITCHES = [
+    'Pro players move their pin as many times as they like.',
+    'Instant Win™ settles the argument about whether that counted.',
+    'Your result, but worded better. That is Share Studio™.',
+    'Four guesses is a free-plan number.',
+    'Pro is $0.00 a month and it always will be.',
+  ];
+
+  var WON_NOTES = [
+    'Victory recorded on this device. Nobody has been told.',
+    'You have won this round. The scoreboard is unmoved.',
+    'Congratulations. Nothing has happened.',
+    'Logged, filed, and never read.',
+  ];
+
+  function proPlan() { return load('pro', null); }
+  function isPro() { return !!proPlan(); }
+
+  function setPro(on) {
+    save('pro', on ? { since: state.dayIndex, at: Date.now() } : null);
+    applyPro();
+    if (!$('#summary').hidden) showSummary();
+  }
+
+  function applyPro() {
+    document.body.classList.toggle('is-pro', isPro());
+    paintWhoami();
+    paintProLink();
+    paintGuesses();
+  }
+
+  // The counter exists only to make a shrug look like a feature, so it stays
+  // out of the way until the pin has actually moved.
+  function paintGuesses() {
+    var n = $('#proguess');
+    if (!n) return;
+    var show = isPro() && state.phase === 'guessing' && state.guesses > 0;
+    n.hidden = !show;
+    if (show) n.textContent = 'Guesses ' + state.guesses + ' / ∞';
+  }
+
+  function paintProLink() {
+    var n = $('#prolink');
+    if (!n) return;
+    var on = isPro();
+    n.hidden = false;
+    n.replaceChildren();
+    n.appendChild(el('span', 'prolink__k', on ? 'TripPin Pro · active' : 'TripPin Pro'));
+    n.appendChild(el('span', 'prolink__go', on ? 'Manage →' : 'See plans →'));
+    n.appendChild(el('span', 'prolink__v', on
+      ? 'Unlimited Guesses™, Instant Win™ and Share Studio™ are on.'
+      : 'Unlimited Guesses™, Instant Win™, Share Studio™. $0.00 a month.'));
+    n.onclick = function () { closeModals(); openPro(); };
+  }
+
+  function openPro() {
+    save('pitch', true);          // they found it themselves; never pitch now
+    proModal();
+    openModal('modal-pro');
+  }
+
+  function proModal() {
+    var box = $('#proBody');
+    if (!box) return;
+    box.replaceChildren();
+    var on = isPro();
+
+    box.appendChild(el('p', 'pro__kicker', on ? 'TripPin Pro · active' : 'TripPin Pro'));
+    var h = el('h2', 'pro__h', on ? 'You are a Pro.' : 'You are on the free plan.');
+    h.id = 'proTitle';
+    box.appendChild(h);
+    box.appendChild(el('p', 'pro__sub', on
+      ? 'Thank you for supporting independent guessing software.'
+      : 'Serious players unlock the whole board. Everybody else keeps guessing the hard way.'));
+
+    if (!on) {
+      var price = el('div', 'pro__price');
+      price.appendChild(el('span', 'pro__was', '$4.99'));
+      price.appendChild(el('span', 'pro__now', '$0.00'));
+      price.appendChild(el('span', 'pro__per', '/ month'));
+      price.appendChild(el('span', 'pro__tag', 'Launch offer'));
+      box.appendChild(price);
+      box.appendChild(el('p', 'pro__note',
+        'Billed never · renews never · cancelled with the same button'));
+    }
+
+    var list = el('ul', 'pro__feats');
+    PRO_PERKS.forEach(function (f) {
+      var li = el('li', 'profeat' + (on ? ' is-on' : ''));
+      var t = el('div');
+      t.appendChild(el('span', 'profeat__k', f.k));
+      t.appendChild(el('span', 'profeat__v', f.v));
+      t.appendChild(el('span', 'profeat__n', f.n));
+      li.appendChild(t);
+      list.appendChild(li);
+    });
+    box.appendChild(list);
+
+    if (on) {
+      var meta = el('div', 'pro__meta');
+      [['Member since', 'No. ' + ((proPlan().since || 0) + 1)], ['Next bill', 'Never']]
+        .forEach(function (pair) {
+          var tile = el('div', 'stat');
+          tile.appendChild(el('span', 'stat__n', pair[1]));
+          tile.appendChild(el('span', 'stat__k', pair[0]));
+          meta.appendChild(tile);
+        });
+      box.appendChild(meta);
+
+      var off = el('button', 'btn btn--ghost btn--wide', 'Cancel subscription');
+      off.type = 'button';
+      off.style.marginTop = '16px';
+      off.addEventListener('click', function () { setPro(false); proModal(); });
+      box.appendChild(off);
+
+      box.appendChild(el('p', 'pro__fine',
+        'Still a joke. Nothing was charged, nothing left this browser, and your score is '
+        + 'exactly what it would have been. Billing questions go to Ben, who is asleep.'));
+      return;
+    }
+
+    var go = el('button', 'btn btn--wide pro__cta', 'Upgrade — $0.00');
+    go.type = 'button';
+    go.addEventListener('click', function () { setPro(true); proModal(); });
+    box.appendChild(go);
+
+    var no = el('button', 'btn btn--ghost btn--wide', 'Stay on the free plan');
+    no.type = 'button';
+    no.style.marginTop = '7px';
+    no.addEventListener('click', closeModals);
+    box.appendChild(no);
+
+    box.appendChild(el('p', 'pro__fine',
+      'TripPin Pro is a joke. Nothing is charged, no card is asked for, and nothing leaves '
+      + 'this browser — the whole subscription is one line in this device’s storage. It '
+      + 'cannot move your score, and nobody else can see it.'));
+  }
+
+  // One pitch, ever, and it waits for a finished day so it never lands on the
+  // puzzle or on top of the first-run help.
+  function maybePitch() {
+    if (state.mode !== 'daily' || isPro() || load('pitch', false)) return;
+    setTimeout(function () {
+      if (document.body.classList.contains('modal-open')) return;
+      if ($('#summary').hidden) return;
+      openPro();
+    }, 1200);
+  }
+
+  // Every third day, and only once the pitch has happened, so the first thing
+  // anybody sees about Pro is the pitch rather than a strip.
+  function proBanner() {
+    if (isPro() || !load('pitch', false)) return null;
+    if (state.dayIndex % 3 !== 0) return null;
+    if (load('probanner', null) === state.dayIndex) return null;
+
+    var bar = el('div', 'probanner');
+    bar.appendChild(el('span', 'probanner__k', 'Pro'));
+    bar.appendChild(el('span', 'probanner__t',
+      PITCHES[hashStr('p' + state.dayIndex) % PITCHES.length]));
+
+    var go = el('button', 'probanner__go', 'See plans');
+    go.type = 'button';
+    go.addEventListener('click', openPro);
+    bar.appendChild(go);
+
+    var x = el('button', 'probanner__x', '×');
+    x.type = 'button';
+    x.setAttribute('aria-label', 'Not today');
+    x.addEventListener('click', function () { save('probanner', state.dayIndex); bar.remove(); });
+    bar.appendChild(x);
+    return bar;
+  }
+
+  // Instant Win. Nothing in here carries .btn, so the reveal's
+  // focus-the-first-button still finds Next.
+  function proWin() {
+    if (!isPro()) return null;
+    var box = el('div', 'prowin');
+    box.appendChild(el('span', 'prowin__k', 'Instant Win™'));
+    var go = el('button', 'prowin__go', 'Declare victory');
+    go.type = 'button';
+    box.appendChild(go);
+    var note = el('p', 'prowin__n',
+      'Included with Pro. Available on every round, including the ones that went badly.');
+    box.appendChild(note);
+    go.addEventListener('click', function () {
+      box.classList.add('is-won');
+      box.replaceChild(el('span', 'prowin__stamp', 'Won'), go);
+      note.textContent = WON_NOTES[hashStr('w' + state.dayIndex + ':' + state.round) % WON_NOTES.length];
+    });
+    return box;
+  }
+
+  // Share Studio: if a Pro has rewritten the grid, that is what goes out. The
+  // link still rides along, because the link was never the part being edited.
+  function outgoingText() {
+    var pre = $('#sumGrid');
+    if (isPro() && pre && pre.isContentEditable) {
+      return pre.textContent.replace(/\s+$/, '') + '\n' + shareLink();
+    }
+    return shareText(true);
+  }
+
   // ------------------------------------------------------------- modals ---
 
   function openModal(id) {
@@ -6640,6 +7172,7 @@ window.STAYS = [];
       else li.appendChild(el('p', 'tell__text tell__text--counted', p.stays ? p.stays + ' in the deck · nothing written yet' : 'Nothing sent in yet'));
       list.appendChild(li);
     });
+    paintProLink();
   }
 
   function buildStats() {
@@ -6758,6 +7291,7 @@ window.STAYS = [];
     map = StayMap.create($('#map'), {
       onPick: function (lat, lng) {
         if (state.phase !== 'guessing') return;
+        state.guesses++;
         state.pickAt = { lat: lat, lng: lng };
         foldCard();
         updateAction();
@@ -6793,8 +7327,8 @@ window.STAYS = [];
 
     function enter() {
       return signIn(function () {
-        paintWhoami();
         buildHelp();
+        applyPro();
         begin();
       });
     }
