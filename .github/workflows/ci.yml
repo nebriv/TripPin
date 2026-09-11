@@ -65,6 +65,9 @@ jobs:
       - name: KV meter counts what it charges for
         run: node tools/sim/kv-meter.mjs
 
+      - name: Two imports at once do not overwrite each other
+        run: node tools/sim/pool-writes.mjs
+
       # src/stays.js is the private deck and is not in this repo. These two
       # steps run only where it is present, so a full checkout gets the extra
       # coverage and the public repo stays green without it.

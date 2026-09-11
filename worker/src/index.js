@@ -657,6 +657,83 @@ const POOL_TTL_MS = 20_000;
 function dropPoolCache() { poolCache = null; }
 
 /* ---------------------------------------------------------------------------
+   ONE WRITER AT A TIME
+
+   The whole deck is one KV value and a submission is a read, a merge and a
+   write. Two at once and the second overwrites the first: the friend who
+   imported a second earlier is simply gone, with nothing anywhere to say so.
+
+   KV has no compare-and-set, so this is two guards rather than one.
+
+   The first is a queue. Within an isolate, pool writes line up instead of
+   interleaving, and the pool is read again when a writer's turn comes round
+   rather than before it waited. Friends importing on the same evening land in
+   the same colo and usually the same isolate, so this is the case that
+   actually happens, and for that case it closes.
+
+   The second is a revision. Every write stamps `rev`, and a writer checks it
+   has not moved between its read and its write. When it has, the merge is run
+   again against what is there now - not patched up, re-run, which is safe
+   because the merge is a pure function of the stored pool and the submission.
+
+   What is left is KV's own convergence window: two isolates inside it both
+   read the same rev and the second still wins. It is a far smaller hole than
+   the one it replaces, and a submission that cannot get a clean turn is told
+   so with a 409 rather than being dropped quietly. Closing it completely
+   needs something that can serialise across isolates - a Durable Object.
+   --------------------------------------------------------------------------- */
+
+let poolWriteQueue = Promise.resolve();
+
+// Errors do not poison the queue: the next writer still gets its turn.
+function queuePoolWrite(fn) {
+  const mine = poolWriteQueue.then(fn, fn);
+  poolWriteQueue = mine.then(() => undefined, () => undefined);
+  return mine;
+}
+
+function revOf(pool) {
+  return (pool && pool.rev) || 0;
+}
+
+// Steps over the isolate cache, so a rev check compares against KV rather
+// than against whatever this isolate happened to see last.
+function readPoolFresh(env) {
+  dropPoolCache();
+  return readPool(env);
+}
+
+// Runs `merge` against the stored pool and writes what it returns. Returns
+// null if every attempt was beaten to the write, so the caller can say so.
+async function writePool(env, merge, attempts = 3) {
+  return queuePoolWrite(async () => {
+    let retried = 0;
+    for (let i = 0; i < attempts; i += 1) {
+      const before = await readPoolFresh(env);
+      const result = merge(before, retried);
+
+      // A write by anybody else since the read above means this merge was
+      // built on a pool that no longer exists.
+      if (revOf(await readPoolFresh(env)) !== revOf(before)) {
+        retried += 1;
+        continue;
+      }
+
+      // Keep one generation back, so a bad publish is recoverable.
+      if (before.stays.length) {
+        await env.TRIPPIN.put(BACKUP_KEY, JSON.stringify(before));
+      }
+      await env.TRIPPIN.put(KEY, JSON.stringify({
+        ...result.next, rev: revOf(before) + 1,
+      }));
+      dropPoolCache();
+      return { ...result, retried };
+    }
+    return null;
+  });
+}
+
+/* ---------------------------------------------------------------------------
    THE DEAL LEDGER
 
    Which three stays a given day shows used to be derived on the fly from a
@@ -1178,60 +1255,72 @@ async function handlePost(request, env) {
     return json({ error: 'None of those had a place and coordinates.' }, 400);
   }
 
-  const pool = await readPool(env);
+  // The merge is a pure function of the stored pool and this submission -
+  // replace this owner's stays, leave everybody else's where they are. That
+  // is what lets writePool run it again against a newer pool rather than
+  // trying to patch up a half-applied one.
+  const merge = (pool, retried) => {
+    // A submission is the complete truth for that person: replace their stays
+    // rather than appending, so re-importing does not double everything up.
+    const kept = pool.stays.filter((s) => s.owner !== owner);
+    // Superlatives and oddities across the whole pool, written onto each stay
+    // now so the game reads and never calculates.
+    const stays = computeFacts(kept.concat(incoming).slice(0, MAX_STAYS));
 
-  // A submission is the complete truth for that person: replace their stays
-  // rather than appending, so re-importing does not double everything up.
-  const kept = pool.stays.filter((s) => s.owner !== owner);
-  // Superlatives and oddities across the whole pool, written onto each stay
-  // now so the game reads and never calculates.
-  const stays = computeFacts(kept.concat(incoming).slice(0, MAX_STAYS));
+    // The roster comes along because /import has to be able to add a player who
+    // wasn't on the list. But it is everyone's roster, and the tells are half the
+    // game — so a submission may add someone new or edit its own entry, and may
+    // not touch anybody else's. Rewriting other people's names and tells is an
+    // admin job: POST /api/crew.
+    const crew = new Map(pool.crew.map((p) => [p.id, p]));
+    for (const raw of Array.isArray(body.crew) ? body.crew : []) {
+      const p = cleanPerson(raw);
+      if (!p) continue;
+      if (crew.has(p.id) && p.id !== owner) continue;
+      crew.set(p.id, { ...(crew.get(p.id) || {}), ...p });
+    }
+    if (!crew.has(owner)) crew.set(owner, cleanPerson({ id: owner, name: owner }));
 
-  // The roster comes along because /import has to be able to add a player who
-  // wasn't on the list. But it is everyone's roster, and the tells are half the
-  // game — so a submission may add someone new or edit its own entry, and may
-  // not touch anybody else's. Rewriting other people's names and tells is an
-  // admin job: POST /api/crew.
-  const crew = new Map(pool.crew.map((p) => [p.id, p]));
-  for (const raw of Array.isArray(body.crew) ? body.crew : []) {
-    const p = cleanPerson(raw);
-    if (!p) continue;
-    if (crew.has(p.id) && p.id !== owner) continue;
-    crew.set(p.id, { ...(crew.get(p.id) || {}), ...p });
-  }
-  if (!crew.has(owner)) crew.set(owner, cleanPerson({ id: owner, name: owner }));
+    // Who rewrote what, kept where the admin page can see it. A passcode is two
+    // tiles by design, so the answer to a stolen one is not a longer passcode —
+    // it is that the damage is scoped to that person's own stays, reversible
+    // from the backup, and never silent.
+    const was = pool.stays.filter((s) => s.owner === owner).length;
+    const log = (pool.writes || []).slice(-19);
+    const entry = {
+      owner, at: new Date().toISOString(), was, now: incoming.length,
+    };
+    // A submission that had to be merged a second time says so, so a
+    // collision is something the admin page reports rather than something
+    // nobody ever finds out about.
+    if (retried) entry.retried = retried;
+    log.push(entry);
 
-  // Who rewrote what, kept where the admin page can see it. A passcode is two
-  // tiles by design, so the answer to a stolen one is not a longer passcode —
-  // it is that the damage is scoped to that person's own stays, reversible
-  // from the backup below, and never silent.
-  const log = (pool.writes || []).slice(-19);
-  log.push({
-    owner,
-    at: new Date().toISOString(),
-    was: pool.stays.filter((s) => s.owner === owner).length,
-    now: incoming.length,
-  });
-
-  const next = {
-    crew: [...crew.values()], stays, writes: log,
-    updated: new Date().toISOString(),
+    return {
+      next: {
+        crew: [...crew.values()], stays, writes: log,
+        updated: new Date().toISOString(),
+      },
+      replaced: was,
+      total: stays.length,
+    };
   };
 
-  // Keep one generation back, so a bad publish is recoverable.
-  if (pool.stays.length) {
-    await env.TRIPPIN.put(BACKUP_KEY, JSON.stringify(pool));
+  const done = await writePool(env, merge);
+  if (!done) {
+    // Beaten to the write every time. Saying so is the whole point: the
+    // friend presses the button again, rather than walking away from an
+    // import that quietly did not happen.
+    return json({ error: 'Somebody else was saving just then. Try again.' }, 409);
   }
-  await env.TRIPPIN.put(KEY, JSON.stringify(next));
-  dropPoolCache();
 
   return json({
     ok: true,
     owner,
     added: incoming.length,
-    replaced: pool.stays.length - kept.length,
-    total: stays.length,
-    crew: next.crew.map((p) => p.id),
+    replaced: done.replaced,
+    total: done.total,
+    crew: done.next.crew.map((p) => p.id),
   });
 }
 
