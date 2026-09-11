@@ -57,17 +57,27 @@ HEADERS = {
 }
 
 
+def auth_headers(args):
+    """What every request carries.
+
+    Built in one place because it was not: the stays POST is assembled
+    inline further down, and when --admin was added here only, that one
+    kept sending no admin word and kept being refused.
+    """
+    return dict(HEADERS, **{
+        "x-trippin-key": args.key,
+        "x-trippin-pass": urllib.parse.quote(args.passcode or "", safe=""),
+        "x-trippin-admin": args.admin or "",
+    })
+
+
 def post(args, path, payload):
     """POST some JSON. Returns (status, body-ish) and never raises for HTTP."""
     req = urllib.request.Request(
         args.url.rstrip("/") + path,
         data=json.dumps(payload).encode("utf-8"),
         method="POST",
-        headers=dict(HEADERS, **{
-            "x-trippin-key": args.key,
-            "x-trippin-pass": urllib.parse.quote(args.passcode or "", safe=""),
-            "x-trippin-admin": args.admin or "",
-        }),
+        headers=auth_headers(args),
     )
     try:
         with urllib.request.urlopen(req, timeout=60) as r:
@@ -148,10 +158,7 @@ def main():
             args.url.rstrip("/") + "/api/stays",
             data=body,
             method="POST",
-            headers=dict(HEADERS, **{
-                "x-trippin-key": args.key,
-                "x-trippin-pass": urllib.parse.quote(args.passcode or "", safe=""),
-            }),
+            headers=auth_headers(args),
         )
         try:
             with urllib.request.urlopen(req, timeout=90) as r:
