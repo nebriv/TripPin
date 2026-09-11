@@ -9,13 +9,22 @@ Three stays a day. For each one:
    amenities are the whole clue — no title, no date.
 2. **Find it on the map.** Drop a pin. The closer you land, the more you score.
 
-Everyone gets the same three until local midnight. Results share as an emoji grid.
-
-> **This repo is the code, not the deck.** `src/stays.js` — the stays, the
-> photos and the crew — is deliberately not checked in. The live game keeps its
-> stays in the Worker's KV namespace and the deployed page reads them from the
-> gated API, so nothing here needs them. Bring your own `src/stays.js` (start
-> from `data/stays-template.csv`) to run it against your own trips.
+Everyone gets the same three until local midnight. Results share as an emoji grid.
+
+> **This repo is the code, not the deck.** `src/stays.js` — the stays, the
+> photos and the crew — is deliberately not checked in. The live game keeps its
+> stays in the Worker's KV namespace and the deployed page reads them from the
+> gated API, so nothing here needs them.
+>
+> To run it, copy the example deck over:
+>
+> ```bash
+> cp src/stays.example.js src/stays.js
+> ```
+>
+> Ten invented stays in ten countries, five players, photos drawn as SVGs so
+> the file is 29 KB rather than four megabytes. Open `index.html` and the
+> game runs. For your own trips, start from `data/stays-template.csv`.
 
 ```
 TripPin #1  2,524/3,000
@@ -360,7 +369,8 @@ itself:
 index.html              the game
 import.html             what friends get — contains no stays
 editor.html             full editor. NOT deployed; embeds the library
-src/stays.js            YOUR DATA — the only file you need to edit
+src/stays.js            YOUR DATA — not in this repo; copy the example
+src/stays.example.js    a fabricated deck, so the game runs out of a clone
 src/game.js             rounds, scoring, streaks, sharing, the gate
 src/map.js              projections, pan/zoom, pin placement
 src/listing.js          the card: photo strip, amenity ranking, redaction
@@ -373,6 +383,7 @@ tools/enrich_stays.py   listing detail and real coordinates
 tools/import_trips.py   an Airbnb trips page -> stays, tagged with an owner
 tools/build_map.py      rebuild worldmap.js from Natural Earth
 tools/build_single.py   inline everything into dist/
+tools/make_example_deck.py  regenerate src/stays.example.js
 worker/                 Cloudflare Worker: serves dist/, pools stays in KV
 data/name-candidates.md how this ended up called TripPin
 ```

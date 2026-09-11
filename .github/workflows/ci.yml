@@ -68,24 +68,23 @@ jobs:
       - name: Two imports at once do not overwrite each other
         run: node tools/sim/pool-writes.mjs
 
-      # src/stays.js is the private deck and is not in this repo. These two
-      # steps run only where it is present, so a full checkout gets the extra
-      # coverage and the public repo stays green without it.
-      - name: Fact generator runs over the real deck
+      # src/stays.js is the private deck and is not in this repo, so the
+      # example deck stands in and the steps below run either way. A full
+      # checkout keeps its own deck and gets the coverage against real data.
+      - name: Fall back to the example deck
         run: |
           if [ -f src/stays.js ]; then
-            node tools/sim/facts-check.mjs
+            echo "Using the deck already in this checkout."
           else
-            echo "src/stays.js is not in this repo - skipping."
+            cp src/stays.example.js src/stays.js
+            echo "Using src/stays.example.js."
           fi
 
+      - name: Fact generator runs over the deck
+        run: node tools/sim/facts-check.mjs
+
       - name: Build the single-file site
-        run: |
-          if [ -f src/stays.js ]; then
-            python tools/build_single.py
-          else
-            echo "src/stays.js is not in this repo - dist/ is checked in."
-          fi
+        run: python tools/build_single.py
 
       # The words must not be in the repo at all. Set ENTRY_KEY and
       # ADMIN_KEY as repository secrets to arm this; without them the step is
@@ -158,6 +157,9 @@ jobs:
       # is deployed as committed. Rebuild it locally and commit it when you
       # change anything under src/. A checkout that does have src/stays.js
       # rebuilds here instead.
+      #
+      # The example deck is deliberately NOT used here. It is fiction with
+      # its own shareUrl, and building from it would deploy that.
       - name: Rebuild dist/ when the deck is present
         run: |
           if [ -f src/stays.js ]; then
