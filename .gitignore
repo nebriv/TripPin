@@ -1,0 +1,14 @@
+node_modules/
+.cache/
+__pycache__/
+
+# The deck and everything derived from it. This repo is code only: the live
+# stays sit in the Worker's KV namespace and the deployed page reads them from
+# the gated API, so nothing here needs them. Keep your local copy on disk --
+# the tools read it from there, not from git.
+src/stays.js
+build/
+design/
+data/ben-trips.json
+data/cache/
+data/geo/

@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Cline x1='9' y1='24' x2='25' y2='10' stroke='%23b02a1f' stroke-width='4.4'/%3E%3Ccircle cx='25' cy='10' r='6.4' fill='%231f1d17'/%3E%3Ccircle cx='9' cy='24' r='5.2' fill='%23fcfbf8' stroke='%231f1d17' stroke-width='4'/%3E%3C/svg%3E">
+<title>TripPin · put your trips in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="src/style.css">
+<link rel="stylesheet" href="src/emoji.css">
+<link rel="stylesheet" href="src/import.css">
+</head>
+<body class="imp">
+
+<!-- This page deliberately contains nobody's stays. It asks the server only
+     for the list of players' names, and for the one signed-in person's own
+     stays, never for anyone else's travel history. -->
+
+<header class="shell-bar">
+  <div class="shell-bar__lockup">
+    <svg class="mark" width="26" height="26" viewBox="0 0 34 34" aria-hidden="true"><line class="mark__thread" x1="8.5" y1="24.5" x2="25.5" y2="9.5" stroke-width="2.6"/><circle class="mark__answer" cx="25.5" cy="9.5" r="5.2"/><circle class="mark__guess" cx="8.5" cy="24.5" r="4.4" stroke-width="2.6"/></svg>
+    <span class="shell-bar__name">TripPin</span>
+    <span class="shell-bar__page">/ import</span>
+  </div>
+  <a class="shell-bar__slot shell-bar__slot--link" id="backLink" href="/"><span>← Back to the game</span></a>
+  <span class="shell-bar__slot shell-bar__slot--box" id="whoSlot" hidden></span>
+</header>
+
+<main class="shell-main">
+<div class="shell-inner">
+
+  <p class="page-head__label">One time only</p>
+  <h1 class="page-head__h1">Put your trips in the deck</h1>
+  <p class="page-head__p">Five steps, about four minutes. Nothing leaves your browser except the list of towns and dates.</p>
+
+  <section class="panel" id="gate">
+    <label class="field" for="gateWord"><span>First, the word</span>
+      <input id="gateWord" class="input input--mono" type="password" autocomplete="current-password" placeholder="the word you were sent"></label>
+    <div class="row" style="margin-top:10px">
+      <button class="btn" id="gateGo" type="button">Continue</button>
+      <span class="msg msg--bad" id="gateErr" hidden>That's not it.</span>
+    </div>
+  </section>
+
+  <div id="flow" hidden>
+  <div class="panels">
+
+    <div class="step">
+      <span class="step__n">1</span>
+      <div class="step__body">
+        <p class="panel__h">Say which one you are</p>
+        <p class="panel__p">This is how the game knows a stay is yours, and it is the only thing it knows about you.</p>
+        <div class="pick" id="pick" role="group" aria-label="Who are you"></div>
+        <div class="row" id="newRow" hidden style="margin-top:10px">
+          <input id="tripNewName" class="input" placeholder="Your first name" spellcheck="false" autocomplete="given-name">
+          <button class="btn btn--ghost" id="newGo" type="button">That's me</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" id="claimStep" hidden>
+      <span class="step__n">2</span>
+      <div class="step__body">
+        <p class="panel__h" id="claimHead">Your animal, and where it lives</p>
+        <p class="panel__p" id="claimNote"></p>
+        <form id="claimBox">
+          <div id="claimPad"></div>
+          <div class="row" style="margin-top:12px">
+            <button class="btn" id="claimGo" type="submit" disabled>Continue</button>
+            <span class="msg msg--bad" id="claimErr" hidden></span>
+          </div>
+        </form>
+        <p class="msg msg--ok" id="claimOk" hidden></p>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step__n">3</span>
+      <div class="step__body">
+        <p class="panel__h">Open your trips, scroll to the bottom</p>
+        <p class="panel__p">Keep going until nothing new loads. Airbnb only builds the trips you have scrolled past, and the next step can only read what is on the page.</p>
+        <a class="btn btn--ghost" href="https://www.airbnb.com/trips" target="_blank" rel="noopener">airbnb.com/trips <span class="mono muted">↗</span></a>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step__n">4</span>
+      <div class="step__body">
+        <p class="panel__h">Press this key, then paste this in</p>
+        <p class="panel__p">A panel opens at the side of the browser. Click the tab called <strong>Console</strong>, paste, press enter. It copies your trips to the clipboard, prints how many it found, and does nothing else.</p>
+        <div class="row keyrow">
+          <span class="keycap">F12</span>
+          <span class="msg">or ⌥⌘I on a Mac</span>
+        </div>
+        <div class="codeblock">
+          <div class="codeblock__bar">
+            <span class="label">Paste in the console</span>
+            <button class="btn btn--ghost btn--sm btn--mono" id="copySnippet" type="button">Copy</button>
+          </div>
+          <pre class="codeblock__pre" id="snippet"></pre>
+        </div>
+        <p class="shell-foot">The first time, Chrome asks you to type <code>allow pasting</code> before it will take a paste. Do that once, then paste again.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step__n">5</span>
+      <div class="step__body">
+        <p class="panel__h">Come back and paste it here</p>
+        <textarea id="tripPaste" class="input input--mono" rows="3" spellcheck="false" placeholder="Paste here"></textarea>
+        <div class="row" style="margin-top:11px">
+          <button class="btn" id="tripRead" type="button">Find my trips</button>
+          <span class="msg" id="tripMsg"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="fold">
+      <button class="fold__btn" id="manualToggle" type="button" aria-expanded="false"><span>Or do it by hand</span><span class="fold__mark">+</span></button>
+      <div class="fold__body" id="manualBody" hidden>
+        <p class="panel__p" style="margin-top:14px">Never used Airbnb, or only a few trips? Type a town, say when, tick who was with you. Same deck, same game.</p>
+        <label class="field"><span>Town</span><input id="manTown" class="input" placeholder="e.g. Whitehall, Montana" autocomplete="off"></label>
+        <ul class="hits" id="manHits"></ul>
+        <p class="msg" id="manPlaced"></p>
+        <div class="row" style="margin-top:12px">
+          <label class="field field--grow"><span>Month</span>
+            <select id="manMonth" class="input">
+              <option value="">—</option>
+              <option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option>
+            </select></label>
+          <label class="field"><span>Year</span><input id="manYear" class="input input--mono" inputmode="numeric" placeholder="2024" style="width:110px"></label>
+          <label class="field"><span>Nights</span><input id="manNights" class="input input--mono" inputmode="numeric" placeholder="2" style="width:90px"></label>
+        </div>
+        <p class="label" style="margin:14px 0 8px">Who was with you</p>
+        <div class="pick pick--mates" id="manMates"></div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn btn--ghost" id="manAdd" type="button" disabled>Add this one</button>
+          <span class="msg" id="manMsg"></span>
+        </div>
+      </div>
+    </div>
+
+    <section class="panel" id="tripResult" hidden>
+      <div class="panel__top">
+        <p class="panel__label" id="tripCount"></p>
+        <div class="row">
+          <button class="btn btn--ghost" id="tripLocate" type="button">Find them on the map</button>
+          <button class="btn" id="tripSend" type="button" disabled>Send them in</button>
+        </div>
+      </div>
+      <div class="progress" id="tripProgress" hidden><i></i></div>
+      <p class="shell-foot" style="margin:6px 0 12px">Drop anything you would rather not share with the ✕. Towns share names, so check anything odd.</p>
+      <ol class="trips" id="tripList"></ol>
+    </section>
+
+    <!-- The burst: dealt out one at a time, big photo, one question, two
+         buttons. Skip is free and obviously free. -->
+    <section class="panel carousel" id="carousel" hidden></section>
+
+    <section class="panel" id="mine" hidden>
+      <div class="panel__top">
+        <p class="panel__label" id="mineCount">Your stays</p>
+        <span class="label label--faint">Only yours. Nobody else's.</span>
+      </div>
+      <p class="panel__p" id="mineNote">Fix a wrong town, or write what you would actually say about the place.</p>
+      <div class="row" id="mineActs" style="margin-bottom:12px" hidden>
+        <button class="btn btn--ghost" id="mineLines" type="button"></button>
+      </div>
+      <ol class="mine" id="mineList"></ol>
+      <div class="row" style="margin-top:14px">
+        <button class="btn" id="mineSave" type="button" disabled>Save changes</button>
+        <span class="msg" id="mineMsg"></span>
+      </div>
+    </section>
+
+  </div>
+  </div>
+
+  <p class="shell-foot">This page holds nobody else's trips. It asks the server for the roster and your own stays, nothing more.</p>
+</div>
+</main>
+
+<script src="src/emoji.js"></script>
+<script src="src/trips.js"></script>
+<script src="src/import.js"></script>
+</body>
+</html>

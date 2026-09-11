@@ -1,0 +1,169 @@
+/* ===========================================================================
+   emoji.css — sign-in and the animal keypad.
+
+   Everything here speaks the tokens in style.css. No colour literal, no
+   scheme query: if a tile needs a different value in dark it needs a token.
+   =========================================================================== */
+
+/* ---------------------------------------------------------------- sign in -- */
+
+.signin {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  padding: 8vh 20px 40px;
+  background: var(--board);
+  overflow-y: auto;
+}
+.signin__box { width: min(400px, 100%); display: grid; gap: 14px; }
+.signin__brand { display: flex; align-items: center; gap: 11px; }
+.signin__name { font: 700 27px/1 var(--display); letter-spacing: var(--ls-tight); color: var(--ink); }
+.signin__sub { margin: 0 0 6px; font: 400 13px/1.6 var(--display); color: var(--muted); }
+.signin__ask { margin: 0 0 10px; color: var(--ink); }
+
+.signin__crew {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+}
+.signin__crew .who {
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  gap: 6px;
+  padding: 6px 2px;
+  text-align: center;
+}
+.signin__crew .who__top { width: auto; }
+.signin__crew .who__top .avatar { margin-left: 0; }
+.signin__crew .who__name { font-size: 10px; }
+.signin__crew .who.is-unset { opacity: .55; border-style: dashed; cursor: pointer; }
+
+/* Stretch, not centre. A centred parent shrinks a grid child to its content,
+   which hands you 32px tiles on a phone — under the floor and too small to
+   drag to. */
+.signin__pad {
+  display: grid;
+  justify-items: stretch;
+  width: 100%;
+  background: var(--paper);
+  padding: 16px;
+  box-shadow: var(--lift);
+}
+
+.signin__err {
+  margin: 0;
+  font: 400 var(--t-data)/1.5 var(--mono);
+  color: var(--thread);
+}
+.signin__err a { display: inline-block; margin-top: 4px; color: var(--ink); font-weight: 700; }
+
+.signin__skip {
+  justify-self: start;
+  min-height: var(--hit);
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: 400 var(--t-label)/1 var(--mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.signin__skip span, .signin__skip { text-decoration: underline; text-underline-offset: 4px; }
+.signin__skip:hover { color: var(--ink); }
+
+/* ----------------------------------------------------------------- keypad -- */
+
+.ecode {
+  display: grid;
+  justify-items: stretch;
+  gap: 10px;
+  width: 100%;
+}
+
+/* The sentence sits ABOVE the pads, so a thumb never covers what it fills. */
+.ecode__say {
+  margin: 0;
+  font: 600 var(--t-body)/1.35 var(--display);
+  color: var(--ink);
+  min-height: 1.35em;
+  text-wrap: balance;
+}
+.ecode__sub {
+  margin: 4px 0 0;
+  font: 400 var(--t-label)/1 var(--mono);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--faint);
+  opacity: .4;
+  transition: opacity var(--swap);
+}
+.ecode__sub.is-live { opacity: 1; }
+
+.ecode__pad { display: grid; gap: 5px; width: 100%; }
+.ecode__pad--animals { grid-template-columns: repeat(6, 1fr); }
+.ecode__pad--homes {
+  grid-template-columns: repeat(6, 1fr);
+  opacity: .35;
+  pointer-events: none;
+  transition: opacity var(--swap);
+}
+.ecode__pad--homes.is-live { opacity: 1; pointer-events: auto; }
+
+.ecode__key {
+  aspect-ratio: 1;
+  min-width: 0;
+  min-height: var(--hit);
+  border: 1px solid var(--line);
+  background: var(--paper);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  /* The drag is a pointer gesture, so the browser must not claim it for
+     scrolling the moment a finger moves. */
+  touch-action: none;
+  transition: border-color var(--swap), background var(--swap);
+}
+.ecode__key:hover { border-color: var(--ink); }
+.ecode__key.is-on { border: 1.5px solid var(--ink); background: var(--sunk); }
+
+/* While something is being dragged, the homes are the only live target. */
+.ecode.is-dragging .ecode__key--home { border-color: var(--ink); }
+.ecode.is-dragging .ecode__key--animal { opacity: .5; }
+
+.ecode__ghost {
+  position: fixed;
+  top: 0; left: 0;
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  font-size: 30px;
+  line-height: 1;
+  pointer-events: none;
+  z-index: 200;
+}
+
+/* Undo is a labelled button beside the pads, never a tile in the grid. */
+.ecode__back {
+  justify-self: start;
+  min-height: var(--hit);
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font: 400 var(--t-label)/1 var(--mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.ecode__back:hover { color: var(--ink); border-color: var(--ink); }
+
+@media (max-width: 420px) {
+  .ecode__key { font-size: 21px; }
+  .signin { padding-top: 5vh; }
+  .signin__pad { padding: 12px; }
+}

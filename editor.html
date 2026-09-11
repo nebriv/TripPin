@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>TripPin — stay editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="src/style.css">
+<link rel="stylesheet" href="src/editor.css">
+</head>
+<body class="editor">
+
+<header class="ed-top">
+  <div class="ed-top__brand">
+    <strong>TripPin</strong>
+    <span>stay editor</span>
+  </div>
+  <div class="ed-top__meta" id="libMeta"></div>
+  <div class="ed-top__acts">
+    <a class="btn btn--ghost btn--sm" href="index.html">Play →</a>
+    <a class="btn btn--ghost btn--sm" href="import.html">Import trips →</a>
+    <button class="btn btn--ghost btn--sm" id="btnImportFile">Load stays.js</button>
+    <button class="btn btn--ghost btn--sm" id="btnPublish" hidden>Publish to the game</button>
+    <button class="btn btn--primary btn--sm" id="btnExport">Export stays.js</button>
+  </div>
+</header>
+
+<!-- ------------------------------------------------------------ URL import -->
+
+<section class="ed-import">
+  <div class="ed-import__row">
+    <label class="ed-import__label" for="urlIn">Import from a listing URL</label>
+    <input type="url" id="urlIn" placeholder="https://www.airbnb.com/rooms/… · a hotel page · a campground listing" spellcheck="false">
+    <button class="btn btn--primary btn--sm" id="btnFetch">Import</button>
+  </div>
+  <p class="ed-import__status" id="helperStatus"></p>
+</section>
+
+<main class="ed-main">
+
+  <!-- ---------------------------------------------------------------- form -->
+  <section class="ed-form" id="form">
+    <h2 class="ed-h">The listing</h2>
+
+    <label class="f f--full">
+      <span>Title <b>*</b></span>
+      <input id="f-title" placeholder="Dreamy A-Frame w/ Cedar Hot Tub 🌲">
+    </label>
+
+    <div class="f-row">
+      <label class="f"><span>Property type</span><input id="f-type" placeholder="Entire cabin" list="typeList"></label>
+      <label class="f f--num"><span>Guests</span><input id="f-guests" type="number" min="1"></label>
+      <label class="f f--num"><span>Bedrooms</span><input id="f-bedrooms" type="number" min="0"></label>
+      <label class="f f--num"><span>Beds</span><input id="f-beds" type="number" min="0"></label>
+      <label class="f f--num"><span>Baths</span><input id="f-baths" type="number" min="0" step="0.5"></label>
+    </div>
+    <datalist id="typeList">
+      <option>Entire cabin</option><option>Entire home</option><option>Entire rental unit</option>
+      <option>Private room</option><option>Tiny home</option><option>Treehouse</option>
+      <option>Camper/RV</option><option>Entire villa</option><option>Entire bungalow</option>
+      <option>Entire guesthouse</option><option>Hotel room</option><option>Campsite</option>
+      <option>Entire loft</option><option>Boat</option><option>Dome</option>
+    </datalist>
+
+    <label class="f f--full">
+      <span>Amenities <em>comma separated, first six show</em></span>
+      <input id="f-amenities" placeholder="Hot tub, Wood stove, Pets allowed, Fire pit, No wifi">
+    </label>
+
+    <div class="f-row">
+      <label class="f f--num"><span>Price / night</span><input id="f-price" type="number" min="0"></label>
+      <label class="f f--num"><span>Rating</span><input id="f-rating" type="number" min="0" max="5" step="0.01"></label>
+      <label class="f f--num"><span>Reviews</span><input id="f-reviews" type="number" min="0"></label>
+    </div>
+
+    <div class="f-row">
+      <label class="f"><span>A review quote</span><input id="f-quote" placeholder="The hot tub is worth the drive. The road up is not for sedans."></label>
+      <label class="f f--sm"><span>By</span><input id="f-quoteBy" placeholder="Dana"></label>
+    </div>
+
+    <h2 class="ed-h">The answer</h2>
+
+    <div class="f-row">
+      <label class="f"><span>Place label <b>*</b> <em>shown on reveal</em></span><input id="f-place" placeholder="Sisters, Oregon"></label>
+      <label class="f f--sm"><span>When</span><input id="f-when" placeholder="March 2023"></label>
+    </div>
+
+    <div class="f f--full">
+      <span>Who booked it <b>*</b></span>
+      <div class="pickrow" id="f-booker"></div>
+    </div>
+
+    <div class="f f--full">
+      <span>Who else was on the trip</span>
+      <div class="pickrow pickrow--multi" id="f-crew"></div>
+    </div>
+
+    <label class="f f--full">
+      <span>The story <em>what you'd actually say out loud about this trip</em></span>
+      <textarea id="f-story" rows="4" placeholder="The hot tub froze. Not the water — the lid…"></textarea>
+    </label>
+
+    <h2 class="ed-h">Photo</h2>
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Add a photo: click to choose a file, or drop or paste an image">
+      <div class="drop__empty" id="dropEmpty">
+        <strong>Drop an image, paste it, or click to choose</strong>
+        <span>Screenshotting the listing photo works fine. Resized to 1200px and embedded.</span>
+      </div>
+      <img class="drop__img" id="dropImg" alt="" hidden>
+      <div class="drop__bar" id="dropBar" hidden>
+        <span id="photoSize"></span>
+        <button type="button" class="btn btn--ghost btn--xs" id="btnPhotoClear">Remove</button>
+      </div>
+    </div>
+    <input type="file" id="fileIn" accept="image/*" hidden>
+
+    <div class="ed-actions">
+      <button class="btn btn--primary" id="btnSave">Save stay</button>
+      <button class="btn btn--ghost" id="btnNew">New / clear</button>
+      <span class="ed-actions__msg" id="saveMsg"></span>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------- rail -->
+  <aside class="ed-rail">
+    <h2 class="ed-h">Where was it <b>*</b></h2>
+    <div class="ed-search">
+      <input id="placeSearch" placeholder="Search a place — Sisters Oregon, Longyearbyen…" spellcheck="false" autocomplete="off">
+      <ul class="ed-search__list" id="searchList" hidden></ul>
+    </div>
+    <div class="mapwrap ed-map"><div id="map" tabindex="0" role="application" aria-label="Map. Click to set the location."></div></div>
+    <p class="ed-coords" id="coords">No location set — click the map</p>
+
+    <h2 class="ed-h">Preview</h2>
+    <div id="preview" class="ed-preview"></div>
+  </aside>
+</main>
+
+<!-- ---------------------------------------------------------------- library -->
+
+<section class="ed-lib">
+  <div class="ed-lib__head">
+    <h2 class="ed-h">Library</h2>
+    <div class="ed-lib__tools">
+      <input id="libFilter" placeholder="Filter…" spellcheck="false">
+      <button class="btn btn--ghost btn--xs" id="btnReseed" title="Discard the library and reload from src/stays.js">Reset from stays.js</button>
+    </div>
+  </div>
+  <ol class="ed-lib__list" id="libList"></ol>
+</section>
+
+<input type="file" id="staysFileIn" accept=".js,.json,text/javascript,application/json" hidden>
+
+<script src="src/worldmap.js"></script>
+<script src="src/map.js"></script>
+<script src="src/listing.js"></script>
+<script src="src/trips.js"></script>
+<script src="src/stays.js"></script>
+<script src="src/editor.js"></script>
+<script src="src/editor-trips.js"></script>
+</body>
+</html>

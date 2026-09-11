@@ -1,0 +1,14 @@
+{
+  "name": "trippin-worker",
+  "private": true,
+  "scripts": {
+    "build": "python ../tools/build_single.py",
+    "dev": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
+    "tail": "wrangler tail"
+  },
+  "devDependencies": {
+    "wrangler": "^4.131.0"
+  },
+  "type": "module"
+}

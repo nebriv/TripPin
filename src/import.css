@@ -1,0 +1,213 @@
+/* ===========================================================================
+   import.css — the friend-facing "put your trips in" page.
+
+   Built from the shell in style.css. Only what this page alone needs lives
+   here: the name tiles, the keycap, the code block, the trip rows, the
+   carousel and the "your stays" list. No colour literal, no scheme query.
+   =========================================================================== */
+
+body.imp { display: block; }
+
+.panel__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.panel__top .panel__label { margin: 0; }
+
+.field--grow { flex: 1; min-width: 160px; }
+
+/* Five name tiles, and one more for a name that is not on the list. */
+.pick { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+.pick .who {
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  gap: 6px;
+  padding: 6px 2px;
+  text-align: center;
+}
+.pick .who__top { width: auto; }
+.pick .who__top .avatar { margin-left: 0; }
+.pick .who__name { font-size: 11px; }
+.pick .who--new { grid-column: 1 / -1; min-height: 46px; }
+.pick--mates .who { min-height: 46px; }
+@media (max-width: 480px) {
+  .pick { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* A physical key, not a code span. */
+.keyrow { margin: 0 0 13px; }
+.keycap {
+  display: grid;
+  place-items: center;
+  min-width: 54px;
+  height: 46px;
+  padding: 0 12px;
+  border: 1.5px solid var(--ink);
+  border-bottom-width: 4px;
+  background: var(--paper);
+  font: 700 13px/1 var(--mono);
+  color: var(--ink);
+}
+
+.codeblock { border: 1px solid var(--line); background: var(--sunk); }
+.codeblock__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--line);
+}
+.codeblock__pre {
+  margin: 0;
+  padding: 12px 11px;
+  font: 400 11.5px/1.7 var(--mono);
+  color: var(--ink);
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-x: auto;
+  user-select: all;
+}
+.shell-foot code { font-family: var(--mono); background: var(--sunk); padding: 1px 4px; user-select: all; }
+
+.progress { height: 4px; background: var(--hair); overflow: hidden; margin: 8px 0 12px; }
+.progress i { display: block; height: 100%; width: 0; background: var(--ink); transition: width var(--swap); }
+
+/* Geocode hits under a town field. */
+.hits { margin: 4px 0 0; padding: 0; list-style: none; display: grid; gap: 2px; }
+.hits li {
+  min-height: var(--hit);
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  border: 1px solid var(--hair);
+  background: var(--paper);
+  font: 400 var(--t-data)/1.4 var(--mono);
+  cursor: pointer;
+}
+.hits li:hover { border-color: var(--ink); }
+
+/* The rows a paste turns into. */
+.trips { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; }
+.trip {
+  display: grid;
+  grid-template-columns: 54px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 0;
+  border-top: 1px solid var(--hair);
+}
+.trip:last-child { border-bottom: 1px solid var(--hair); }
+.trip__thumb {
+  width: 54px; height: 40px;
+  object-fit: cover;
+  border: 1px solid var(--ink);
+  background: var(--sunk);
+  display: grid; place-items: center;
+  font: 400 var(--t-label)/1 var(--mono);
+  color: var(--faint);
+}
+.trip__mid { min-width: 0; }
+.trip__head { display: block; font: 600 var(--t-row)/1.25 var(--display); color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.trip__sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  font: 400 var(--t-label)/1 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.trip__warn { color: var(--thread); }
+.trip--missing .trip__head { color: var(--muted); }
+.trip__drop {
+  width: var(--hit); height: var(--hit);
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font: 400 14px/1 var(--mono);
+  cursor: pointer;
+  padding: 0;
+}
+.trip__drop:hover { color: var(--thread); border-color: var(--thread); }
+
+/* The carousel: one card at a time. */
+.carousel { position: relative; }
+.carousel__photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border: 1px solid var(--ink);
+  background: var(--photo-bg);
+}
+.carousel__photo--empty {
+  border: 1px dashed var(--line);
+  background-color: var(--sunk);
+  background-image: repeating-linear-gradient(135deg, transparent 0 7px, var(--paper) 7px 14px);
+  display: grid; place-items: center;
+  font: 400 var(--t-label)/1 var(--mono);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.carousel__place { margin: 12px 0 2px; font: 600 var(--t-odd)/1.25 var(--display); letter-spacing: -.015em; }
+.carousel__when { margin: 0 0 14px; font: 400 var(--t-data)/1.4 var(--mono); text-transform: uppercase; color: var(--muted); }
+.carousel .ask { margin-top: 0; }
+.carousel__acts { display: flex; gap: 6px; margin-top: 10px; }
+.carousel__acts .btn { flex: 1; }
+.carousel__out {
+  margin: 12px 0 0;
+  text-align: center;
+}
+.carousel__out button {
+  min-height: var(--hit);
+  padding: 0 6px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: 400 var(--t-label)/1 var(--mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+/* Your own stays: thumb, town, when, status, EDIT. */
+.mine { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; }
+.mine__row {
+  display: grid;
+  grid-template-columns: 54px 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 9px 0;
+  border-top: 1px solid var(--hair);
+}
+.mine > li:last-child .mine__row { border-bottom: 1px solid var(--hair); }
+.mine__thumb { width: 54px; height: 40px; object-fit: cover; border: 1px solid var(--ink); background: var(--sunk); }
+.mine__where { min-width: 0; }
+.mine__place { display: block; font: 600 var(--t-row)/1.25 var(--display); color: var(--ink); }
+.mine__meta { display: block; margin-top: 2px; font: 400 var(--t-label)/1.3 var(--mono); text-transform: uppercase; letter-spacing: .04em; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mine__status { font: 400 var(--t-label)/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); white-space: nowrap; }
+.mine__status--check { color: var(--thread); }
+.mine__status--line { color: var(--band-0); }
+.mine__body { padding: 10px 0 14px 66px; display: grid; gap: 12px; }
+.mine__body .field textarea { min-height: 0; }
+li.is-dirty .mine__place::after { content: ' ·'; color: var(--thread); }
+
+@media (max-width: 560px) {
+  .mine__row { grid-template-columns: 54px 1fr auto; }
+  .mine__status { display: none; }
+  .mine__body { padding-left: 0; }
+  .trip { grid-template-columns: 54px 1fr auto; }
+}

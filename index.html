@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>TripPin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Cline x1='9' y1='24' x2='25' y2='10' stroke='%23b02a1f' stroke-width='4.4'/%3E%3Ccircle cx='25' cy='10' r='6.4' fill='%231f1d17'/%3E%3Ccircle cx='9' cy='24' r='5.2' fill='%23fcfbf8' stroke='%231f1d17' stroke-width='4'/%3E%3C/svg%3E">
+<meta name="description" content="A daily guessing game. Three places we stayed. Name who was there, then find it on the map.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="src/style.css">
+<link rel="stylesheet" href="src/emoji.css">
+</head>
+<body>
+
+<!-- The word. Authentication: it keeps the internet out. The animal below
+     is authorisation only — which of five friends you are. Both stay. -->
+<section class="gate" id="gate" hidden>
+  <div class="gate__box">
+    <div class="gate__brand">
+      <svg class="mark" width="30" height="30" viewBox="0 0 34 34" aria-hidden="true"><line class="mark__thread" x1="8.5" y1="24.5" x2="25.5" y2="9.5" stroke-width="2.6"/><circle class="mark__answer" cx="25.5" cy="9.5" r="5.2"/><circle class="mark__guess" cx="8.5" cy="24.5" r="4.4" stroke-width="2.6"/></svg>
+      <h1>TripPin</h1>
+    </div>
+    <p class="gate__blurb">Places we actually stayed. Work out who was there, then find it on the map.</p>
+    <form class="gate__form" id="gateForm">
+      <label for="gateIn">The word</label>
+      <input class="input input--mono" id="gateIn" type="password" autocomplete="current-password" spellcheck="false">
+      <button class="btn btn--wide" type="submit">Come in</button>
+    </form>
+    <p class="gate__err" id="gateErr" role="alert" hidden>That's not it.</p>
+    <p class="gate__foot">Ask whoever sent you.</p>
+  </div>
+</section>
+
+<section class="signin" id="signin" hidden></section>
+
+<!-- Three grid cells, and the side ones are groups. Dropping a fourth child
+     straight into .topbar puts it on an implicit second row, which is exactly
+     what happened when the sign-in chip arrived. -->
+<header class="topbar">
+  <div class="topbar__side">
+    <button class="iconbtn" data-open="help" aria-label="How to play" title="How to play">?</button>
+    <button class="iconbtn" data-open="stats" aria-label="Your record" title="Your record">▟</button>
+  </div>
+  <div class="brand">
+    <svg class="mark" width="26" height="26" viewBox="0 0 34 34" aria-hidden="true"><line class="mark__thread" x1="8.5" y1="24.5" x2="25.5" y2="9.5" stroke-width="2.6"/><circle class="mark__answer" cx="25.5" cy="9.5" r="5.2"/><circle class="mark__guess" cx="8.5" cy="24.5" r="4.4" stroke-width="2.6"/></svg>
+    <h1 class="brand__name">TripPin</h1>
+    <p class="brand__no" id="todayLabel"></p>
+  </div>
+  <div class="topbar__side topbar__side--end">
+    <button class="whoami" id="whoami" hidden type="button"></button>
+    <div id="pips"></div>
+  </div>
+</header>
+
+<main>
+  <section class="board" id="play">
+
+    <div class="col col--card">
+      <div id="listing"></div>
+      <!-- Shown only when the deck deals you somewhere you have actually been.
+           Carries the whole question in that case. -->
+      <div class="hostq" id="host" hidden></div>
+      <!-- Phone only: the card folds to this the moment a name is tapped. -->
+      <button class="cardfold" id="cardfold" type="button" hidden></button>
+      <div class="whoblock">
+        <p class="qlabel qlabel--who" id="whoLabel">Who was there · tick all</p>
+        <div id="whoPicker" class="whopicker" role="group" aria-label="Who was there"></div>
+        <div id="choice" class="choice" role="group" aria-label="Pick one" hidden></div>
+      </div>
+    </div>
+
+    <section class="col col--reveal" id="reveal" hidden aria-live="polite"></section>
+
+    <div class="col col--map">
+      <p class="qlabel">Where was it · drop a pin</p>
+      <div class="mapwrap"><div id="map" tabindex="0" role="application" aria-label="World map. Click to drop a pin. Arrow keys pan, plus and minus zoom, Enter drops a pin at the centre."></div></div>
+      <p class="maphelp">Drag to pan · scroll to zoom · ◍ switches projection</p>
+    </div>
+
+  </section>
+
+  <section class="summary" id="summary" hidden></section>
+  <section class="dayview" id="dayview" hidden></section>
+  <section class="record" id="record" hidden></section>
+  <section id="needstays" hidden></section>
+</main>
+
+<div class="actionbar">
+  <p class="hint" id="hint"></p>
+  <button class="btn" id="lockin" disabled>Lock it in</button>
+</div>
+
+<!-- ------------------------------------------------------------- modals -->
+
+<div class="modal" id="modal-help" hidden role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+  <div class="modal__box">
+    <button class="modal__x" data-close aria-label="Close">×</button>
+    <p class="modal__label">How it works</p>
+    <h2 class="modal__h2" id="helpTitle"><span id="roundCount">Three</span> stays. Two answers each.</h2>
+    <ol class="howto">
+      <li><span><strong>Who was there.</strong> The photo and the amenities are the whole clue. Learn what each of them books and you can read it off the picture. Partial credit for part of the party.</span></li>
+      <li><span><strong>Where it was.</strong> Drop a pin. Closer is more.</span></li>
+    </ol>
+    <div class="scorekey">
+      <div><strong>800</strong><span>a perfect pin</span></div>
+      <div><strong>200</strong><span>the whole party</span></div>
+      <div><strong id="perfectDay">3,000</strong><span>a perfect day</span></div>
+    </div>
+    <p class="modal__h3">Know the crew</p>
+    <ul class="tells" id="crewTells"></ul>
+    <p class="fineprint">Everyone gets the same three. It resets at midnight, your time. When it deals you a place you slept in, it asks something else.</p>
+    <button class="btn btn--wide" data-close>Back to it</button>
+  </div>
+</div>
+
+<div class="modal" id="modal-stats" hidden role="dialog" aria-modal="true" aria-labelledby="statsTitle">
+  <div class="modal__box">
+    <button class="modal__x" data-close aria-label="Close">×</button>
+    <p class="modal__label" id="statsSince">Your record</p>
+    <h2 class="modal__h2" id="statsTitle">Your record</h2>
+    <div id="statsBody"></div>
+    <button class="btn btn--ghost btn--wide" data-close>Close</button>
+  </div>
+</div>
+
+<script src="src/worldmap.js"></script>
+<script src="src/map.js"></script>
+<script src="src/listing.js"></script>
+<script src="src/emoji.js"></script>
+<script src="src/host.js"></script>
+<script src="src/lines.js"></script>
+<script src="src/stays.js"></script>
+<script src="src/game.js"></script>
+</body>
+</html>

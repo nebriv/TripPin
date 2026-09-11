@@ -1,0 +1,47 @@
+/* ===========================================================================
+   admin.css — the ops page.
+
+   Everything generic — bar, panels, tiles, hairtable, fields, buttons, the
+   quarantine — comes from src/style.css's "shell pages" section. What's left
+   here is only what is genuinely specific to this page: the width of a name
+   column in the tells list and the claims list, and letting a wide table
+   scroll sideways instead of the page.
+   =========================================================================== */
+
+.tablewrap { overflow-x: auto; }
+
+.gateRow { margin-top: var(--s3); }
+
+/* The tells: a fixed name column so every input starts at the same x. */
+.tellRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding: var(--s2) 0;
+  border-top: 1px solid var(--hair);
+}
+.tellRow:first-child { border-top: 0; }
+.tellRow__who {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  flex: 0 0 104px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.tellRow .input { flex: 1; }
+
+/* One passcode row: dot, name, status word, an optional reset. */
+.claimRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding: var(--s2) 0;
+  border-top: 1px solid var(--hair);
+}
+.claimRow:first-child { border-top: 0; }
+.claimRow__name {
+  flex: 1;
+  font-weight: 600;
+  color: var(--ink);
+}

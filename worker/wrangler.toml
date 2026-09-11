@@ -1,0 +1,42 @@
+# TripPin on Cloudflare Workers.
+#
+# One-time setup:
+#   npm install -g wrangler          # or use npx wrangler for everything
+#   wrangler login
+#   wrangler kv namespace create TRIPPIN
+#     -> paste the printed id into kv_namespaces below
+#   wrangler secret put ENTRY_KEY    # the same word as SETTINGS.key in stays.js
+#
+# Then, from the project root, every time you change anything:
+#   python tools/build_single.py
+#   cd worker && wrangler deploy
+
+name = "trippin"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+
+# The built site. `python tools/build_single.py` writes it.
+[assets]
+directory = "../dist"
+binding = "ASSETS"
+# Unknown paths must 404, not silently serve the game — otherwise
+# /editor looks like it still exists.
+not_found_handling = "none"
+
+# The pooled stays live here. Create it with:
+#   wrangler kv namespace create TRIPPIN
+[[kv_namespaces]]
+binding = "TRIPPIN"
+id = "2cce228149d74dc384186b7440f4c25d"
+
+# Cloudflare's [[ratelimits]] binding was tried here and did not enforce on this
+# account: 40 calls against a 12-per-minute limit every one of them success:true.
+# Wrong guesses are counted in the KV namespace above instead, which is testable
+# and which `src/index.js` explains. Do not re-add this binding without checking
+# that it actually returns success:false.
+
+# ENTRY_KEY and ADMIN_KEY are secrets, not vars — set them with
+#   wrangler secret put ENTRY_KEY
+#   wrangler secret put ADMIN_KEY
+# so they do not sit in this file. Leave ENTRY_KEY unset to let anyone submit;
+# leave ADMIN_KEY unset and the admin routes fall back to the group word.

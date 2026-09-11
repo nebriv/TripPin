@@ -1,0 +1,1019 @@
+-- Day 1 --
+1 ben 1 blurb | Benjamin wrote “the fridge hummed loud enough to hear from the road”. You have put that 1,047 miles from where it happened.
+1 benjamin 1 deadpan | You were there. You got 70.
+1 andrew 1 — | (silence)
+1 maddie 1 blurb | Benjamin wrote “the fridge hummed loud enough to hear from the road”. You have put that 781 miles from where it happened.
+1 anna 1 blurb | “the fridge hummed loud enough to hear from the road”, according to Benjamin. Not 3,918 miles from here it didn't.
+1 ben 2 — | (silence)
+1 benjamin 2 — | (silence)
+1 andrew 2 — | (silence)
+1 maddie 2 — | (silence)
+1 anna 2 listing | The nearest anything to that pin is Los Angeles, 1,305 miles off. No listings out there either.
+1 ben 3 — | (silence)
+1 benjamin 3 listing | You have pinned the North Atlantic. No bedrooms, no baths, and the host has never responded.
+1 andrew 3 — | (silence)
+1 maddie 3 — | (silence)
+1 anna 3 yardstick | You missed by further than South Padre Island is from Mims. Both of those are in this game.
+
+-- Day 2 --
+2 ben 1 listing | 579 miles from Lima and nothing else. Self check-in, one assumes.
+2 benjamin 1 — | (silence)
+2 andrew 1 blurb | “the sauna smelled faintly of the previous guests”, according to Benjamin. Not 1,241 miles from here it didn't.
+2 maddie 1 listing | That pin is in the North Pacific. Check-in is whenever you surface.
+2 anna 1 — | (silence)
+2 ben 2 yardstick | That is more than the whole way from Keeseville to South Padre Island, and somebody here has slept in both.
+2 benjamin 2 — | (silence)
+2 andrew 2 listing | The nearest anything to that pin is New York, 1,126 miles off. No listings out there either.
+2 maddie 2 yardstick | You missed by further than Keeseville is from South Padre Island. Both of those are in this game.
+2 anna 2 — | (silence)
+2 ben 3 — | (silence)
+2 benjamin 3 — | (silence)
+2 andrew 3 — | (silence)
+2 maddie 3 witness | You left Andrew out. Andrew has the photos.
+2 anna 3 — | (silence)
+
+-- Day 3 --
+3 ben 1 — | (silence)
+3 benjamin 1 — | (silence)
+3 andrew 1 — | (silence)
+3 maddie 1 — | (silence)
+3 anna 1 — | (silence)
+3 ben 2 — | (silence)
+3 benjamin 2 — | (silence)
+3 andrew 2 deadpan | You were there. You got 180.
+3 maddie 2 — | (silence)
+3 anna 2 — | (silence)
+3 ben 3 — | (silence)
+3 benjamin 3 — | (silence)
+3 andrew 3 witness | You left Benjamin out. Benjamin has the photos.
+3 maddie 3 — | (silence)
+3 anna 3 — | (silence)
+
+-- Day 4 --
+4 ben 1 callback | Fourth pin in a row in North America.
+4 benjamin 1 — | (silence)
+4 andrew 1 — | (silence)
+4 maddie 1 — | (silence)
+4 anna 1 — | (silence)
+4 ben 2 — | (silence)
+4 benjamin 2 yardstick | That is more than the whole way from New Orleans to Point Arena, and somebody here has slept in both.
+4 andrew 2 — | (silence)
+4 maddie 2 — | (silence)
+4 anna 2 deadpan | You were there. You got 61.
+4 ben 3 — | (silence)
+4 benjamin 3 blurb | Ben wrote “the shower was a hose bolted to the garden wall”. You have put that 5,315 miles from where it happened.
+4 andrew 3 — | (silence)
+4 maddie 3 — | (silence)
+4 anna 3 witness | Andrew was there. Andrew is in this group chat.
+
+-- Day 5 --
+5 ben 1 witness | Andrew slept there. Andrew will have opinions about being left off.
+5 benjamin 1 — | (silence)
+5 andrew 1 — | (silence)
+5 maddie 1 — | (silence)
+5 anna 1 — | (silence)
+5 ben 2 — | (silence)
+5 benjamin 2 — | (silence)
+5 andrew 2 — | (silence)
+5 maddie 2 — | (silence)
+5 anna 2 — | (silence)
+5 ben 3 deadpan | You were there. You got 214.
+5 benjamin 3 — | (silence)
+5 andrew 3 — | (silence)
+5 maddie 3 deadpan | You were there. You got 3.
+5 anna 3 — | (silence)
+
+-- Day 6 --
+6 ben 1 — | (silence)
+6 benjamin 1 callback | Fourth pin in a row in North America.
+6 andrew 1 — | (silence)
+6 maddie 1 — | (silence)
+6 anna 1 — | (silence)
+6 ben 2 — | (silence)
+6 benjamin 2 listing | The nearest anything to that pin is Atlanta, 321 miles off. No listings out there either.
+6 andrew 2 listing | That pin is in the North Pacific. Check-in is whenever you surface.
+6 maddie 2 — | (silence)
+6 anna 2 — | (silence)
+6 ben 3 — | (silence)
+6 benjamin 3 — | (silence)
+6 andrew 3 blurb | “the host left a single roll of paper towels, total”, according to Ben. Not 7,515 miles from here it didn't.
+6 maddie 3 — | (silence)
+6 anna 3 — | (silence)
+
+-- Day 7 --
+7 ben 1 listing | The nearest anything to that pin is Dubai, 432 miles off. No listings out there either.
+7 benjamin 1 — | (silence)
+7 andrew 1 — | (silence)
+7 maddie 1 — | (silence)
+7 anna 1 — | (silence)
+7 ben 2 — | (silence)
+7 benjamin 2 deadpan | You were there. You got 292.
+7 andrew 2 — | (silence)
+7 maddie 2 listing | 389 miles from Washington,  D.C. and nothing else. Self check-in, one assumes.
+7 anna 2 listing | The South Pacific. Sleeps nobody. Not yet reviewed.
+7 ben 3 yardstick | That is more than the whole way from South Padre Island to Titusville, and somebody here has slept in both.
+7 benjamin 3 — | (silence)
+7 andrew 3 — | (silence)
+7 maddie 3 — | (silence)
+7 anna 3 — | (silence)
+
+-- Day 8 --
+8 ben 1 — | (silence)
+8 benjamin 1 — | (silence)
+8 andrew 1 — | (silence)
+8 maddie 1 blurb | “the mattress had a valley you both rolled into”, according to Ben. Not 5,797 miles from here it didn't.
+8 anna 1 — | (silence)
+8 ben 2 — | (silence)
+8 benjamin 2 — | (silence)
+8 andrew 2 — | (silence)
+8 maddie 2 yardstick | That is more than the whole way from Lima to Point Arena, and somebody here has slept in both.
+8 anna 2 — | (silence)
+8 ben 3 — | (silence)
+8 benjamin 3 — | (silence)
+8 andrew 3 — | (silence)
+8 maddie 3 — | (silence)
+8 anna 3 — | (silence)
+
+-- Day 9 --
+9 ben 1 — | (silence)
+9 benjamin 1 blurb | Ben wrote “the fireplace worked once and then never again”. You have put that 1,434 miles from where it happened.
+9 andrew 1 yardstick | That is more than the whole way from New Orleans to Lima, and somebody here has slept in both.
+9 maddie 1 — | (silence)
+9 anna 1 blurb | Ben wrote “the fireplace worked once and then never again”. You have put that 893 miles from where it happened.
+9 ben 2 — | (silence)
+9 benjamin 2 — | (silence)
+9 andrew 2 — | (silence)
+9 maddie 2 — | (silence)
+9 anna 2 — | (silence)
+9 ben 3 — | (silence)
+9 benjamin 3 — | (silence)
+9 andrew 3 — | (silence)
+9 maddie 3 — | (silence)
+9 anna 3 yardstick | That is more than the whole way from Stonington to Mims, and somebody here has slept in both.
+
+-- Day 10 --
+10 ben 1 — | (silence)
+10 benjamin 1 listing | The nearest anything to that pin is Ürümqi, 257 miles off. No listings out there either.
+10 andrew 1 — | (silence)
+10 maddie 1 — | (silence)
+10 anna 1 amenity | Free washer – In unit, the listing said. the North Pacific, you said.
+10 ben 2 — | (silence)
+10 benjamin 2 amenity | Private hot tub - available all year, the listing said. the North Atlantic, you said.
+10 andrew 2 — | (silence)
+10 maddie 2 — | (silence)
+10 anna 2 — | (silence)
+10 ben 3 — | (silence)
+10 benjamin 3 — | (silence)
+10 andrew 3 — | (silence)
+10 maddie 3 — | (silence)
+10 anna 3 — | (silence)
+
+-- Day 11 --
+11 ben 1 deadpan | You were there. You got 6.
+11 benjamin 1 — | (silence)
+11 andrew 1 listing | 462 miles from Stockholm and nothing else. Self check-in, one assumes.
+11 maddie 1 accusation | Andrew, you said. The closest Andrew has ever been to this is 3,455 miles.
+11 anna 1 — | (silence)
+11 ben 2 listing | 336 miles from Ürümqi and nothing else. Self check-in, one assumes.
+11 benjamin 2 — | (silence)
+11 andrew 2 — | (silence)
+11 maddie 2 deadpan | You were there. You got 278.
+11 anna 2 — | (silence)
+11 ben 3 — | (silence)
+11 benjamin 3 — | (silence)
+11 andrew 3 — | (silence)
+11 maddie 3 listing | The nearest anything to that pin is Kinshasa, 500 miles off. No listings out there either.
+11 anna 3 — | (silence)
+
+-- Day 12 --
+12 ben 1 — | (silence)
+12 benjamin 1 — | (silence)
+12 andrew 1 — | (silence)
+12 maddie 1 — | (silence)
+12 anna 1 listing | You have pinned the North Pacific. No bedrooms, no baths, and the host has never responded.
+12 ben 2 — | (silence)
+12 benjamin 2 — | (silence)
+12 andrew 2 — | (silence)
+12 maddie 2 — | (silence)
+12 anna 2 — | (silence)
+12 ben 3 — | (silence)
+12 benjamin 3 yardstick | You missed by further than Melbourne is from Newry. Both of those are in this game.
+12 andrew 3 — | (silence)
+12 maddie 3 — | (silence)
+12 anna 3 — | (silence)
+
+-- Day 13 --
+13 ben 1 — | (silence)
+13 benjamin 1 deadpan | You were there. You got 12.
+13 andrew 1 — | (silence)
+13 maddie 1 blurb | “the driveway ate two rental cars that same week”, according to Andrew. Not 736 miles from here it didn't.
+13 anna 1 blurb | “the driveway ate two rental cars that same week”, according to Andrew. Not 3,681 miles from here it didn't.
+13 ben 2 witness | You left Andrew out. Andrew has the photos.
+13 benjamin 2 blurb | Anna wrote “a rooster started at four and never really stopped”. You have put that 5,223 miles from where it happened.
+13 andrew 2 — | (silence)
+13 maddie 2 — | (silence)
+13 anna 2 deadpan | You were there. You got 241.
+13 ben 3 yardstick | You missed by further than Stonington is from New Orleans. Both of those are in this game.
+13 benjamin 3 — | (silence)
+13 andrew 3 — | (silence)
+13 maddie 3 yardstick | That is more than the whole way from Mexico City to Nashville, and somebody here has slept in both.
+13 anna 3 — | (silence)
+
+-- Day 14 --
+14 ben 1 blurb | Andrew wrote “the wifi worked but only if you stood on a chair”. You have put that 4,834 miles from where it happened.
+14 benjamin 1 — | (silence)
+14 andrew 1 — | (silence)
+14 maddie 1 — | (silence)
+14 anna 1 — | (silence)
+14 ben 2 — | (silence)
+14 benjamin 2 — | (silence)
+14 andrew 2 — | (silence)
+14 maddie 2 — | (silence)
+14 anna 2 — | (silence)
+14 ben 3 accusation | Andrew, you said. The closest Andrew has ever been to this is 4,591 miles.
+14 benjamin 3 — | (silence)
+14 andrew 3 — | (silence)
+14 maddie 3 — | (silence)
+14 anna 3 — | (silence)
+
+-- Day 15 --
+15 ben 1 — | (silence)
+15 benjamin 1 — | (silence)
+15 andrew 1 deadpan | You were there. You got 231.
+15 maddie 1 — | (silence)
+15 anna 1 yardstick | That is more than the whole way from Elizabethtown to Mims, and somebody here has slept in both.
+15 ben 2 — | (silence)
+15 benjamin 2 witness | Anna slept there. Anna will have opinions about being left off.
+15 andrew 2 — | (silence)
+15 maddie 2 — | (silence)
+15 anna 2 — | (silence)
+15 ben 3 — | (silence)
+15 benjamin 3 — | (silence)
+15 andrew 3 amenity | Fast wifi – 73 Mbps, the listing said. the South Pacific, you said.
+15 maddie 3 — | (silence)
+15 anna 3 — | (silence)
+
+-- Day 16 --
+16 ben 1 — | (silence)
+16 benjamin 1 listing | You have pinned the North Pacific. No bedrooms, no baths, and the host has never responded.
+16 andrew 1 — | (silence)
+16 maddie 1 — | (silence)
+16 anna 1 — | (silence)
+16 ben 2 listing | Toronto. Entire place, presumably. No photos were provided.
+16 benjamin 2 — | (silence)
+16 andrew 2 — | (silence)
+16 maddie 2 — | (silence)
+16 anna 2 — | (silence)
+16 ben 3 — | (silence)
+16 benjamin 3 — | (silence)
+16 andrew 3 — | (silence)
+16 maddie 3 — | (silence)
+16 anna 3 listing | 674 miles from Nairobi and nothing else. Self check-in, one assumes.
+
+-- Day 17 --
+17 ben 1 yardstick | You missed by further than Keeseville is from Tromsø. Both of those are in this game.
+17 benjamin 1 — | (silence)
+17 andrew 1 listing | The nearest anything to that pin is Lima, 558 miles off. No listings out there either.
+17 maddie 1 deadpan | You were there. You got 119.
+17 anna 1 — | (silence)
+17 ben 2 — | (silence)
+17 benjamin 2 — | (silence)
+17 andrew 2 — | (silence)
+17 maddie 2 blurb | Andrew wrote “the wifi worked but only if you stood on a chair”. You have put that 2,918 miles from where it happened.
+17 anna 2 — | (silence)
+17 ben 3 — | (silence)
+17 benjamin 3 — | (silence)
+17 andrew 3 — | (silence)
+17 maddie 3 — | (silence)
+17 anna 3 — | (silence)
+
+-- Day 18 --
+18 ben 1 — | (silence)
+18 benjamin 1 — | (silence)
+18 andrew 1 witness | Anna was there. Anna is in this group chat.
+18 maddie 1 — | (silence)
+18 anna 1 — | (silence)
+18 ben 2 — | (silence)
+18 benjamin 2 — | (silence)
+18 andrew 2 — | (silence)
+18 maddie 2 — | (silence)
+18 anna 2 — | (silence)
+18 ben 3 — | (silence)
+18 benjamin 3 — | (silence)
+18 andrew 3 — | (silence)
+18 maddie 3 — | (silence)
+18 anna 3 — | (silence)
+
+-- Day 19 --
+19 ben 1 — | (silence)
+19 benjamin 1 yardstick | That is more than the whole way from Newry to Al Ain, and somebody here has slept in both.
+19 andrew 1 — | (silence)
+19 maddie 1 — | (silence)
+19 anna 1 yardstick | You missed by further than Tromsø is from San Isidro. Both of those are in this game.
+19 ben 2 — | (silence)
+19 benjamin 2 deadpan | You were there. You got 298.
+19 andrew 2 — | (silence)
+19 maddie 2 — | (silence)
+19 anna 2 — | (silence)
+19 ben 3 — | (silence)
+19 benjamin 3 — | (silence)
+19 andrew 3 — | (silence)
+19 maddie 3 listing | The nearest anything to that pin is Los Angeles, 488 miles off. No listings out there either.
+19 anna 3 — | (silence)
+
+-- Day 20 --
+20 ben 1 deadpan | You were there. You got 3.
+20 benjamin 1 — | (silence)
+20 andrew 1 — | (silence)
+20 maddie 1 yardstick | That is more than the whole way from Laguna Vista to San Isidro, and somebody here has slept in both.
+20 anna 1 — | (silence)
+20 ben 2 listing | The nearest anything to that pin is Addis Ababa, 695 miles off. No listings out there either.
+20 benjamin 2 — | (silence)
+20 andrew 2 — | (silence)
+20 maddie 2 amenity | Private backyard – Not fully fenced, the listing said. the North Pacific, you said.
+20 anna 2 — | (silence)
+20 ben 3 blurb | “the sauna smelled faintly of the previous guests”, according to Benjamin. Not 4,058 miles from here it didn't.
+20 benjamin 3 — | (silence)
+20 andrew 3 — | (silence)
+20 maddie 3 — | (silence)
+20 anna 3 — | (silence)
+
+-- Day 21 --
+21 ben 1 — | (silence)
+21 benjamin 1 — | (silence)
+21 andrew 1 — | (silence)
+21 maddie 1 — | (silence)
+21 anna 1 — | (silence)
+21 ben 2 — | (silence)
+21 benjamin 2 listing | The nearest anything to that pin is New York, 636 miles off. No listings out there either.
+21 andrew 2 deadpan | You were there. You got 219.
+21 maddie 2 — | (silence)
+21 anna 2 listing | 272 miles from Toronto and nothing else. Self check-in, one assumes.
+21 ben 3 — | (silence)
+21 benjamin 3 witness | You left Andrew out. Andrew has the photos.
+21 andrew 3 — | (silence)
+21 maddie 3 — | (silence)
+21 anna 3 — | (silence)
+
+-- Day 22 --
+22 ben 1 yardstick | You missed by further than Mexico City is from Nashville. Both of those are in this game.
+22 benjamin 1 blurb | “the hot tub was cold and the pool was a puddle”, according to Anna. Not 1,799 miles from here it didn't.
+22 andrew 1 — | (silence)
+22 maddie 1 — | (silence)
+22 anna 1 deadpan | You were there. You got 133.
+22 ben 2 — | (silence)
+22 benjamin 2 — | (silence)
+22 andrew 2 — | (silence)
+22 maddie 2 — | (silence)
+22 anna 2 — | (silence)
+22 ben 3 — | (silence)
+22 benjamin 3 — | (silence)
+22 andrew 3 — | (silence)
+22 maddie 3 blurb | Andrew wrote “the driveway ate two rental cars that same week”. You have put that 1,147 miles from where it happened.
+22 anna 3 blurb | “the driveway ate two rental cars that same week”, according to Andrew. Not 6,018 miles from here it didn't.
+
+-- Day 23 --
+23 ben 1 — | (silence)
+23 benjamin 1 — | (silence)
+23 andrew 1 yardstick | That is more than the whole way from Mexico City to Nashville, and somebody here has slept in both.
+23 maddie 1 listing | You have pinned the South Pacific. No bedrooms, no baths, and the host has never responded.
+23 anna 1 — | (silence)
+23 ben 2 — | (silence)
+23 benjamin 2 — | (silence)
+23 andrew 2 — | (silence)
+23 maddie 2 deadpan | You were there. You got 83.
+23 anna 2 — | (silence)
+23 ben 3 amenity | Beach access, the listing said. the South Pacific, you said.
+23 benjamin 3 — | (silence)
+23 andrew 3 — | (silence)
+23 maddie 3 — | (silence)
+23 anna 3 — | (silence)
+
+-- Day 24 --
+24 ben 1 — | (silence)
+24 benjamin 1 — | (silence)
+24 andrew 1 blurb | Benjamin wrote “the fridge hummed loud enough to hear from the road”. You have put that 2,258 miles from where it happened.
+24 maddie 1 — | (silence)
+24 anna 1 yardstick | That is more than the whole way from Jamestown to New Orleans, and somebody here has slept in both.
+24 ben 2 — | (silence)
+24 benjamin 2 — | (silence)
+24 andrew 2 amenity | Wifi – 20 Mbps, the listing said. the South Atlantic, you said.
+24 maddie 2 — | (silence)
+24 anna 2 — | (silence)
+24 ben 3 — | (silence)
+24 benjamin 3 — | (silence)
+24 andrew 3 listing | 1,160 miles from Dubai and nothing else. Self check-in, one assumes.
+24 maddie 3 — | (silence)
+24 anna 3 — | (silence)
+
+-- Day 25 --
+25 ben 1 — | (silence)
+25 benjamin 1 listing | The nearest anything to that pin is Kinshasa, 482 miles off. No listings out there either.
+25 andrew 1 — | (silence)
+25 maddie 1 — | (silence)
+25 anna 1 listing | The South Atlantic. Sleeps nobody. Not yet reviewed.
+25 ben 2 — | (silence)
+25 benjamin 2 yardstick | You missed by further than Stonington is from San Francisco. Both of those are in this game.
+25 andrew 2 — | (silence)
+25 maddie 2 yardstick | You missed by further than Mims is from San Juan. Both of those are in this game.
+25 anna 2 — | (silence)
+25 ben 3 blurb | “the kitchen had every spice except the one we needed”, according to Maddie. Not 776 miles from here it didn't.
+25 benjamin 3 deadpan | You were there. You got 120.
+25 andrew 3 — | (silence)
+25 maddie 3 — | (silence)
+25 anna 3 amenity | Lake view, the listing said. the South Pacific, you said.
+
+-- Day 26 --
+26 ben 1 deadpan | You were there. You got 83.
+26 benjamin 1 — | (silence)
+26 andrew 1 — | (silence)
+26 maddie 1 blurb | “the fireplace worked once and then never again”, according to Ben. Not 3,565 miles from here it didn't.
+26 anna 1 — | (silence)
+26 ben 2 — | (silence)
+26 benjamin 2 — | (silence)
+26 andrew 2 — | (silence)
+26 maddie 2 — | (silence)
+26 anna 2 — | (silence)
+26 ben 3 — | (silence)
+26 benjamin 3 — | (silence)
+26 andrew 3 — | (silence)
+26 maddie 3 — | (silence)
+26 anna 3 — | (silence)
+
+-- Day 27 --
+27 ben 1 — | (silence)
+27 benjamin 1 blurb | “the view was incredible if you leaned out the window”, according to Ben. Not 1,384 miles from here it didn't.
+27 andrew 1 — | (silence)
+27 maddie 1 — | (silence)
+27 anna 1 — | (silence)
+27 ben 2 — | (silence)
+27 benjamin 2 — | (silence)
+27 andrew 2 yardstick | You missed by further than Choteau is from Al Ain. Both of those are in this game.
+27 maddie 2 — | (silence)
+27 anna 2 blurb | Benjamin wrote “the lake was closer than the map made it look”. You have put that 1,152 miles from where it happened.
+27 ben 3 — | (silence)
+27 benjamin 3 — | (silence)
+27 andrew 3 — | (silence)
+27 maddie 3 — | (silence)
+27 anna 3 callback | Fourth pin in a row in North America.
+
+-- Day 28 --
+28 ben 1 — | (silence)
+28 benjamin 1 — | (silence)
+28 andrew 1 — | (silence)
+28 maddie 1 listing | The nearest anything to that pin is Caracas, 1,201 miles off. No listings out there either.
+28 anna 1 — | (silence)
+28 ben 2 — | (silence)
+28 benjamin 2 — | (silence)
+28 andrew 2 — | (silence)
+28 maddie 2 — | (silence)
+28 anna 2 accusation | Maddie, you said. The closest Maddie has ever been to this is 3,461 miles.
+28 ben 3 listing | The nearest anything to that pin is Mexico City, 620 miles off. No listings out there either.
+28 benjamin 3 — | (silence)
+28 andrew 3 — | (silence)
+28 maddie 3 — | (silence)
+28 anna 3 — | (silence)
+
+-- Day 29 --
+29 ben 1 — | (silence)
+29 benjamin 1 — | (silence)
+29 andrew 1 listing | You have pinned the North Atlantic. No bedrooms, no baths, and the host has never responded.
+29 maddie 1 yardstick | You missed by further than Whitehall is from Nagasaki. Both of those are in this game.
+29 anna 1 — | (silence)
+29 ben 2 yardstick | That is more than the whole way from Tromsø to Laguna Vista, and somebody here has slept in both.
+29 benjamin 2 — | (silence)
+29 andrew 2 — | (silence)
+29 maddie 2 — | (silence)
+29 anna 2 — | (silence)
+29 ben 3 — | (silence)
+29 benjamin 3 — | (silence)
+29 andrew 3 — | (silence)
+29 maddie 3 — | (silence)
+29 anna 3 — | (silence)
+
+-- Day 30 --
+30 ben 1 — | (silence)
+30 benjamin 1 listing | 444 miles from Caracas and nothing else. Self check-in, one assumes.
+30 andrew 1 blurb | Ben wrote “the mattress had a valley you both rolled into”. You have put that 4,193 miles from where it happened.
+30 maddie 1 — | (silence)
+30 anna 1 yardstick | That is more than the whole way from Kerhonkson to Titusville, and somebody here has slept in both.
+30 ben 2 — | (silence)
+30 benjamin 2 — | (silence)
+30 andrew 2 deadpan | You were there. You got 114.
+30 maddie 2 — | (silence)
+30 anna 2 listing | The nearest anything to that pin is Toronto, 446 miles off. No listings out there either.
+30 ben 3 — | (silence)
+30 benjamin 3 — | (silence)
+30 andrew 3 witness | Anna slept there. Anna will have opinions about being left off.
+30 maddie 3 — | (silence)
+30 anna 3 — | (silence)
+
+-- Day 31 --
+31 ben 1 witness | Andrew was there. Andrew is in this group chat.
+31 benjamin 1 blurb | Anna wrote “a rooster started at four and never really stopped”. You have put that 3,129 miles from where it happened.
+31 andrew 1 — | (silence)
+31 maddie 1 — | (silence)
+31 anna 1 deadpan | You were there. You got 261.
+31 ben 2 callback | Fourth pin in a row in North America.
+31 benjamin 2 yardstick | You missed by further than Morris is from Laguna Vista. Both of those are in this game.
+31 andrew 2 — | (silence)
+31 maddie 2 — | (silence)
+31 anna 2 amenity | It had private hot tub - available all year. You put it in the Indian Ocean.
+31 ben 3 blurb | Andrew wrote “the wifi worked but only if you stood on a chair”. You have put that 1,349 miles from where it happened.
+31 benjamin 3 — | (silence)
+31 andrew 3 — | (silence)
+31 maddie 3 blurb | “the wifi worked but only if you stood on a chair”, according to Andrew. Not 1,165 miles from here it didn't.
+31 anna 3 blurb | Andrew wrote “the wifi worked but only if you stood on a chair”. You have put that 2,597 miles from where it happened.
+
+-- Day 32 --
+32 ben 1 listing | The nearest anything to that pin is Chicago, 469 miles off. No listings out there either.
+32 benjamin 1 — | (silence)
+32 andrew 1 — | (silence)
+32 maddie 1 deadpan | You were there. You got 57.
+32 anna 1 — | (silence)
+32 ben 2 deadpan | You were there. You got 166.
+32 benjamin 2 — | (silence)
+32 andrew 2 — | (silence)
+32 maddie 2 amenity | It had free washer – In unit. You put it in the South Pacific.
+32 anna 2 — | (silence)
+32 ben 3 — | (silence)
+32 benjamin 3 — | (silence)
+32 andrew 3 — | (silence)
+32 maddie 3 — | (silence)
+32 anna 3 — | (silence)
+
+-- Day 33 --
+33 ben 1 — | (silence)
+33 benjamin 1 callback | Fourth pin in a row in North America.
+33 andrew 1 listing | The nearest anything to that pin is Addis Ababa, 389 miles off. No listings out there either.
+33 maddie 1 — | (silence)
+33 anna 1 — | (silence)
+33 ben 2 — | (silence)
+33 benjamin 2 — | (silence)
+33 andrew 2 yardstick | That is more than the whole way from Al Ain to Orleans, and somebody here has slept in both.
+33 maddie 2 — | (silence)
+33 anna 2 — | (silence)
+33 ben 3 — | (silence)
+33 benjamin 3 — | (silence)
+33 andrew 3 — | (silence)
+33 maddie 3 — | (silence)
+33 anna 3 — | (silence)
+
+-- Day 34 --
+34 ben 1 — | (silence)
+34 benjamin 1 — | (silence)
+34 andrew 1 — | (silence)
+34 maddie 1 listing | 595 miles from Los Angeles and nothing else. Self check-in, one assumes.
+34 anna 1 listing | You have put them in Toronto. Nobody in this group has ever booked Toronto.
+34 ben 2 — | (silence)
+34 benjamin 2 deadpan | You were there. You got 6.
+34 andrew 2 — | (silence)
+34 maddie 2 — | (silence)
+34 anna 2 yardstick | That is more than the whole way from Choteau to Indian Harbour Beach, and somebody here has slept in both.
+34 ben 3 accusation | Ben, you said. The closest Ben has ever been to this is 3,476 miles.
+34 benjamin 3 listing | That pin is in the North Pacific. Check-in is whenever you surface.
+34 andrew 3 — | (silence)
+34 maddie 3 yardstick | You missed by further than Melbourne is from Newry. Both of those are in this game.
+34 anna 3 — | (silence)
+
+-- Day 35 --
+35 ben 1 blurb | “the front door needed a shoulder, not a key”, according to Anna. Not 8,190 miles from here it didn't.
+35 benjamin 1 — | (silence)
+35 andrew 1 blurb | Anna wrote “the front door needed a shoulder, not a key”. You have put that 955 miles from where it happened.
+35 maddie 1 blurb | “the front door needed a shoulder, not a key”, according to Anna. Not 6,787 miles from here it didn't.
+35 anna 1 — | (silence)
+35 ben 2 — | (silence)
+35 benjamin 2 — | (silence)
+35 andrew 2 witness | Anna was there. Anna is in this group chat.
+35 maddie 2 — | (silence)
+35 anna 2 — | (silence)
+35 ben 3 — | (silence)
+35 benjamin 3 — | (silence)
+35 andrew 3 — | (silence)
+35 maddie 3 — | (silence)
+35 anna 3 — | (silence)
+
+-- Day 36 --
+36 ben 1 — | (silence)
+36 benjamin 1 blurb | “the shower was a hose bolted to the garden wall”, according to Ben. Not 720 miles from here it didn't.
+36 andrew 1 deadpan | You were there. You got 45.
+36 maddie 1 — | (silence)
+36 anna 1 — | (silence)
+36 ben 2 — | (silence)
+36 benjamin 2 — | (silence)
+36 andrew 2 — | (silence)
+36 maddie 2 — | (silence)
+36 anna 2 — | (silence)
+36 ben 3 — | (silence)
+36 benjamin 3 — | (silence)
+36 andrew 3 — | (silence)
+36 maddie 3 — | (silence)
+36 anna 3 — | (silence)
+
+-- Day 37 --
+37 ben 1 — | (silence)
+37 benjamin 1 — | (silence)
+37 andrew 1 — | (silence)
+37 maddie 1 — | (silence)
+37 anna 1 — | (silence)
+37 ben 2 listing | The nearest anything to that pin is Toronto, 703 miles off. No listings out there either.
+37 benjamin 2 — | (silence)
+37 andrew 2 — | (silence)
+37 maddie 2 — | (silence)
+37 anna 2 — | (silence)
+37 ben 3 — | (silence)
+37 benjamin 3 amenity | Ski-in/Ski-out, the listing said. the Indian Ocean, you said.
+37 andrew 3 — | (silence)
+37 maddie 3 — | (silence)
+37 anna 3 deadpan | You were there. You got 101.
+
+-- Day 38 --
+38 ben 1 yardstick | That is more than the whole way from Norwich to Toyako, and somebody here has slept in both.
+38 benjamin 1 — | (silence)
+38 andrew 1 — | (silence)
+38 maddie 1 listing | 1,104 miles from Tokyo and nothing else. Self check-in, one assumes.
+38 anna 1 — | (silence)
+38 ben 2 — | (silence)
+38 benjamin 2 — | (silence)
+38 andrew 2 listing | 360 miles from Chicago and nothing else. Self check-in, one assumes.
+38 maddie 2 yardstick | That is more than the whole way from Al Ain to San Francisco, and somebody here has slept in both.
+38 anna 2 — | (silence)
+38 ben 3 — | (silence)
+38 benjamin 3 — | (silence)
+38 andrew 3 yardstick | That is more than the whole way from Newry to New Orleans, and somebody here has slept in both.
+38 maddie 3 — | (silence)
+38 anna 3 — | (silence)
+
+-- Day 39 --
+39 ben 1 — | (silence)
+39 benjamin 1 — | (silence)
+39 andrew 1 — | (silence)
+39 maddie 1 — | (silence)
+39 anna 1 listing | 895 miles from Toronto and nothing else. Self check-in, one assumes.
+39 ben 2 — | (silence)
+39 benjamin 2 — | (silence)
+39 andrew 2 blurb | “the fridge hummed loud enough to hear from the road”, according to Benjamin. Not 7,205 miles from here it didn't.
+39 maddie 2 — | (silence)
+39 anna 2 blurb | “the fridge hummed loud enough to hear from the road”, according to Benjamin. Not 1,010 miles from here it didn't.
+39 ben 3 — | (silence)
+39 benjamin 3 listing | 711 miles from New York and nothing else. Self check-in, one assumes.
+39 andrew 3 — | (silence)
+39 maddie 3 — | (silence)
+39 anna 3 callback | Sixth pin in a row in North America.
+
+-- Day 40 --
+40 ben 1 — | (silence)
+40 benjamin 1 deadpan | You were there. You got 62.
+40 andrew 1 — | (silence)
+40 maddie 1 — | (silence)
+40 anna 1 yardstick | That is more than the whole way from Mexico City to Stamford, and somebody here has slept in both.
+40 ben 2 — | (silence)
+40 benjamin 2 blurb | Ben wrote “the fireplace worked once and then never again”. You have put that 4,063 miles from where it happened.
+40 andrew 2 — | (silence)
+40 maddie 2 blurb | “the fireplace worked once and then never again”, according to Ben. Not 1,269 miles from here it didn't.
+40 anna 2 — | (silence)
+40 ben 3 — | (silence)
+40 benjamin 3 witness | Maddie was there. Maddie is in this group chat.
+40 andrew 3 — | (silence)
+40 maddie 3 — | (silence)
+40 anna 3 — | (silence)
+
+-- Day 41 --
+41 ben 1 — | (silence)
+41 benjamin 1 — | (silence)
+41 andrew 1 — | (silence)
+41 maddie 1 — | (silence)
+41 anna 1 — | (silence)
+41 ben 2 — | (silence)
+41 benjamin 2 — | (silence)
+41 andrew 2 — | (silence)
+41 maddie 2 — | (silence)
+41 anna 2 — | (silence)
+41 ben 3 blurb | “the kitchen had every spice except the one we needed”, according to Maddie. Not 7,614 miles from here it didn't.
+41 benjamin 3 — | (silence)
+41 andrew 3 — | (silence)
+41 maddie 3 deadpan | You were there. You got 221.
+41 anna 3 — | (silence)
+
+-- Day 42 --
+42 ben 1 — | (silence)
+42 benjamin 1 — | (silence)
+42 andrew 1 witness | Ben slept there. Ben will have opinions about being left off.
+42 maddie 1 — | (silence)
+42 anna 1 witness | Ben was there. Ben is in this group chat.
+42 ben 2 — | (silence)
+42 benjamin 2 yardstick | You missed by further than New Orleans is from Boston. Both of those are in this game.
+42 andrew 2 deadpan | You were there. You got 219.
+42 maddie 2 — | (silence)
+42 anna 2 — | (silence)
+42 ben 3 — | (silence)
+42 benjamin 3 — | (silence)
+42 andrew 3 amenity | It had private hot tub - available all year. You put it in the Indian Ocean.
+42 maddie 3 — | (silence)
+42 anna 3 — | (silence)
+
+-- Day 43 --
+43 ben 1 yardstick | You missed by further than Indian Harbour Beach is from Boston. Both of those are in this game.
+43 benjamin 1 amenity | Beach access, the listing said. the South Atlantic, you said.
+43 andrew 1 — | (silence)
+43 maddie 1 amenity | It had beach access. You put it in the North Pacific.
+43 anna 1 deadpan | You were there. You got 113.
+43 ben 2 accusation | Andrew, you said. The closest Andrew has ever been to this is 4,591 miles.
+43 benjamin 2 — | (silence)
+43 andrew 2 — | (silence)
+43 maddie 2 listing | The North Pacific. Sleeps nobody. Not yet reviewed.
+43 anna 2 — | (silence)
+43 ben 3 — | (silence)
+43 benjamin 3 listing | You have pinned the South Pacific. No bedrooms, no baths, and the host has never responded.
+43 andrew 3 — | (silence)
+43 maddie 3 — | (silence)
+43 anna 3 — | (silence)
+
+-- Day 44 --
+44 ben 1 deadpan | You were there. You got 34.
+44 benjamin 1 — | (silence)
+44 andrew 1 — | (silence)
+44 maddie 1 witness | Ben slept there. Ben will have opinions about being left off.
+44 anna 1 — | (silence)
+44 ben 2 — | (silence)
+44 benjamin 2 — | (silence)
+44 andrew 2 — | (silence)
+44 maddie 2 blurb | “the shower was a hose bolted to the garden wall”, according to Ben. Not 1,502 miles from here it didn't.
+44 anna 2 — | (silence)
+44 ben 3 witness | You left Andrew out. Andrew has the photos.
+44 benjamin 3 — | (silence)
+44 andrew 3 — | (silence)
+44 maddie 3 — | (silence)
+44 anna 3 — | (silence)
+
+-- Day 45 --
+45 ben 1 — | (silence)
+45 benjamin 1 — | (silence)
+45 andrew 1 listing | You have pinned the North Atlantic. No bedrooms, no baths, and the host has never responded.
+45 maddie 1 — | (silence)
+45 anna 1 — | (silence)
+45 ben 2 — | (silence)
+45 benjamin 2 — | (silence)
+45 andrew 2 yardstick | That is more than the whole way from Tromsø to Queens, and somebody here has slept in both.
+45 maddie 2 — | (silence)
+45 anna 2 — | (silence)
+45 ben 3 — | (silence)
+45 benjamin 3 blurb | Ben wrote “the fireplace worked once and then never again”. You have put that 1,466 miles from where it happened.
+45 andrew 3 blurb | “the fireplace worked once and then never again”, according to Ben. Not 6,027 miles from here it didn't.
+45 maddie 3 — | (silence)
+45 anna 3 blurb | “the fireplace worked once and then never again”, according to Ben. Not 1,052 miles from here it didn't.
+
+-- Day 46 --
+46 ben 1 — | (silence)
+46 benjamin 1 yardstick | You missed by further than Nashville is from San Isidro. Both of those are in this game.
+46 andrew 1 — | (silence)
+46 maddie 1 — | (silence)
+46 anna 1 — | (silence)
+46 ben 2 blurb | Benjamin wrote “the fridge hummed loud enough to hear from the road”. You have put that 1,394 miles from where it happened.
+46 benjamin 2 deadpan | You were there. You got 145.
+46 andrew 2 — | (silence)
+46 maddie 2 — | (silence)
+46 anna 2 listing | That pin is in the Southern Ocean. Check-in is whenever you surface.
+46 ben 3 listing | 600 miles from Mexico City and nothing else. Self check-in, one assumes.
+46 benjamin 3 — | (silence)
+46 andrew 3 — | (silence)
+46 maddie 3 yardstick | That is more than the whole way from Melbourne to Newry, and somebody here has slept in both.
+46 anna 3 — | (silence)
+
+-- Day 47 --
+47 ben 1 amenity | It had private hot tub. You put it in the North Pacific.
+47 benjamin 1 — | (silence)
+47 andrew 1 — | (silence)
+47 maddie 1 amenity | Private hot tub, the listing said. the South Atlantic, you said.
+47 anna 1 — | (silence)
+47 ben 2 yardstick | That is more than the whole way from Tromsø to Toyako, and somebody here has slept in both.
+47 benjamin 2 — | (silence)
+47 andrew 2 accusation | Anna was not there. Anna has never been within 2,206 miles of there.
+47 maddie 2 deadpan | You were there. You got 292.
+47 anna 2 — | (silence)
+47 ben 3 — | (silence)
+47 benjamin 3 — | (silence)
+47 andrew 3 — | (silence)
+47 maddie 3 listing | The South Pacific. Sleeps nobody. Not yet reviewed.
+47 anna 3 — | (silence)
+
+-- Day 48 --
+48 ben 1 — | (silence)
+48 benjamin 1 listing | 317 miles from Houston and nothing else. Self check-in, one assumes.
+48 andrew 1 deadpan | You were there. You got 53.
+48 maddie 1 — | (silence)
+48 anna 1 — | (silence)
+48 ben 2 — | (silence)
+48 benjamin 2 — | (silence)
+48 andrew 2 — | (silence)
+48 maddie 2 — | (silence)
+48 anna 2 — | (silence)
+48 ben 3 — | (silence)
+48 benjamin 3 — | (silence)
+48 andrew 3 — | (silence)
+48 maddie 3 — | (silence)
+48 anna 3 — | (silence)
+
+-- Day 49 --
+49 ben 1 — | (silence)
+49 benjamin 1 blurb | “the view was incredible if you leaned out the window”, according to Ben. Not 4,267 miles from here it didn't.
+49 andrew 1 — | (silence)
+49 maddie 1 blurb | Ben wrote “the view was incredible if you leaned out the window”. You have put that 1,121 miles from where it happened.
+49 anna 1 blurb | “the view was incredible if you leaned out the window”, according to Ben. Not 4,289 miles from here it didn't.
+49 ben 2 — | (silence)
+49 benjamin 2 — | (silence)
+49 andrew 2 — | (silence)
+49 maddie 2 — | (silence)
+49 anna 2 yardstick | That is more than the whole way from Mexico City to Boston, and somebody here has slept in both.
+49 ben 3 — | (silence)
+49 benjamin 3 — | (silence)
+49 andrew 3 — | (silence)
+49 maddie 3 callback | Fourth pin in a row in North America.
+49 anna 3 — | (silence)
+
+-- Day 50 --
+50 ben 1 deadpan | You were there. You got 36.
+50 benjamin 1 witness | Ben was there. Ben is in this group chat.
+50 andrew 1 — | (silence)
+50 maddie 1 — | (silence)
+50 anna 1 — | (silence)
+50 ben 2 listing | 1,524 miles from Vancouver and nothing else. Self check-in, one assumes.
+50 benjamin 2 — | (silence)
+50 andrew 2 listing | 537 miles from Miami and nothing else. Self check-in, one assumes.
+50 maddie 2 — | (silence)
+50 anna 2 — | (silence)
+50 ben 3 — | (silence)
+50 benjamin 3 — | (silence)
+50 andrew 3 — | (silence)
+50 maddie 3 — | (silence)
+50 anna 3 — | (silence)
+
+-- Day 51 --
+51 ben 1 — | (silence)
+51 benjamin 1 yardstick | That is more than the whole way from Mexico City to Nashville, and somebody here has slept in both.
+51 andrew 1 yardstick | That is more than the whole way from Newry to Al Ain, and somebody here has slept in both.
+51 maddie 1 — | (silence)
+51 anna 1 — | (silence)
+51 ben 2 — | (silence)
+51 benjamin 2 — | (silence)
+51 andrew 2 blurb | “the lake was closer than the map made it look”, according to Benjamin. Not 8,446 miles from here it didn't.
+51 maddie 2 — | (silence)
+51 anna 2 — | (silence)
+51 ben 3 — | (silence)
+51 benjamin 3 — | (silence)
+51 andrew 3 — | (silence)
+51 maddie 3 — | (silence)
+51 anna 3 — | (silence)
+
+-- Day 52 --
+52 ben 1 — | (silence)
+52 benjamin 1 listing | 690 miles from Buenos Aires and nothing else. Self check-in, one assumes.
+52 andrew 1 — | (silence)
+52 maddie 1 — | (silence)
+52 anna 1 deadpan | You were there. You got 153.
+52 ben 2 — | (silence)
+52 benjamin 2 — | (silence)
+52 andrew 2 — | (silence)
+52 maddie 2 listing | The nearest anything to that pin is New York, 1,065 miles off. No listings out there either.
+52 anna 2 — | (silence)
+52 ben 3 — | (silence)
+52 benjamin 3 — | (silence)
+52 andrew 3 — | (silence)
+52 maddie 3 — | (silence)
+52 anna 3 listing | 1,237 miles from Cape Town and nothing else. Self check-in, one assumes.
+
+-- Day 53 --
+53 ben 1 yardstick | That is more than the whole way from Melbourne to Al Ain, and somebody here has slept in both.
+53 benjamin 1 — | (silence)
+53 andrew 1 — | (silence)
+53 maddie 1 — | (silence)
+53 anna 1 — | (silence)
+53 ben 2 — | (silence)
+53 benjamin 2 — | (silence)
+53 andrew 2 — | (silence)
+53 maddie 2 amenity | It had private backyard – Not fully fenced. You put it in the South Pacific.
+53 anna 2 — | (silence)
+53 ben 3 — | (silence)
+53 benjamin 3 — | (silence)
+53 andrew 3 — | (silence)
+53 maddie 3 blurb | “the mattress had a valley you both rolled into”, according to Ben. Not 5,292 miles from here it didn't.
+53 anna 3 — | (silence)
+
+-- Day 54 --
+54 ben 1 — | (silence)
+54 benjamin 1 — | (silence)
+54 andrew 1 listing | The nearest anything to that pin is Beijing, 963 miles off. No listings out there either.
+54 maddie 1 — | (silence)
+54 anna 1 callback | Fourth pin in a row in North America.
+54 ben 2 — | (silence)
+54 benjamin 2 — | (silence)
+54 andrew 2 — | (silence)
+54 maddie 2 — | (silence)
+54 anna 2 — | (silence)
+54 ben 3 — | (silence)
+54 benjamin 3 — | (silence)
+54 andrew 3 amenity | It had wifi – 20 Mbps. You put it in the North Pacific.
+54 maddie 3 — | (silence)
+54 anna 3 yardstick | You missed by further than South Padre Island is from Titusville. Both of those are in this game.
+
+-- Day 55 --
+55 ben 1 listing | 547 miles from Tokyo and nothing else. Self check-in, one assumes.
+55 benjamin 1 deadpan | You were there. You got 173.
+55 andrew 1 — | (silence)
+55 maddie 1 — | (silence)
+55 anna 1 blurb | Maddie wrote “the kitchen had every spice except the one we needed”. You have put that 6,391 miles from where it happened.
+55 ben 2 — | (silence)
+55 benjamin 2 — | (silence)
+55 andrew 2 — | (silence)
+55 maddie 2 witness | You left Ben out. Ben has the photos.
+55 anna 2 — | (silence)
+55 ben 3 — | (silence)
+55 benjamin 3 — | (silence)
+55 andrew 3 — | (silence)
+55 maddie 3 — | (silence)
+55 anna 3 witness | Ben slept there. Ben will have opinions about being left off.
+
+-- Day 56 --
+56 ben 1 — | (silence)
+56 benjamin 1 — | (silence)
+56 andrew 1 — | (silence)
+56 maddie 1 yardstick | You missed by further than South Padre Island is from Al Ain. Both of those are in this game.
+56 anna 1 — | (silence)
+56 ben 2 blurb | “a rooster started at four and never really stopped”, according to Anna. Not 7,570 miles from here it didn't.
+56 benjamin 2 — | (silence)
+56 andrew 2 — | (silence)
+56 maddie 2 deadpan | You were there. You got 2.
+56 anna 2 — | (silence)
+56 ben 3 — | (silence)
+56 benjamin 3 — | (silence)
+56 andrew 3 witness | You left Benjamin out. Benjamin has the photos.
+56 maddie 3 listing | That pin is in the North Atlantic. Check-in is whenever you surface.
+56 anna 3 — | (silence)
+
+-- Day 57 --
+57 ben 1 — | (silence)
+57 benjamin 1 — | (silence)
+57 andrew 1 yardstick | You missed by further than Tromsø is from Nashville. Both of those are in this game.
+57 maddie 1 — | (silence)
+57 anna 1 listing | 348 miles from Atlanta and nothing else. Self check-in, one assumes.
+57 ben 2 — | (silence)
+57 benjamin 2 listing | The nearest anything to that pin is New York, 581 miles off. No listings out there either.
+57 andrew 2 — | (silence)
+57 maddie 2 — | (silence)
+57 anna 2 — | (silence)
+57 ben 3 — | (silence)
+57 benjamin 3 — | (silence)
+57 andrew 3 — | (silence)
+57 maddie 3 — | (silence)
+57 anna 3 — | (silence)
+
+-- Day 58 --
+58 ben 1 yardstick | You missed by further than Morris is from New Orleans. Both of those are in this game.
+58 benjamin 1 — | (silence)
+58 andrew 1 — | (silence)
+58 maddie 1 — | (silence)
+58 anna 1 deadpan | You were there. You got 223.
+58 ben 2 — | (silence)
+58 benjamin 2 — | (silence)
+58 andrew 2 — | (silence)
+58 maddie 2 — | (silence)
+58 anna 2 — | (silence)
+58 ben 3 — | (silence)
+58 benjamin 3 blurb | “the hot tub was cold and the pool was a puddle”, according to Anna. Not 2,422 miles from here it didn't.
+58 andrew 3 — | (silence)
+58 maddie 3 blurb | Anna wrote “the hot tub was cold and the pool was a puddle”. You have put that 1,040 miles from where it happened.
+58 anna 3 — | (silence)
+
+-- Day 59 --
+59 ben 1 listing | 1,455 miles from Melbourne and nothing else. Self check-in, one assumes.
+59 benjamin 1 — | (silence)
+59 andrew 1 — | (silence)
+59 maddie 1 — | (silence)
+59 anna 1 — | (silence)
+59 ben 2 — | (silence)
+59 benjamin 2 — | (silence)
+59 andrew 2 — | (silence)
+59 maddie 2 — | (silence)
+59 anna 2 — | (silence)
+59 ben 3 — | (silence)
+59 benjamin 3 — | (silence)
+59 andrew 3 listing | The nearest anything to that pin is New York, 983 miles off. No listings out there either.
+59 maddie 3 — | (silence)
+59 anna 3 — | (silence)
+
+-- Day 60 --
+60 ben 1 witness | Benjamin was there. Benjamin is in this group chat.
+60 benjamin 1 — | (silence)
+60 andrew 1 blurb | Maddie wrote “the kitchen had every spice except the one we needed”. You have put that 8,773 miles from where it happened.
+60 maddie 1 — | (silence)
+60 anna 1 — | (silence)
+60 ben 2 — | (silence)
+60 benjamin 2 — | (silence)
+60 andrew 2 — | (silence)
+60 maddie 2 — | (silence)
+60 anna 2 — | (silence)
+60 ben 3 — | (silence)
+60 benjamin 3 yardstick | That is more than the whole way from Stamford to New Orleans, and somebody here has slept in both.
+60 andrew 3 deadpan | You were there. You got 127.
+60 maddie 3 — | (silence)
+60 anna 3 — | (silence)
