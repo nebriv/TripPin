@@ -1244,10 +1244,22 @@ async function handlePost(request, env) {
   const owner = ownerId(body.owner);
   if (!owner) return json({ error: 'Say who these belong to.' }, 400);
 
-  // Only the person who claimed this name may write to it.
-  const verdict = await checkOwner(env, owner, passOf(request, body));
-  if (verdict !== 'ok') {
-    return deny(request, env, DENY[verdict][0], DENY[verdict][1], 'id', owner);
+  // Only the person who claimed this name may write to it - or the admin.
+  //
+  // That is not a hole in the passcode: the admin word already reads the
+  // whole deck, forgets any owner and rewrites the roster, so writing stays
+  // is strictly less than it can already do. Without it a deck cannot be
+  // seeded or repaired until its owner has claimed a name, which is a
+  // chicken-and-egg the person running the game should not be stuck behind.
+  //
+  // Gated on ADMIN_KEY being set, because isAdmin falls back to the group
+  // word when it is not - and without that gate, every friend holding the
+  // word could overwrite every other friend's stays.
+  if (!(env.ADMIN_KEY && isAdmin(request, env, body))) {
+    const verdict = await checkOwner(env, owner, passOf(request, body));
+    if (verdict !== 'ok') {
+      return deny(request, env, DENY[verdict][0], DENY[verdict][1], 'id', owner);
+    }
   }
   if (!Array.isArray(body.stays)) return json({ error: 'No stays in there.' }, 400);
 

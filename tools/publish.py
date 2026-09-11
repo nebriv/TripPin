@@ -11,6 +11,7 @@ blocks third-party images), but a 5 MB KV value helps nobody.
 
     export TRIPPIN_ENTRY_KEY=...   # the group word; --key overrides
     export TRIPPIN_PASSCODE=...    # the owner's passcode; --pass overrides
+    export TRIPPIN_ADMIN_KEY=...   # admin word; writes without a passcode
     python tools/publish.py --url https://trippin.<sub>.workers.dev
     python tools/publish.py ... --owner player1      # just one person's stays
 
@@ -65,6 +66,7 @@ def post(args, path, payload):
         headers=dict(HEADERS, **{
             "x-trippin-key": args.key,
             "x-trippin-pass": urllib.parse.quote(args.passcode or "", safe=""),
+            "x-trippin-admin": args.admin or "",
         }),
     )
     try:
@@ -87,6 +89,11 @@ def main():
                     help="the passcode for --owner, or $TRIPPIN_PASSCODE. Every owner you publish "
                          "must be claimed and must share this passcode, so in "
                          "practice publish one owner at a time.")
+    ap.add_argument("--admin", default=os.environ.get("TRIPPIN_ADMIN_KEY"),
+                    help="ADMIN_KEY, or $TRIPPIN_ADMIN_KEY. Writes any "
+                         "owner's stays without that owner's passcode, "
+                         "which is how a deck gets seeded before anybody "
+                         "has claimed a name.")
     ap.add_argument("--claim", action="store_true",
                     help="claim the owner with --pass if nobody has yet")
     ap.add_argument("--owner", help="only publish this person's stays")
@@ -99,10 +106,11 @@ def main():
               file=sys.stderr)
         return 2
 
-    if not args.passcode and not args.dry_run:
+    if not args.passcode and not args.admin and not args.dry_run:
         print("A passcode is needed now: each name is claimed by one person.\n"
               "  --pass <passcode>           if you have already claimed it\n"
-              "  --pass <passcode> --claim   to claim it for the first time",
+              "  --pass <passcode> --claim   to claim it for the first time\n"
+              "  --admin <admin word>        to write without one",
               file=sys.stderr)
         return 2
 
